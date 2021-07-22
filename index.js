@@ -1,4 +1,7 @@
 const express = require("express");
+const dotenv = require('dotenv');
+dotenv.config();
+
 const app = express();
 const cors = require("cors");
 const pool = require("./db")
@@ -220,6 +223,6 @@ app.delete('/orders/:id', async (request, response) => {
 })
 
 
-app.listen(5000, () =>
+app.listen(process.env.PORT, () =>
     console.log("server is started on port 5000")
 )
