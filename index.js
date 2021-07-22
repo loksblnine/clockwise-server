@@ -224,5 +224,5 @@ app.delete('/orders/:id', async (request, response) => {
 
 
 app.listen(process.env.PORT, () =>
-    console.log("server is started on port 5000")
+    console.log(`server is started on port ${process.env.PORT}`)
 )
