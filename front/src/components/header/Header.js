@@ -1,24 +1,17 @@
-import React, {useEffect, useState, ReactElement} from 'react';
-import {Button} from "@material-ui/core";
-
-
-function renderIf(condition: boolean | Array<any>, children: ReactElement): ReactElement | null {
-    return (Array.isArray(condition) ? condition.length > 0 : condition) ? children : null;
-}
+import React, {useEffect, useState, ReactElement} from 'react'
+import Button from "@material-ui/core/Button";
 
 function Header(props) {
 
-    const isLoggedIn = props.isUserLoggedIn;
-
+    console.log("123", props.isUserLoggedIn)
     return (
         <div className="header">
             <div className="h1">
                 <h1> Clockwise Clockware</h1>
             </div>
-            {renderIf(!isLoggedIn,
-                <div className="button">
-                    <Button href='/login'>Вход</Button>
-                </div>)}
+            {window.location.pathname !== '/login' && window.location.pathname !== '/access_succeed'
+            && <Button href={'/login'}>Вход</Button>}
+
         </div>
     );
 }
