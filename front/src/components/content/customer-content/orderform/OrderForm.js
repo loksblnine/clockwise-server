@@ -56,8 +56,8 @@ const OrderForm = (props) => {
                 state: {data: values}
             })
         },
-
     });
+
     return (
         <form onSubmit={formik.handleSubmit}>
             <div className="form-group">
@@ -84,7 +84,7 @@ const OrderForm = (props) => {
                         className={"form-control"}
                         placeholder="Выберите ваш город">
                     {cities?.map(city =>
-                        <option value={city.city_id}>{city.city_name} </option>)}
+                        <option key={city.city_id} value={city.city_id}>{city.city_name} </option>)}
                 </select>
             </div>
 

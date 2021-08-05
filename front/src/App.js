@@ -14,15 +14,6 @@ import MasterView from "./components/content/customer-content/mastersview/Master
 import LoginForm from "./components/content/admin-content/login-form/LoginForm";
 
 
-function requireAuth(nextState, replace, next) {
-    if (constants.IS_USER_AUTHORISED.is) {
-        replace({
-            pathname: "/login",
-            state: {nextPathname: nextState.location.pathname}
-        });
-    }
-    next();
-}
 function requireOrder(nextState, replace, next) {
     if (constants.IS_ORDER_SUBMITTED.is) {
         replace({
@@ -36,13 +27,13 @@ function requireOrder(nextState, replace, next) {
 const App = () => {
     return (
         <Fragment>
-            <Header isUserLoggedIn={constants.IS_USER_AUTHORISED.is}/>
+            <Header/>
             <Router>
                 <Switch>
                     <Route exact path='/' component={OrderForm}/>
                     <Route exact path='/choose_master' component={MasterView}/>
                     <Route exact path='/login' component={LoginForm}/>
-                    <Route exact path='/access_succeed' component={AdminPanel} onEnter={requireAuth}/>
+                    <Route exact path='/access_succeed' component={AdminPanel}/>
                     <Route exact path='/masters_choosing' onEnter={requireOrder}>
                         <MasterView />
                     </Route>

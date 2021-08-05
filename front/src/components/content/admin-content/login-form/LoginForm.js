@@ -1,35 +1,18 @@
 import React, {useState} from 'react';
 import {useFormik} from 'formik';
-import * as yup from 'yup';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import * as constants from "../../../../constants";
 
-const validationSchema = yup.object({
-    email: yup
-        .string('Enter your email')
-        .email('Enter a valid email')
-        .required('Email is required'),
-    password: yup
-        .string('Enter your password')
-        .min(8, 'Password should be of minimum 8 characters length')
-        .required('Password is required'),
-});
 
-const LoginForm = (state) => {
-
-    const [, setState] = useState( constants.IS_USER_AUTHORISED.is );
-
+const LoginForm = () => {
     const formik = useFormik({
         initialValues: {
             email: 'admin@example.com',
             password: 'passwordsecret',
         },
-        // validationSchema: validationSchema,
-
         onSubmit: (values) => {
             if (constants.ADMIN_LOGIN === values.email && constants.ADMIN_PASSWORD === values.password) {
-                constants.IS_USER_AUTHORISED.is = true
                 window.location = "/access_succeed"
             }
             else {

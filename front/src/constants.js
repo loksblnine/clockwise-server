@@ -23,7 +23,6 @@ export const WORK_TYPES = {
     },
 }
 
-export const IS_USER_AUTHORISED = {is: false};
 export const IS_ORDER_SUBMITTED = {is: false};
 
 export const MY_EMAIL = "illya200457@gmail.com"
