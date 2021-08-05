@@ -2,9 +2,26 @@ import React, {useEffect, useState} from 'react';
 import {useFormik} from 'formik';
 import * as constants from "../../../../constants";
 import {useHistory} from "react-router-dom";
-import {SERVER_URL} from "../../../../constants";
+import {getCities} from "../../getData";
 
+const validate = values => {
+    const errors = {};
+    if (!values.name) {
+        errors.name = 'Имя обязательно';
+    } else if (values.name.length < 3) {
+        errors.name = 'Короткое имя)';
+    }
+    if (values.name === "Ян") {
+        errors.name = 'Извините, станьте Яной)';
+    }
 
+    if (!values.email) {
+        errors.email = 'Адрес электронный почты обязателен';
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+        errors.email = 'Невалидный адрес электронной почты';
+    }
+    return errors;
+};
 
 const orderPageStyle = {
     margin: "32px auto 37px",
@@ -19,21 +36,8 @@ const OrderForm = (props) => {
     const [cities, setCities] = useState([]);
     const history = useHistory()
 
-    const getCities = () => {
-        fetch(SERVER_URL + `/cities`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setCities(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
     useEffect(() => {
-        getCities()
+        getCities(setCities)
     }, [])
 
     const formik = useFormik({
@@ -45,12 +49,14 @@ const OrderForm = (props) => {
             time: constants.TIME_FROM,
             type: '1'
         },
+        validate,
         onSubmit: (values) => {
             history.push({
                 pathname: '/masters_choosing',
                 state: {data: values}
             })
         },
+
     });
     return (
         <form onSubmit={formik.handleSubmit}>
@@ -60,6 +66,7 @@ const OrderForm = (props) => {
                        value={formik.values.name} onChange={formik.handleChange}
                        className={"form-control"} placeholder="Имя"
                        required/>
+                {formik.errors.name ? <div>{formik.errors.name}</div> : null}
             </div>
             <div className="form-group">
                 <label htmlFor="email">Email</label>
@@ -67,6 +74,7 @@ const OrderForm = (props) => {
                        value={formik.values.email} onChange={formik.handleChange}
                        className={"form-control"} placeholder="email"
                        required/>
+                {formik.errors.email ? <div>{formik.errors.email}</div> : null}
             </div>
 
             <div className="form-group">

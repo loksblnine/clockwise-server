@@ -4,7 +4,8 @@ import * as constants from "../../../../constants";
 import emailjs from 'emailjs-com';
 import {useLocation, Redirect} from 'react-router-dom'
 import {SERVER_URL} from "../../../../constants";
-import InputCustomer from "../../admin-content/customers/InputCustomer";
+import {getMasters, getCustomers, getOrders} from "../../getData";
+
 
 function MasterView(props) {
     const [masters, setMasters] = useState([]);
@@ -12,56 +13,16 @@ function MasterView(props) {
     const [customers, setCustomers] = useState([]);
     const location = useLocation()
 
-    const getCustomers = () => {
-        fetch(SERVER_URL + `/customers`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setCustomers(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
-    const getMasters = () => {
-        fetch(SERVER_URL + `/masters`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                return setMasters(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
-    const getOrders = () => {
-        fetch(SERVER_URL + `/orders`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                return setOrders(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
-
     useEffect(() => {
-        getOrders()
+        getMasters(setMasters)
     }, [])
 
     useEffect(() => {
-        getMasters()
+        getOrders(setOrders)
     }, [])
 
     useEffect(() => {
-        getCustomers()
+        getCustomers(setCustomers)
     }, [])
 
     const Time = location.state.data.time
@@ -79,7 +40,7 @@ function MasterView(props) {
             });
         e.target.reset()
 
-        if (!isCustomerExist()){
+        if (!isCustomerExist()) {
             try {
                 const body = {customer_name: location.state.data.name, customer_email: location.state.data.email}
                 console.log(body)
@@ -117,9 +78,14 @@ function MasterView(props) {
         orders.forEach(o => {
             {
                 if (o.master_id === master.master_id) {
-                    if (o.order_time.split('T')[1] > START_TIME && o.order_time.split('T')[1] < END_TIME) {
-                        flag++
-                        return
+                    console.log(o.order_time.split('T')[0] === location.state.data.date)
+                    if (o.order_time.split('T')[0] === location.state.data.date) {
+                        if (o.order_time.split('T')[1] > START_TIME
+                            && o.order_time.split('T')[1] < END_TIME
+                        ) {
+                            flag++
+                            return
+                        }
                     }
                 }
             }

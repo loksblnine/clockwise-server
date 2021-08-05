@@ -2,6 +2,7 @@ import React, {Fragment, useEffect, useState} from "react";
 import EditMaster from "./EditMaster";
 import InputMaster from "./InputMaster";
 import {SERVER_URL} from "../../../../constants";
+import {getMasters} from "../../getData";
 
 const ListMasters = () => {
     const [masters, setMasters] = useState([]);
@@ -11,27 +12,14 @@ const ListMasters = () => {
             await fetch(SERVER_URL+`masters/${id}`, {
                 method: "DELETE"
             });
-           await getMasters()
+           await getMasters(setMasters)
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getMasters = () => {
-        fetch(SERVER_URL + `/masters`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setMasters(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
     useEffect(() => {
-        getMasters()
+        getMasters(setMasters)
     }, [])
 
     return (

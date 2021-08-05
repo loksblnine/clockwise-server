@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from "react";
 import EditCustomer from "./EditCustomer";
 import InputCustomer from "./InputCustomer";
 import {SERVER_URL} from "../../../../constants";
-
+import {getCustomers} from "../../getData";
 
 const ListCustomers = () => {
     const [customers, setCustomers] = useState([]);
@@ -12,27 +12,14 @@ const ListCustomers = () => {
             await fetch(SERVER_URL + `customers/${id}`, {
                 method: "DELETE"
             });
-            await getCustomers()
+            await getCustomers(setCustomers)
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getCustomers = () => {
-        fetch(SERVER_URL + `/customers`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setCustomers(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
     useEffect(() => {
-        getCustomers()
+        getCustomers(setCustomers)
     }, [])
 
     return (

@@ -2,7 +2,7 @@ import React, {Fragment, useEffect, useState} from "react";
 import EditCity from "./EditCity";
 import InputCity from "./InputCity";
 import {SERVER_URL} from "../../../../constants";
-
+import {getCities} from "../../getData";
 
 const ListCities = () => {
     const [cities, setCities] = useState([]);
@@ -12,27 +12,14 @@ const ListCities = () => {
             await fetch(SERVER_URL + `cities/${id}`, {
                 method: "DELETE"
             });
-            await getCities()
+            await getCities(setCities)
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getCities = () => {
-        fetch(SERVER_URL + `/cities`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setCities(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
-
     useEffect(() => {
-        getCities()
+        getCities(setCities)
     }, [])
 
     return (

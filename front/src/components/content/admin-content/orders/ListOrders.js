@@ -2,36 +2,26 @@ import React, {Fragment, useEffect, useState} from "react";
 import EditOrder from "./EditOrder";
 import InputOrder from "./InputOrder";
 import {SERVER_URL} from "../../../../constants";
+import {getOrders} from "../../getData";
 
 const ListOrders = () => {
     const [orders, setOrders] = useState([]);
 
     const deleteOrder = async (id) => {
         try {
-            await fetch(SERVER_URL + `orders/${id}`, {
+            await fetch(SERVER_URL + `/orders/${id}`, {
                 method: "DELETE"
             });
-            getOrders()
+            getOrders(setOrders)
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getOrders = () => {
-        fetch(SERVER_URL + `/orders`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                setOrders(data)
-            })
-            .catch((e) => {
-                console.error(e)
-            })
-    }
+
 
     useEffect(() => {
-        getOrders()
+        getOrders(setOrders)
     }, [])
 
     return (
