@@ -1,19 +1,20 @@
 import React from 'react';
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
 import Button from "@material-ui/core/Button"
 import {LinkContainer} from 'react-router-bootstrap'
 import './AdminPanel.css'
+import * as constants from "../../../../constants";
 
 //components
 import ListMasters from "../masters/ListMasters";
 import ListCities from "../cities/ListCities";
 import ListCustomers from "../customers/ListCustomers";
 import ListOrders from "../orders/ListOrders";
-import LoginForm from "./LoginForm";
-import {IS_USER_AUTHORISED} from "../../../../constants";
+
+
 
 function AdminPanel() {
-    IS_USER_AUTHORISED.is = true;
+
     return (
         <Router>
             <div className="router">

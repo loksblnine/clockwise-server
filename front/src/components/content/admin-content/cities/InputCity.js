@@ -9,7 +9,7 @@ const InputCity = () => {
 
         try {
             const body = {city_name}
-            await fetch(SERVER_URL+`cities`, {
+            await fetch(SERVER_URL+`/cities`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)

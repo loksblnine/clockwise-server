@@ -1,12 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormik} from 'formik';
 import * as yup from 'yup';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import * as constants from "../../../../constants";
-import MasterView from "../../customer-content/mastersview/MasterView";
-import AdminPanel from "./AdminPanel";
-import Header from "../../../header/Header";
 
 const validationSchema = yup.object({
     email: yup
@@ -19,26 +16,30 @@ const validationSchema = yup.object({
         .required('Password is required'),
 });
 
-const LoginForm = () => {
+const LoginForm = (state) => {
+
+    const [, setState] = useState( constants.IS_USER_AUTHORISED.is );
+
     const formik = useFormik({
         initialValues: {
-            email: '',
-            password: '',
+            email: 'admin@example.com',
+            password: 'passwordsecret',
         },
-        validationSchema: validationSchema,
+        // validationSchema: validationSchema,
 
         onSubmit: (values) => {
             if (constants.ADMIN_LOGIN === values.email && constants.ADMIN_PASSWORD === values.password) {
                 constants.IS_USER_AUTHORISED.is = true
-                console.log(constants.IS_USER_AUTHORISED.is)
+                window.location = "/access_succeed"
             }
             else {
-                constants.IS_USER_AUTHORISED.is = false
+                alert("wrong pass")
             }
         }
     })
     const loginPageStyle = {
         margin: "32px auto 37px",
+        maxWidth: "40%",
         background: "#fff",
         padding: "30px",
         borderRadius: "10px",
@@ -69,14 +70,10 @@ const LoginForm = () => {
                     error={formik.touched.password && Boolean(formik.errors.password)}
                     helperText={formik.touched.password && formik.errors.password}
                 />
-                <Button color="primary" variant="contained" fullWidth type="submit">
-                    Submit
+                <Button color="primary" variant="contained" fullWidth type="submit" className={"mt-5"}>
+                    Войти
                 </Button>
             </form>
-
-            {constants.IS_USER_AUTHORISED.is &&
-            <AdminPanel/>}
-
         </div>
     );
 };

@@ -11,20 +11,23 @@ const ListMasters = () => {
             await fetch(SERVER_URL+`masters/${id}`, {
                 method: "DELETE"
             });
-            setMasters(masters.filter(master => master.master_id !== id))
+           await getMasters()
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getMasters = async () => {
-        try {
-            const response = await fetch(SERVER_URL+`masters`)
-            const jsonData = await response.json()
-            setMasters(jsonData)
-        } catch (e) {
-            console.log(e.message)
-        }
+    const getMasters = () => {
+        fetch(SERVER_URL + `/masters`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setMasters(data)
+            })
+            .catch((e) => {
+                console.error(e)
+            })
     }
 
     useEffect(() => {

@@ -1,25 +1,38 @@
-import React, {Fragment, useReducer} from "react";
+import React, {Fragment, useState} from "react";
 import {SERVER_URL} from "../../../../constants";
-import reducer from "./reducer";
-
 
 const InputOrder = () => {
-    const [order, dispatch] = useReducer(reducer, {});
+    const [order, setOrder] = useState({
+        customer_id:'',
+        master_id:'',
+        city_id:'',
+        work_id:'',
+        order_time: ''
+    });
 
     const onSubmitForm = async e => {
         e.preventDefault();
 
         try {
             const body = {order}
-            await fetch(SERVER_URL + `orders`, {
+            console.log(JSON.stringify(body.order))
+            await fetch(SERVER_URL + `/orders`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(body)
+                body: JSON.stringify(body.order)
             });
         } catch (e) {
             console.log(e.message)
         }
     }
+    const handleChange = e => {
+        const { name, value } = e.target;
+        setOrder(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
     return (
         <Fragment>
             <button type="button" className="btn btn-success" data-toggle="modal"
@@ -38,20 +51,20 @@ const InputOrder = () => {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <input className="form-control" value={order.master_id}
-                                   onChange={e => dispatch({type: 'master_id', payload: e.target.value})}/>
+                            <input className="form-control" value={order.master_id} name={`master_id`}
+                                   onChange={handleChange}/>
 
-                            <input className="form-control" value={order.customer_id}
-                                   onChange={e => dispatch({type: 'customer_id', payload: e.target.value})}/>
+                            <input className="form-control" value={order.customer_id} name={`customer_id`}
+                                   onChange={handleChange}/>
 
-                            <input className="form-control" value={order.city_id}
-                                   onChange={e => dispatch({type: 'city_id', payload: e.target.value})}/>
+                            <input className="form-control" value={order.city_id} name={`city_id`}
+                                   onChange={handleChange}/>
 
-                            <input className="form-control" value={order.work_id}
-                                   onChange={e => dispatch({type: 'type_id', payload: e.target.value})}/>
+                            <input className="form-control" value={order.work_id} name={`work_id`}
+                                   onChange={handleChange}/>
 
-                            <input className="form-control" value={order.order_time}
-                                   onChange={e => dispatch({type: 'order_time', payload: e.target.value})}/>
+                            <input className="form-control" value={order.order_time} name={`order_time`}
+                                   onChange={handleChange}/>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-dismiss="modal">Закрыть</button>

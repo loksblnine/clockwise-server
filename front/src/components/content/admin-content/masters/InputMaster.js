@@ -10,7 +10,7 @@ const InputMaster = () => {
 
         try {
             const body = {master_name, ranking}
-            await fetch(SERVER_URL+`masters`, {
+            await fetch(SERVER_URL+`/masters`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)

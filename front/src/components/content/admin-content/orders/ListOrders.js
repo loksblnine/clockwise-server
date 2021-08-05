@@ -6,26 +6,28 @@ import {SERVER_URL} from "../../../../constants";
 const ListOrders = () => {
     const [orders, setOrders] = useState([]);
 
-    const deleteOrder = async (id)=>{
+    const deleteOrder = async (id) => {
         try {
-            await fetch(SERVER_URL+`orders/${id}`, {
+            await fetch(SERVER_URL + `orders/${id}`, {
                 method: "DELETE"
             });
-            setOrders(orders.filter(order => order.order_id !== id))
+            getOrders()
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getOrders = async () => {
-        try {
-            const response = await fetch(SERVER_URL+`orders`)
-            const jsonData = await response.json()
-            setOrders(jsonData)
-            console.log(orders)
-        } catch (e) {
-            console.log(e.message)
-        }
+    const getOrders = () => {
+        fetch(SERVER_URL + `/orders`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setOrders(data)
+            })
+            .catch((e) => {
+                console.error(e)
+            })
     }
 
     useEffect(() => {
@@ -52,7 +54,7 @@ const ListOrders = () => {
 
                 <tbody>
                 {
-                    orders.map(order=>(
+                    orders.map(order => (
                         <tr key={order.order_id}>
                             <th scope="row"> {order.order_id}</th>
                             <td>{order.master_id}</td>
@@ -60,10 +62,12 @@ const ListOrders = () => {
                             <td>{order.city_id}</td>
                             <td>{order.work_id}</td>
                             <td>{order.order_time}</td>
-                            <td></td>
-                            {/*<td><EditOrder order = {order}/></td>*/}
-                            <td><button className="btn btn-danger"
-                                        onClick={()=>deleteOrder(order.order_id)}>Удалить</button></td>
+                            <td><EditOrder order = {order}/></td>
+                            <td>
+                                <button className="btn btn-danger"
+                                        onClick={() => deleteOrder(order.order_id)}>Удалить
+                                </button>
+                            </td>
                         </tr>
                     ))}
 

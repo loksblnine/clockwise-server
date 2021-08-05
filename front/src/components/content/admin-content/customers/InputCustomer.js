@@ -10,7 +10,7 @@ const InputCustomer = () => {
 
         try {
             const body = {customer_name, customer_email}
-            await fetch(SERVER_URL+ `customers`, {
+            await fetch(SERVER_URL+ `/customers`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)

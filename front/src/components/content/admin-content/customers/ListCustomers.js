@@ -3,28 +3,32 @@ import EditCustomer from "./EditCustomer";
 import InputCustomer from "./InputCustomer";
 import {SERVER_URL} from "../../../../constants";
 
+
 const ListCustomers = () => {
     const [customers, setCustomers] = useState([]);
 
-    const deleteCustomer = async (id)=>{
+    const deleteCustomer = async (id) => {
         try {
-            await fetch(SERVER_URL+`customers/${id}`, {
+            await fetch(SERVER_URL + `customers/${id}`, {
                 method: "DELETE"
             });
-            setCustomers(customers.filter(customer => customer.customer_id !== id))
+            await getCustomers()
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getCustomers = async () => {
-        try {
-            const response = await fetch(SERVER_URL+`customers`)
-            const jsonData = await response.json()
-            setCustomers(jsonData)
-        } catch (e) {
-            console.log(e.message)
-        }
+    const getCustomers = () => {
+        fetch(SERVER_URL + `/customers`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setCustomers(data)
+            })
+            .catch((e) => {
+                console.error(e)
+            })
     }
 
     useEffect(() => {
@@ -47,14 +51,17 @@ const ListCustomers = () => {
                 </thead>
 
                 <tbody>
-                {customers.map(customer=>(
+                {customers.map(customer => (
                     <tr key={customer.customer_id}>
                         <th scope="row"> {customer.customer_id}</th>
                         <td>{customer.customer_name}</td>
                         <td>{customer.customer_email}</td>
-                        <td><EditCustomer customer = {customer}/></td>
-                        <td><button className="btn btn-danger"
-                                    onClick={()=>deleteCustomer(customer.customer_id)}>Удалить</button></td>
+                        <td><EditCustomer customer={customer}/></td>
+                        <td>
+                            <button className="btn btn-danger"
+                                    onClick={() => deleteCustomer(customer.customer_id)}>Удалить
+                            </button>
+                        </td>
                     </tr>
                 ))}
 

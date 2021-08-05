@@ -9,7 +9,7 @@ const EditMaster = ({master}) => {
         e.preventDefault()
         try {
             const body = {master_name, ranking}
-            await fetch(SERVER_URL+`masters/${master.master_id}`, {
+            await fetch(SERVER_URL+`/masters/${master.master_id}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body)

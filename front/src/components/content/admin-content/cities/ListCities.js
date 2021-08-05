@@ -3,28 +3,32 @@ import EditCity from "./EditCity";
 import InputCity from "./InputCity";
 import {SERVER_URL} from "../../../../constants";
 
+
 const ListCities = () => {
     const [cities, setCities] = useState([]);
 
     const deleteCity = async (id) => {
         try {
-            await fetch(SERVER_URL+`cities/${id}`, {
+            await fetch(SERVER_URL + `cities/${id}`, {
                 method: "DELETE"
             });
-            setCities(cities.filter(city => city.city_id !== id))
+            await getCities()
         } catch (e) {
             console.log(e.message)
         }
     }
 
-    const getCities = async () => {
-        try {
-            const response = await fetch(SERVER_URL+`cities`)
-            const jsonData = await response.json()
-            setCities(jsonData)
-        } catch (e) {
-            console.log(e.message)
-        }
+    const getCities = () => {
+        fetch(SERVER_URL + `/cities`)
+            .then((res) => {
+                return res.json()
+            })
+            .then((data) => {
+                setCities(data)
+            })
+            .catch((e) => {
+                console.error(e)
+            })
     }
 
     useEffect(() => {
