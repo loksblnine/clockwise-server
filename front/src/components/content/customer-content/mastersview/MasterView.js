@@ -1,58 +1,32 @@
 import React, {useEffect, useState} from 'react';
 import {Button} from "@material-ui/core";
 import * as constants from "../../../../constants";
-import emailjs from 'emailjs-com';
 import {useLocation, Redirect} from 'react-router-dom'
-import {SERVER_URL} from "../../../../constants";
 import {getMasters, getCustomers, getOrders} from "../../getData";
-
 
 function MasterView(props) {
     const [masters, setMasters] = useState([]);
     const [orders, setOrders] = useState([]);
     const [customers, setCustomers] = useState([]);
+
     const location = useLocation()
 
     useEffect(() => {
-        getMasters(setMasters)
+        if (location.state) {
+            getMasters(setMasters)
+            getOrders(setOrders)
+            getCustomers(setCustomers)
+        }
     }, [])
-
-    useEffect(() => {
-        getOrders(setOrders)
-    }, [])
-
-    useEffect(() => {
-        getCustomers(setCustomers)
-    }, [])
-
-    const Time = location.state.data.time
-    const START_TIME = Time
-    const END_TIME = new Date(2001, 0, 0, (Number(Time.split(':')[0]) + Number(constants.WORK_TYPES[location.state.data.type].value))).getHours() + ":00"
-
 
     async function sendData(e) {
-        e.preventDefault();
-        emailjs.sendForm('gmail', 'template_gv8gk0m', e.target, 'user_hv0hRS1aIzu9chJ0LXehi')
-            .then((result) => {
-                console.log(result.text);
-            }, (error) => {
-                console.log(error.text);
-            });
-        e.target.reset()
-
-        if (!isCustomerExist()) {
-            try {
-                const body = {customer_name: location.state.data.name, customer_email: location.state.data.email}
-                console.log(body)
-                // await fetch(SERVER_URL+ `/customers`, {
-                //     method: "POST",
-                //     headers: {"Content-Type": "application/json"},
-                //     body: JSON.stringify(body)
-                // });
-            } catch (e) {
-                console.log(e.message)
-            }
-        }
+        // const body = {customer_name: location.state.data.name, customer_email: location.state.data.email}
+        // await fetch(constants.SERVER_URL + `/customers`, {
+        //     method: "POST",
+        //     headers: {"Content-Type": "application/json"},
+        //     body: JSON.stringify(body)
+        // })
+        console.log(123)
     }
 
     function isCustomerExist() {
@@ -66,7 +40,6 @@ function MasterView(props) {
         return flag === 1;
     }
 
-
     if (!location.state) {
         return (
             <Redirect to="/"/>
@@ -78,7 +51,6 @@ function MasterView(props) {
         orders.forEach(o => {
             {
                 if (o.master_id === master.master_id) {
-                    console.log(o.order_time.split('T')[0] === location.state.data.date)
                     if (o.order_time.split('T')[0] === location.state.data.date) {
                         if (o.order_time.split('T')[1] > START_TIME
                             && o.order_time.split('T')[1] < END_TIME
@@ -93,6 +65,10 @@ function MasterView(props) {
         return flag !== 1;
     }
 
+    const START_TIME = location.state.data.time
+    const END_TIME = (Number(START_TIME.split(':')[0])
+        + Number(constants.WORK_TYPES[location.state.data.type].value))
+        + ":00"
 
     return (
         <div>
@@ -104,13 +80,13 @@ function MasterView(props) {
             <form onSubmit={sendData}>
                 {
                     masters?.map((master) =>
-                        <form id={master.master_id} className="mt-5">
+                        <div key={master.master_id} id={master.master_id} className="mt-5">
                             <input value={master.master_name} readOnly/>
                             <input value={master.ranking} readOnly/>
                             <Button id={master.master_id} type={`submit`}
                                     disabled={!isMasterAvailable(master)}
                             >Выбрать</Button>
-                        </form>
+                        </div>
                     )
                 }
             </form>
