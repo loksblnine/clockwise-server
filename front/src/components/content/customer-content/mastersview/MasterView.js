@@ -29,6 +29,19 @@ function MasterView(props) {
         console.log(123)
     }
 
+    async function handleClick(e) {
+        if (!isCustomerExist()) {
+            const body = {customer_name: location.state.data.name, customer_email: location.state.data.email}
+            console.log(JSON.stringify(body))
+            await fetch(constants.SERVER_URL + `/customers`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(body)
+            })
+        }
+
+    }
+
     function isCustomerExist() {
         let flag = 0;
         customers.forEach(c => {
@@ -77,19 +90,19 @@ function MasterView(props) {
                 <p>Вы заказали
                     ремонт {constants.WORK_TYPES[location.state.data.type].message} на {location.state.data.date} в {START_TIME}-{END_TIME}</p>
             </div>
-            <form onSubmit={sendData}>
+            <div>
                 {
                     masters?.map((master) =>
-                        <div key={master.master_id} id={master.master_id} className="mt-5">
+                        <form onSubmit={sendData} key={master.master_id} id={master.master_id} className="mt-5">
                             <input value={master.master_name} readOnly/>
                             <input value={master.ranking} readOnly/>
-                            <Button id={master.master_id} type={`submit`}
+                            <Button id={master.master_id} onClick={handleClick}
                                     disabled={!isMasterAvailable(master)}
                             >Выбрать</Button>
-                        </div>
+                        </form>
                     )
                 }
-            </form>
+            </div>
         </div>
     );
 }

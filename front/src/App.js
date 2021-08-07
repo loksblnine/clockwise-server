@@ -27,19 +27,19 @@ function requireOrder(nextState, replace, next) {
 const App = () => {
     return (
         <Fragment>
-            <Header/>
+
             <Router>
+                <Header/>
                 <Switch>
                     <Route exact path='/' component={OrderForm}/>
                     <Route exact path='/choose_master' component={MasterView}/>
                     <Route exact path='/login' component={LoginForm}/>
                     <Route exact path='/access_succeed' component={AdminPanel}/>
-                    <Route exact path='/masters_choosing' onEnter={requireOrder}>
-                        <MasterView />
-                    </Route>
+                    <Route exact path='/masters_choosing' onEnter={requireOrder}> <MasterView/> </Route>
+                    {/*<Footer/>*/}
                 </Switch>
             </Router>
-            {/*<Footer/>*/}
+
         </Fragment>
     );
 }
