@@ -149,16 +149,7 @@ app.get('/customers/:id', async (request, response) => {
     }
 
 })
-app.get('/customers/:email', async (request, response) => {
-    try {
-        const {email} = request.params;
-        const customer = await pool.query("SELECT * FROM customers WHERE customer_email = ($1)", [email])
-        response.json(customer.rows[0])
-    } catch (e) {
-        console.log(e.toString())
-    }
 
-})
 app.put('/customers/:id', async (request, response) => {
     try {
         const {id} = request.params;
