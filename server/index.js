@@ -6,7 +6,7 @@ const sgMail = require('@sendgrid/mail')
 
 const SENDGRID_API_KEY='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'
 const MESSAGE = {
-    to:'',
+    to:'illya01@ukr.net',
     from:'illya200457@gmail.com',
     subject:'123',
     text:'123',
