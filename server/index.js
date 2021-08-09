@@ -1,10 +1,22 @@
 const express = require("express");
 const dotenv = require('dotenv');
+const cors = require("cors");
+const pool = require("./db")
+const sgMail = require('@sendgrid/mail')
+
+const SENDGRID_API_KEY='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'
+const MESSAGE = {
+    to:'',
+    from:'illya200457@gmail.com',
+    subject:'123',
+    text:'123',
+    html:'<div>123 <p>123</p></div>'
+}
+
+sgMail.setApiKey(SENDGRID_API_KEY)
 dotenv.config();
 
 const app = express();
-const cors = require("cors");
-const pool = require("./db")
 
 //middleware
 app.use(cors())
@@ -223,6 +235,11 @@ app.delete('/orders/:id', async (request, response) => {
     }
 })
 //endregion
+
+
+sgMail.send(MESSAGE)
+    .then(response=> console.log('email '))
+    .catch(error=> console.log(error.message))
 
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
