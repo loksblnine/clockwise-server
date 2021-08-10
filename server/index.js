@@ -4,23 +4,36 @@ const cors = require("cors");
 const pool = require("./db")
 const sgMail = require('@sendgrid/mail')
 
-const SENDGRID_API_KEY='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'
-const MESSAGE = {
-    to:'illya01@ukr.net',
-    from:'illya200457@gmail.com',
-    subject:'123',
-    text:'123',
-    html:'<div>123 <p>123</p></div>'
-}
-
-sgMail.setApiKey(SENDGRID_API_KEY)
 dotenv.config();
+sgMail.setApiKey(process.env.SG_API_SECRET)
 
 const app = express();
 
 //middleware
 app.use(cors())
 app.use(express.json())
+
+const sgM = (to, params, templateId) => {
+    const message = {
+        ...params,
+        to: to,
+        from: 'illya200457@gmail.com',
+        subject: 'test123',
+        text: 'test321',
+
+    }
+    sgMail
+        .send(message)
+        .then(() => {
+        }, error => {
+            console.error(error);
+
+            if (error.response) {
+                console.error(error.response.body)
+            }
+        });
+
+}
 
 //ROUTES
 //region
@@ -186,6 +199,7 @@ app.delete('/customers/:id', async (request, response) => {
 
 //order
 app.post('/orders', async (request, response) => {
+    const {customer_email} = request.body
     try {
         const {customer_id, master_id, city_id, work_id, order_time} = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
@@ -194,6 +208,7 @@ app.post('/orders', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
+    sgM(customer_email, )
 })
 app.get('/orders', async (request, response) => {
     try {
@@ -235,11 +250,6 @@ app.delete('/orders/:id', async (request, response) => {
     }
 })
 //endregion
-
-
-sgMail.send(MESSAGE)
-    .then(response=> console.log('email '))
-    .catch(error=> console.log(error.message))
 
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
