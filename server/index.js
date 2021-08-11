@@ -2,10 +2,32 @@ const express = require("express");
 const dotenv = require('dotenv');
 const cors = require("cors");
 const pool = require("./db")
-const sgMail = require('@sendgrid/mail')
+const nodemailer = require('nodemailer');
 
+function sendEMail(body) {
+
+    const mailOptions = {
+        from: 'golandia100500@gmail.com',
+        to: body.customer_email,
+        subject: 'Clockwise подтверждение заказа',
+        text: 'Спасибо за заказ'
+    };
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.NM_USER,
+            pass: process.env.NM_AUTH
+        }
+    });
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+}
 dotenv.config();
-sgMail.setApiKey(process.env.SG_API_SECRET)
 
 const app = express();
 
@@ -13,31 +35,8 @@ const app = express();
 app.use(cors())
 app.use(express.json())
 
-const sgM = (to, params, templateId) => {
-    const message = {
-        ...params,
-        to: to,
-        from: 'illya200457@gmail.com',
-        subject: 'test123',
-        text: 'test321',
-
-    }
-    sgMail
-        .send(message)
-        .then(() => {
-        }, error => {
-            console.error(error);
-
-            if (error.response) {
-                console.error(error.response.body)
-            }
-        });
-
-}
-
-//ROUTES
-//region
-//masters
+//region ROUTES
+//region masters
 app.post('/masters', async (request, response) => {
     try {
         const {master_name, photo, ranking} = request.body
@@ -90,8 +89,8 @@ app.delete('/masters/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
-
-//cities
+//endregion
+//region cities
 app.post('/cities', async (request, response) => {
     try {
         const {city_name} = request.body
@@ -143,8 +142,8 @@ app.delete('/cities/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
-
-//customers
+//endregion
+//region customers
 app.post('/customers', async (request, response) => {
     try {
         const {customer_name, customer_email} = request.body
@@ -196,8 +195,8 @@ app.delete('/customers/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
-
-//order
+//endregion
+//region order
 app.post('/orders', async (request, response) => {
     const {customer_email} = request.body
     try {
@@ -208,7 +207,7 @@ app.post('/orders', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-    sgM(customer_email, )
+    sendEMail(request.body)
 })
 app.get('/orders', async (request, response) => {
     try {
@@ -249,6 +248,7 @@ app.delete('/orders/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
+//endregion
 //endregion
 
 app.listen(process.env.PORT, () =>
