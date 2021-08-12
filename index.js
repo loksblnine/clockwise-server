@@ -4,31 +4,6 @@ const cors = require("cors");
 const pool = require("./db")
 const nodemailer = require('nodemailer');
 dotenv.config();
-
-function sendEMail(body) {
-    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас ${body.order_time}`
-    const mailOptions = {
-        from: process.env.NM_USER,
-        to: body.customer_email,
-        subject: 'Clockwise подтверждение заказа',
-        text: txt
-    };
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.NM_USER,
-            pass: process.env.NM_AUTH
-        }
-    });
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-}
-
 const app = express();
 
 //middleware
@@ -203,8 +178,6 @@ app.post('/orders', async (request, response) => {
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
         response.json(newOrder.rows[0])
-
-        sendEMail(order)
     } catch (e) {
         console.log(e.toString())
     }
@@ -250,6 +223,34 @@ app.delete('/orders/:id', async (request, response) => {
     }
 })
 //endregion
+
+//send mail
+
+const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.NM_USER,
+            pass: process.env.NM_AUTH
+        }
+    });
+
+app.post("/send", function (req, res) {
+    const body = req.body
+    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас ${body.order_time.split('T')[0]} в ${body.order_time.split('T')[1]}`
+    const mailOptions = {
+        from: process.env.NM_USER,
+        to: body.customer_email,
+        subject: 'Clockwise подтверждение заказа',
+        text: txt
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Email sent: ' + info.response);
+        }
+    });
+});
 //endregion
 
 app.listen(process.env.PORT, () =>
