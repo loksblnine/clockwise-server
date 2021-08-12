@@ -225,7 +225,7 @@ app.delete('/orders/:id', async (request, response) => {
 //endregion
 
 //region send mail
-const transporter = nodemailer.createTransport({
+let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
         user: process.env.NM_USER,
