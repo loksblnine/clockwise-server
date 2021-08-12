@@ -3,9 +3,10 @@ const dotenv = require('dotenv');
 const cors = require("cors");
 const pool = require("./db")
 const nodemailer = require('nodemailer');
+dotenv.config();
 
 function sendEMail(body) {
-
+    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас `
     const mailOptions = {
         from: 'golandia100500@gmail.com',
         to: body.customer_email,
@@ -27,7 +28,7 @@ function sendEMail(body) {
         }
     });
 }
-dotenv.config();
+
 
 const app = express();
 
@@ -196,9 +197,8 @@ app.delete('/customers/:id', async (request, response) => {
     }
 })
 //endregion
-//region order
+//region orders
 app.post('/orders', async (request, response) => {
-    const {customer_email} = request.body
     try {
         const {customer_id, master_id, city_id, work_id, order_time} = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
