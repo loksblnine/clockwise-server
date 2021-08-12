@@ -6,12 +6,12 @@ const nodemailer = require('nodemailer');
 dotenv.config();
 
 function sendEMail(body) {
-    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас `
+    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас ${body.order_time}`
     const mailOptions = {
         from: 'golandia100500@gmail.com',
         to: body.customer_email,
         subject: 'Clockwise подтверждение заказа',
-        text: 'Спасибо за заказ'
+        text: txt
     };
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -28,7 +28,6 @@ function sendEMail(body) {
         }
     });
 }
-
 
 const app = express();
 
@@ -200,14 +199,16 @@ app.delete('/customers/:id', async (request, response) => {
 //region orders
 app.post('/orders', async (request, response) => {
     try {
-        const {customer_id, master_id, city_id, work_id, order_time} = request.body
+        const order = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [customer_id, master_id, city_id, work_id, order_time]);
+            [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
         response.json(newOrder.rows[0])
+
+        sendEMail(order)
     } catch (e) {
         console.log(e.toString())
     }
-    sendEMail(request.body)
+
 })
 app.get('/orders', async (request, response) => {
     try {
