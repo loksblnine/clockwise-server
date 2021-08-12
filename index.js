@@ -224,33 +224,46 @@ app.delete('/orders/:id', async (request, response) => {
 })
 //endregion
 
-//send mail
-
+//region send mail
 const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-            user: process.env.NM_USER,
-            pass: process.env.NM_AUTH
-        }
-    });
+    service: "gmail",
+    auth: {
+        user: process.env.NM_USER,
+        pass: process.env.NM_AUTH,
+    },
+});
+
+app.get('/send', async (request, response) => {
+    try {
+        response.json(123)
+    } catch (e) {
+        console.log(e.toString())
+    }
+
+})
 
 app.post("/send", function (req, res) {
-    const body = req.body
-    const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас ${body.order_time.split('T')[0]} в ${body.order_time.split('T')[1]}`
-    const mailOptions = {
-        from: process.env.NM_USER,
-        to: body.customer_email,
-        subject: 'Clockwise подтверждение заказа',
-        text: txt
+    let mailOptions = {
+        from: process.env.EMAIL,
+        to: `${req.body.email}`,
+        subject: `Clockwise tm`,
+        text: `123`,
     };
-    transporter.sendMail(mailOptions, function (error, info) {
-        if (error) {
-            console.log(error);
+
+    transporter.sendMail(mailOptions, function (err, data) {
+        if (err) {
+            res.json({
+                status: "fail",
+            });
         } else {
-            console.log('Email sent: ' + info.response);
+            console.log("== Message Sent ==");
+            res.json({
+                status: "success",
+            });
         }
     });
 });
+//endregion
 //endregion
 
 app.listen(process.env.PORT, () =>
