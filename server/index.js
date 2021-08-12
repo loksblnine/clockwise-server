@@ -8,7 +8,7 @@ dotenv.config();
 function sendEMail(body) {
     const txt = `${body.customer_name}, спасибо за заказ, ${body.master_name} будет у вас ${body.order_time}`
     const mailOptions = {
-        from: 'golandia100500@gmail.com',
+        from: process.env.NM_USER,
         to: body.customer_email,
         subject: 'Clockwise подтверждение заказа',
         text: txt
