@@ -233,6 +233,12 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+transporter.verify((err, success) => {
+    err
+        ? console.log(err)
+        : console.log(`=== Server is ready to take messages: ${success} ===`);
+});
+
 app.get('/send', async (request, response) => {
     try {
         response.json(123)
