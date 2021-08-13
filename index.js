@@ -1,10 +1,9 @@
 const express = require("express");
-const dotenv = require('dotenv');
+const nodemailer = require("nodemailer");
+const app = express();
 const cors = require("cors");
 const pool = require("./db")
-const nodemailer = require('nodemailer');
-dotenv.config();
-const app = express();
+require("dotenv").config();
 
 //middleware
 app.use(cors())
