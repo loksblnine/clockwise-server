@@ -224,15 +224,14 @@ app.delete('/orders/:id', async (request, response) => {
 //endregion
 
 //region send mail
-const mailer = nodemailer.createTransport({
-    host: 'smtp.sendgrid.net',
-    port: 465,
-    secure: true,
+
+const sgTransport = require('nodemailer-sendgrid-transport');
+const options = {
     auth: {
-        user: 'apikey',
-        pass: process.env.SG_API_KEY,
-    },
-});
+        api_key: process.env.SG_API_KEY
+    }
+}
+const mailer = nodemailer.createTransport(sgTransport(options))
 
 app.get('/send', async (request, response) => {
     try {
