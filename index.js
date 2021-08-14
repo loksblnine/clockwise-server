@@ -224,19 +224,15 @@ app.delete('/orders/:id', async (request, response) => {
 //endregion
 
 //region send mail
-let transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: process.env.NM_USER,
-        pass: process.env.NM_AUTH,
-    },
-});
 
-transporter.verify((err, success) => {
-    err
-        ? console.log(err)
-        : console.log(`=== Server is ready to take messages: ${success} ===`);
-});
+const sgTransport = require('nodemailer-sendgrid-transport');
+const options = {
+    auth:{
+        api_key: process.env.SG_API_KEY
+    }
+}
+const mailer = nodemailer.createTransport(sgTransport(options))
+
 
 app.get('/send', async (request, response) => {
     try {
@@ -248,14 +244,15 @@ app.get('/send', async (request, response) => {
 })
 
 app.post("/send", function (req, res) {
-    let mailOptions = {
-        from: process.env.EMAIL,
-        to: `${req.body.email}`,
-        subject: `Clockwise tm`,
-        text: `123`,
+
+    const email = {
+        to: req.body.email,
+        from: process.env.NM_USER,
+        subject: 'Clockwise test mail 123',
+        text: 'molus` i viriu',
     };
 
-    transporter.sendMail(mailOptions, function (err, data) {
+    mailer.sendMail(email, function (err, data) {
         if (err) {
             res.json({
                 status: "fail",
@@ -268,6 +265,7 @@ app.post("/send", function (req, res) {
         }
     });
 });
+
 //endregion
 //endregion
 
