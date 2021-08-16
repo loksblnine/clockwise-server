@@ -4,8 +4,7 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db")
 require("dotenv").config();
-const sgMail = require('@sendgrid/mail')
-sgMail.setApiKey(process.env.SG_API_KEY)
+const nodeOutlook = require('nodejs-nodemailer-outlook')
 
 //middleware
 app.use(cors())
@@ -227,20 +226,6 @@ app.delete('/orders/:id', async (request, response) => {
 
 //region send mail
 
-
-// const transporter = nodemailer.createTransport({
-//     service: "gmail",
-//     auth: {
-//         type: "OAuth2",
-//         user: process.env.USER,
-//         pass: process.env.PASSWORD,
-//         accessToken: process.env.OAUTH_ACCESS_TOKEN,
-//         clientId: process.env.OAUTH_CLIENT_ID,
-//         clientSecret: process.env.OAUTH_CLIENT_SECRET,
-//         refreshToken: process.env.OAUTH_REFRESH_TOKEN,
-//     },
-// });
-
 app.get('/send', async (request, response) => {
     try {
         response.json(123)
@@ -251,35 +236,18 @@ app.get('/send', async (request, response) => {
 })
 
 app.post("/send", function (req, res) {
-
-    const email = {
+    nodeOutlook.sendEmail({
+        auth: {
+            user: process.env.USER,
+            pass: process.env.PASSWORD
+        },
+        from: process.env.USER,
         to: req.body.email,
-        from: process.env.NM_USER,
         subject: 'Clockwise test mail 123',
         text: req.body.message,
-    };
-    sgMail
-        .send(email)
-        .then((response) => {
-            console.log(response[0].statusCode)
-            console.log(response[0].headers)
-        })
-        .catch((error) => {
-            console.error(error)
-        })
-
-    // transporter.sendMail(email, function (err, data) {
-    //     if (err) {
-    //         res.json({
-    //             status: "fail",
-    //         });
-    //     } else {
-    //         console.log("== Message Sent ==");
-    //         res.json({
-    //             status: "success",
-    //         });
-    //     }
-    // });
+        onError: (e) => console.log(e),
+        onSuccess: (i) => console.log(i)
+    })
 });
 
 //endregion
