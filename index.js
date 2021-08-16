@@ -225,13 +225,17 @@ app.delete('/orders/:id', async (request, response) => {
 
 //region send mail
 
-const sgTransport = require('nodemailer-sendgrid-transport');
-const options = {
+const transporter = nodemailer.createTransport({
+    service: "gmail",
     auth: {
-        api_key: process.env.SG_API_KEY
-    }
-}
-const mailer = nodemailer.createTransport(sgTransport(options))
+        type: "OAuth2",
+        user: process.env.USER,
+        pass: process.env.PASSWORD,
+        clientId: process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        refreshToken: process.env.OAUTH_REFRESH_TOKEN,
+    },
+});
 
 app.get('/send', async (request, response) => {
     try {
@@ -248,10 +252,10 @@ app.post("/send", function (req, res) {
         to: req.body.email,
         from: process.env.NM_USER,
         subject: 'Clockwise test mail 123',
-        text: 'molus` i viriu',
+        text: req.body.message,
     };
 
-    mailer.sendMail(email, function (err, data) {
+    transporter.sendMail(email, function (err, data) {
         if (err) {
             res.json({
                 status: "fail",
