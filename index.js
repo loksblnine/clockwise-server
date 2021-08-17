@@ -4,8 +4,8 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db")
 require("dotenv").config();
-const nodeOutlook = require('nodejs-nodemailer-outlook')
-
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SG_API_KEY)
 //middleware
 app.use(cors())
 app.use(express.json())
@@ -232,22 +232,24 @@ app.get('/send', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 
 app.post("/send", function (req, res) {
-    nodeOutlook.sendEmail({
-        auth: {
-            user: process.env.USER,
-            pass: process.env.PASSWORD
-        },
-        from: process.env.USER,
+    const msg = {
         to: req.body.email,
-        subject: 'Clockwise test mail 123',
+        from: process.env.USER,
+        subject: 'Sending with SendGrid is Fun',
         text: req.body.message,
-        onError: (e) => console.log(e),
-        onSuccess: (i) => console.log(i)
-    })
+    }
+    sgMail
+        .send(msg)
+        .then((response) => {
+            console.log(response[0].statusCode)
+            console.log(response[0].headers)
+        })
+        .catch((error) => {
+            console.error(error)
+        })
 });
 
 //endregion
