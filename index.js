@@ -239,13 +239,19 @@ app.post("/send", function (req, res) {
         to: req.body.email,
         from: process.env.USER,
         subject: 'Sending with SendGrid is Fun',
-        text: req.body.message,
+        template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
+        dynamic_template_data:{
+            customer_name:req.body.name
+        }
     }
     sgMail
         .send(msg)
         .then((response) => {
             console.log(response[0].statusCode)
             console.log(response[0].headers)
+            res.json({
+                "success":true
+            })
         })
         .catch((error) => {
             console.error(error)
