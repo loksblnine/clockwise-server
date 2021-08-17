@@ -255,6 +255,10 @@ app.post("/send", function (req, res) {
         })
         .catch((error) => {
             console.error(error)
+            res.json({
+                error,
+                statusCode: 400
+            })
         })
 });
 
