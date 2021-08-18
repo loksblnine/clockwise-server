@@ -172,12 +172,41 @@ app.delete('/customers/:id', async (request, response) => {
 })
 //endregion
 //region orders
+function sendEmail (){
+    sgMail
+        .send(msg)
+        .then((response) => {
+            console.log(response[0].statusCode)
+            console.log(response[0].headers)
+            response.json({
+                "success":true
+            })
+        })
+        .catch((error) => {
+            console.error(error)
+            response.json({
+                error,
+                statusCode: 400
+            })
+        })
+}
 app.post('/orders', async (request, response) => {
     try {
         const order = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
         response.json(newOrder.rows[0])
+        const msg = {
+            to: request.body.email,
+            from: process.env.USER,
+            subject: 'Sending with SendGrid is Fun',
+            template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
+            dynamic_template_data:{
+                message:request.body.message
+            }
+        }
+        sendEmail(msg)
+
     } catch (e) {
         console.log(e.toString())
     }
@@ -209,6 +238,16 @@ app.put('/orders/:id', async (request, response) => {
             "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
             [id, customer_id, master_id, city_id, work_id, order_time])
         response.json("order was updated")
+        const msg = {
+            to: request.body.email,
+            from: process.env.USER,
+            subject: 'Sending with SendGrid is Fun',
+            template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
+            dynamic_template_data:{
+                message:request.body.message
+            }
+        }
+        sendEmail(msg)
     } catch (e) {
         console.log(e.toString())
     }
@@ -222,46 +261,6 @@ app.delete('/orders/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
-//endregion
-
-//region send mail
-
-app.get('/send', async (request, response) => {
-    try {
-        response.json(123)
-    } catch (e) {
-        console.log(e.toString())
-    }
-})
-
-app.post("/send", function (req, res) {
-    const msg = {
-        to: req.body.email,
-        from: process.env.USER,
-        subject: 'Sending with SendGrid is Fun',
-        template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
-        dynamic_template_data:{
-            customer_name:req.body.name
-        }
-    }
-    sgMail
-        .send(msg)
-        .then((response) => {
-            console.log(response[0].statusCode)
-            console.log(response[0].headers)
-            res.json({
-                "success":true
-            })
-        })
-        .catch((error) => {
-            console.error(error)
-            res.json({
-                error,
-                statusCode: 400
-            })
-        })
-});
-
 //endregion
 //endregion
 
