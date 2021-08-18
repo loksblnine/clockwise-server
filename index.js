@@ -195,7 +195,7 @@ app.post('/orders', async (request, response) => {
         const order = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
-        response.json(newOrder.rows[0])
+
         const msg = {
             to: request.body.email,
             from: process.env.USER,
@@ -206,7 +206,7 @@ app.post('/orders', async (request, response) => {
             }
         }
         sendEmail(msg)
-
+        response.json(newOrder.rows[0])
     } catch (e) {
         console.log(e.toString())
     }
@@ -237,7 +237,6 @@ app.put('/orders/:id', async (request, response) => {
         await pool.query(
             "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
             [id, customer_id, master_id, city_id, work_id, order_time])
-        response.json("order was updated")
         const msg = {
             to: request.body.email,
             from: process.env.USER,
@@ -248,6 +247,7 @@ app.put('/orders/:id', async (request, response) => {
             }
         }
         sendEmail(msg)
+        response.json("order was updated")
     } catch (e) {
         console.log(e.toString())
     }
