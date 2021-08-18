@@ -197,7 +197,7 @@ app.post('/orders', async (request, response) => {
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
 
         const msg = {
-            to: request.body.email,
+            to: request.body.customer_email,
             from: process.env.USER,
             subject: 'Sending with SendGrid is Fun',
             template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
