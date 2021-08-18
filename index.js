@@ -172,7 +172,7 @@ app.delete('/customers/:id', async (request, response) => {
 })
 //endregion
 //region orders
-function sendEmail (){
+function sendEmail (msg){
     sgMail
         .send(msg)
         .then((response) => {
