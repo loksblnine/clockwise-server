@@ -280,7 +280,7 @@ app.post("/register", async (req, res) => {
         const encryptedPassword = await bcrypt.hash(password, 5);
 
         // Create user in our database
-        const newUser = await pool.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
+        const newUser = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
             [email, encryptedPassword, "ADMIN"]);
         // Create token
         const token = jwt.sign(
