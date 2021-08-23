@@ -321,7 +321,7 @@ app.post("/login", async (req, res) => {
                 }
             );
             oldUser.token = token;
-            res.status(200).json(user);
+            res.status(200).json(oldUser);
         }
         res.status(400).send("Invalid Credentials");
     } catch (err) {
