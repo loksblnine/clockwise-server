@@ -4,6 +4,8 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db")
 require("dotenv").config();
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SG_API_KEY)
 //middleware
@@ -172,14 +174,14 @@ app.delete('/customers/:id', async (request, response) => {
 })
 //endregion
 //region orders
-function sendEmail (msg){
+function sendEmail(msg) {
     sgMail
         .send(msg)
         .then((response) => {
             console.log(response[0].statusCode)
             console.log(response[0].headers)
             response.json({
-                "success":true
+                "success": true
             })
         })
         .catch((error) => {
@@ -190,6 +192,7 @@ function sendEmail (msg){
             })
         })
 }
+
 app.post('/orders', async (request, response) => {
     try {
         const order = request.body
@@ -200,8 +203,8 @@ app.post('/orders', async (request, response) => {
             to: request.body.customer_email,
             from: process.env.USER,
             template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
-            dynamic_template_data:{
-                message:request.body.message
+            dynamic_template_data: {
+                message: request.body.message
             }
         }
         sendEmail(msg)
@@ -241,8 +244,8 @@ app.put('/orders/:id', async (request, response) => {
             from: process.env.USER,
             subject: 'Sending with SendGrid is Fun',
             template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
-            dynamic_template_data:{
-                message:request.body.message
+            dynamic_template_data: {
+                message: request.body.message
             }
         }
         sendEmail(msg)
@@ -261,6 +264,46 @@ app.delete('/orders/:id', async (request, response) => {
     }
 })
 //endregion
+//region Login
+
+app.get('/login', async (request, response) => {
+    try {
+        const allDBUsers = await pool.query("SELECT * FROM users")
+        response.json(allDBUsers.rows)
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
+
+
+const generateJwt = (id, email, role) => {
+    return jwt.sign(
+        {id, email, role},
+        process.env.SECRET_KEY,
+        {expiresIn: '24h'}
+    )
+}
+app.post('/login', async (request, response) => {
+    try {
+        const {email, password} = request.body
+        const user = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
+        if (!user) {
+            return ('Пользователь не найден')
+        }
+        let comparePassword = bcrypt.compareSync(password, user.password)
+        if (!comparePassword) {
+            return ('Указан неверный пароль')
+        }
+        const token = generateJwt(user.user_id, user.password, user.role)
+        return response.json({token})
+
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
+
+//endregion
+
 //endregion
 
 app.listen(process.env.PORT, () =>
