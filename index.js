@@ -276,7 +276,7 @@ app.post("/register", async (req, res) => {
         if (!(email && password)) {
             res.status(400).send("Проверьте логин и пароль");
         }
-                //Encrypt user password
+        //Encrypt user password
         const encryptedPassword = await bcrypt.hash(password, 5);
 
         // Create user in our database
@@ -302,7 +302,7 @@ app.post("/register", async (req, res) => {
 app.post("/login", async (req, res) => {
     try {
         // Get user input
-        const { email, password } = req.body;
+        const {email, password} = req.body;
 
         // Validate user input
         if (!(email && password)) {
@@ -310,19 +310,19 @@ app.post("/login", async (req, res) => {
         }
         // Validate if user exist in our database
         const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
-
-        if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
-            // Create token
-            const token = jwt.sign(
-                {user_id: oldUser.user_id, email },
-                process.env.SECRET_KEY,
-                {
-                    expiresIn: "2h",
-                }
-            );
-            oldUser.token = token;
-            res.status(200).json(oldUser);
-        }
+        res.json(oldUser[0])
+            // if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
+            //     // Create token
+            //     const token = jwt.sign(
+            //         {user_id: oldUser.user_id, email},
+            //         process.env.SECRET_KEY,
+            //         {
+            //             expiresIn: "2h",
+            //         }
+            //     );
+            //     oldUser.token = token;
+            //     res.status(200).json(oldUser);
+            // }
         res.status(400).send("Invalid Credentials");
     } catch (err) {
         console.log(err);
