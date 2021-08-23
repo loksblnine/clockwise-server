@@ -266,40 +266,74 @@ app.delete('/orders/:id', async (request, response) => {
 //endregion
 //region Login
 
-const generateJwt = (id, email, role) => {
-    return jwt.sign(
-        {id, email, role},
-        process.env.SECRET_KEY,
-        {expiresIn: '24h'}
-    )
-}
-app.post('/login', async (request, response, next) => {
+app.post("/register", async (req, res) => {
+    // Our register logic starts here
     try {
-        const {email, password} = request.body
-        const user = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
-        let comparePassword = bcrypt.compareSync(password, user.password)
+        // Get user input
+        const {email, password} = req.body;
 
-        if (email === user.email && comparePassword) {
-            const token = generateJwt(user.user_id, user.password, user.role)
-            return response.send(token)
-        } else {
-            console.log('ERROR: Could not log in');
+        // Validate user input
+        if (!(email && password)) {
+            res.status(400).send("Проверьте логин и пароль");
         }
-    } catch (e) {
-        console.log(e.toString())
+
+        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
+        if (oldUser) {
+            return res.status(409).send("Пользователь уже сущестсвует, войдите в аккаунт");
+        }
+
+        //Encrypt user password
+        const encryptedPassword = await bcrypt.hash(password, 10);
+
+        // Create user in our database
+        const newUser = await pool.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
+            [email, encryptedPassword, "ADMIN"]);
+        // Create token
+        const token = jwt.sign(
+            {newUser},
+            process.env.TOKEN_KEY,
+            {
+                expiresIn: "2h",
+            }
+        );
+        // save user token
+        newUser.token = token;
+        // return new user
+        res.status(201).json(user);
+    } catch (err) {
+        console.log(err);
     }
-})
-app.post('/registration', async (request, response) => {
+});
+
+app.post("/login", async (req, res) => {
     try {
-        const {email, password, role} = request.body
-        const hashPassword = await bcrypt.hash(password, 5)
-        const newAdmin = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
-            [email, hashPassword, "ADMIN"]);
-        response.json(newAdmin.rows[0])
-    } catch (e) {
-        console.log(e.toString())
+        // Get user input
+        const { email, password } = req.body;
+
+        // Validate user input
+        if (!(email && password)) {
+            res.status(400).send("All input is required");
+        }
+        // Validate if user exist in our database
+        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
+
+        if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
+            // Create token
+            const token = jwt.sign(
+                {oldUser},
+                process.env.TOKEN_KEY,
+                {
+                    expiresIn: "2h",
+                }
+            );
+            oldUser.token = token;
+            res.status(200).json(user);
+        }
+        res.status(400).send("Invalid Credentials");
+    } catch (err) {
+        console.log(err);
     }
-})
+});
 
 //endregion
 
