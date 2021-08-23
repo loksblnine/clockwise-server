@@ -266,16 +266,6 @@ app.delete('/orders/:id', async (request, response) => {
 //endregion
 //region Login
 
-app.get('/login', async (request, response) => {
-    try {
-        const allDBUsers = await pool.query("SELECT * FROM users")
-        response.json(allDBUsers.rows)
-    } catch (e) {
-        console.log(e.toString())
-    }
-})
-
-
 const generateJwt = (id, email, role) => {
     return jwt.sign(
         {id, email, role},
