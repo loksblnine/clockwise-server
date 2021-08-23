@@ -309,8 +309,9 @@ app.post("/login", async (req, res) => {
             res.status(400).send("All input is required");
         }
         // Validate if user exist in our database
-        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
-        res.json(oldUser[0])
+        const allUsers = await pool.query("SELECT * FROM users")
+        const oldUser = allUsers.find(u => u.email === email)
+        res.json(oldUser)
             // if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
             //     // Create token
             //     const token = jwt.sign(
