@@ -283,20 +283,31 @@ const generateJwt = (id, email, role) => {
         {expiresIn: '24h'}
     )
 }
-app.post('/login', async (request, response) => {
+app.get('/login', async (request, response) => {
     try {
         const {email, password} = request.body
         const user = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
         if (!user) {
-            return ('Пользователь не найден')
+            return response.json('Пользователь не найден')
         }
         let comparePassword = bcrypt.compareSync(password, user.password)
         if (!comparePassword) {
-            return ('Указан неверный пароль')
+            return response.json('Указан неверный пароль')
         }
         const token = generateJwt(user.user_id, user.password, user.role)
         return response.json({token})
 
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
+app.post('/login', async (request, response) => {
+    try {
+        const {email, password, role} = request.body
+        const hashPassword = await bcrypt.hash(password, 5)
+        const newAdmin = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
+            [email, hashPassword, "ADMIN"]);
+        response.json(newAdmin.rows[0])
     } catch (e) {
         console.log(e.toString())
     }
