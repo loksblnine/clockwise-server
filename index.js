@@ -314,7 +314,7 @@ app.post("/login", async (req, res) => {
         if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
             // Create token
             const token = jwt.sign(
-                {oldUser},
+                {user_id: oldUser.user_id, email },
                 process.env.TOKEN_KEY,
                 {
                     expiresIn: "2h",
