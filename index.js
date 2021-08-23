@@ -315,7 +315,7 @@ app.post("/login", async (req, res) => {
             // Create token
             const token = jwt.sign(
                 {user_id: oldUser.user_id, email },
-                process.env.TOKEN_KEY,
+                process.env.SECRET_KEY,
                 {
                     expiresIn: "2h",
                 }
