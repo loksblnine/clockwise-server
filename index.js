@@ -293,7 +293,7 @@ app.post("/register", async (req, res) => {
         // save user token
         newUser.token = token;
         // return new user
-        res.status(201).json(user);
+        res.status(201).json(newUser);
     } catch (err) {
         console.log(err);
     }
