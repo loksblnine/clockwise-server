@@ -276,14 +276,8 @@ app.post("/register", async (req, res) => {
         if (!(email && password)) {
             res.status(400).send("Проверьте логин и пароль");
         }
-
-        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
-        if (oldUser) {
-            return res.status(409).send("Пользователь уже сущестсвует, войдите в аккаунт");
-        }
-
-        //Encrypt user password
-        const encryptedPassword = await bcrypt.hash(password, 10);
+                //Encrypt user password
+        const encryptedPassword = await bcrypt.hash(password, 5);
 
         // Create user in our database
         const newUser = await pool.query("INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *",
