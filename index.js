@@ -273,7 +273,7 @@ const generateJwt = (id, email, role) => {
         {expiresIn: '24h'}
     )
 }
-app.get('/login', async (request, response) => {
+app.post('/login', async (request, response) => {
     try {
         const {email, password} = request.body
         const user = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
@@ -291,7 +291,7 @@ app.get('/login', async (request, response) => {
         console.log(e.toString())
     }
 })
-app.post('/login', async (request, response) => {
+app.post('/registration', async (request, response) => {
     try {
         const {email, password, role} = request.body
         const hashPassword = await bcrypt.hash(password, 5)
