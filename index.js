@@ -1,9 +1,8 @@
 const express = require("express");
-const nodemailer = require("nodemailer");
 const app = express();
 const cors = require("cors");
-const pool = require("./db")
 require("dotenv").config();
+const pool = require("./db")
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sgMail = require('@sendgrid/mail')
@@ -11,6 +10,7 @@ sgMail.setApiKey(process.env.SG_API_KEY)
 //middleware
 app.use(cors())
 app.use(express.json())
+
 
 //region ROUTES
 //region masters
@@ -285,7 +285,7 @@ app.post("/register", async (req, res) => {
         // Create token
         const token = jwt.sign(
             {newUser},
-            process.env.TOKEN_KEY,
+            process.env.SECRET_KEY,
             {
                 expiresIn: "2h",
             }
@@ -301,29 +301,22 @@ app.post("/register", async (req, res) => {
 
 app.post("/login", async (req, res) => {
     try {
-        // Get user input
         const {email, password} = req.body;
-
-        // Validate user input
         if (!(email && password)) {
             res.status(400).send("All input is required");
         }
-        // Validate if user exist in our database
-        const allUsers = await pool.query("SELECT * FROM users")
-        const oldUser = allUsers.find(u => u.email === email)
-        res.json(oldUser)
-            // if (oldUser && (await bcrypt.compare(password, oldUser.password))) {
-            //     // Create token
-            //     const token = jwt.sign(
-            //         {user_id: oldUser.user_id, email},
-            //         process.env.SECRET_KEY,
-            //         {
-            //             expiresIn: "2h",
-            //         }
-            //     );
-            //     oldUser.token = token;
-            //     res.status(200).json(oldUser);
-            // }
+        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
+        const passwordMatch = await bcrypt.compare(password, oldUser.rows[0].password)
+        if (oldUser && passwordMatch) {
+            oldUser.token = jwt.sign(
+                {user_id: oldUser.user_id, email},
+                process.env.SECRET_KEY,
+                {
+                    expiresIn: "2h",
+                }
+            );
+            res.status(200).json(oldUser);
+        }
         res.status(400).send("Invalid Credentials");
     } catch (err) {
         console.log(err);
