@@ -7,7 +7,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SG_API_KEY)
-//middleware
+const authMiddleware = require('./middleware/authMiddleware')
+
 app.use(cors())
 app.use(express.json())
 
@@ -265,35 +266,28 @@ app.delete('/orders/:id', async (request, response) => {
 })
 //endregion
 //region Login
+const generateJwt = (id, email, role) => {
+    return jwt.sign(
+        {id, email, role},
+        process.env.SECRET_KEY,
+        {
+            expiresIn: "2h",
+        }
+    );
+}
 
 app.post("/register", async (req, res) => {
-    // Our register logic starts here
+
     try {
-        // Get user input
         const {email, password} = req.body;
-
-        // Validate user input
         if (!(email && password)) {
-            res.status(400).send("Проверьте логин и пароль");
+            return res.status(400).send("Проверьте логин и пароль");
         }
-        //Encrypt user password
         const encryptedPassword = await bcrypt.hash(password, 5);
-
-        // Create user in our database
         const newUser = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
             [email, encryptedPassword, "ADMIN"]);
-        // Create token
-        const token = jwt.sign(
-            {newUser},
-            process.env.SECRET_KEY,
-            {
-                expiresIn: "2h",
-            }
-        );
-        // save user token
-        newUser.token = token;
-        // return new user
-        res.status(201).json(newUser);
+        const token = generateJwt(newUser.user_id, email, "ADMIN")
+        return res.status(201).json({token});
     } catch (err) {
         console.log(err);
     }
@@ -308,14 +302,8 @@ app.post("/login", async (req, res) => {
         const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
         const passwordMatch = await bcrypt.compare(password, oldUser.rows[0].password)
         if (oldUser && passwordMatch) {
-            oldUser.token = jwt.sign(
-                {user_id: oldUser.user_id, email},
-                process.env.SECRET_KEY,
-                {
-                    expiresIn: "2h",
-                }
-            );
-            res.status(200).json(oldUser);
+            const token = generateJwt(oldUser.rows[0].user_id, oldUser.rows[0].email, oldUser.rows[0].role)
+            return res.status(200).json({token});
         }
         res.status(400).send("Invalid Credentials");
     } catch (err) {
@@ -323,6 +311,10 @@ app.post("/login", async (req, res) => {
     }
 });
 
+app.get("/login", authMiddleware, (req, res, next) => {
+    const token = generateJwt(req.user.id, req.user.email, req.user.role)
+    return res.status(200).json({token});
+})
 //endregion
 
 //endregion
