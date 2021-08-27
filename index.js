@@ -174,7 +174,7 @@ app.delete('/customers/:id', async (request, response) => {
     }
 })
 //endregion
-//region orders
+//region orders & send email
 function sendEmail(msg) {
     sgMail
         .send(msg)
@@ -277,7 +277,6 @@ const generateJwt = (id, email, role) => {
 }
 
 app.post("/register", async (req, res) => {
-
     try {
         const {email, password} = req.body;
         if (!(email && password)) {
@@ -313,7 +312,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/login", authMiddleware, (req, res, next) => {
     const token = generateJwt(req.user.id, req.user.email, req.user.role)
-    return res.status(200).json({token});
+    res.status(200).json({token});
 })
 //endregion
 
