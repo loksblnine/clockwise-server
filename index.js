@@ -11,7 +11,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 
 app.use(cors())
 app.use(express.json())
-
+app.use(express.static("public"));
 
 //region ROUTES
 //region masters
@@ -177,7 +177,7 @@ app.delete('/customers/:id', async (request, response) => {
 //region orders & send email
 app.get('/send', async (request, response) => {
     try {
-        response.json(123)
+        response.json("This is route for sending mail")
     } catch (e) {
         console.log(e.toString())
     }
