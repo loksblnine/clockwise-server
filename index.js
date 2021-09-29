@@ -52,7 +52,7 @@ app.put('/masters/:id', async (request, response) => {
             "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
             [id, master_name, photo, ranking])
 
-        response.json("master was updated")
+        response.json("Обновления мастера сохранены")
     } catch (e) {
         console.log(e.toString())
     }
@@ -62,7 +62,7 @@ app.delete('/masters/:id', async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM masters WHERE master_id = ($1)", [id])
-        response.json("Master was deleted")
+        response.json("Мастер удален")
     } catch (e) {
         console.log(e.toString())
     }
@@ -105,7 +105,7 @@ app.put('/cities/:id', async (request, response) => {
         await pool.query(
             "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
             [id, city_name])
-        response.json("city was updated")
+        response.json("Обновления города сохранены")
     } catch (e) {
         console.log(e.toString())
     }
@@ -115,7 +115,7 @@ app.delete('/cities/:id', async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM cities WHERE city_id = ($1)", [id])
-        response.json("City was deleted")
+        response.json("Город удален")
     } catch (e) {
         console.log(e.toString())
     }
@@ -159,7 +159,7 @@ app.put('/customers/:id', async (request, response) => {
         await pool.query(
             "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
             [id, customer_name, customer_email])
-        response.json("customer was updated")
+        response.json("Изменения данных покупателя сохранены")
     } catch (e) {
         console.log(e.toString())
     }
@@ -168,7 +168,7 @@ app.delete('/customers/:id', async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM customers WHERE customer_id = ($1)", [id])
-        response.json("Customer was deleted")
+        response.json("Покупатель был удален")
     } catch (e) {
         console.log(e.toString())
     }
@@ -187,7 +187,6 @@ app.post('/send', function (req, res) {
     const msg = {
         to: req.body.email,
         from: process.env.USER,
-        subject: 'Sending with SendGrid is Fun',
         template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
         dynamic_template_data: {
             message: req.body.message
@@ -241,7 +240,7 @@ app.put('/orders/:id', async (request, response) => {
         await pool.query(
             "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
             [id, customer_id, master_id, city_id, work_id, order_time])
-        response.json("order was updated")
+        response.json("Данные заказа были обновлены")
     } catch (e) {
         console.log(e.toString())
     }
@@ -250,7 +249,7 @@ app.delete('/orders/:id', async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM orders WHERE order_id = ($1)", [id])
-        response.json("Order was deleted")
+        response.json("Заказ удален")
     } catch (e) {
         console.log(e.toString())
     }
