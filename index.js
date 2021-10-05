@@ -11,7 +11,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static("public"));
+app.use(express.static("build"));
 
 //region ROUTES
 //region masters
