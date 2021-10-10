@@ -42,7 +42,6 @@ app.get('/masters/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.put('/masters/:id', async (request, response) => {
     try {
@@ -56,7 +55,6 @@ app.put('/masters/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.delete('/masters/:id', async (request, response) => {
     try {
@@ -86,7 +84,6 @@ app.get('/cities', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.get('/cities/:id', async (request, response) => {
     try {
@@ -96,7 +93,6 @@ app.get('/cities/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.put('/cities/:id', async (request, response) => {
     try {
@@ -139,7 +135,6 @@ app.get('/customers', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.get('/customers/:id', async (request, response) => {
     try {
@@ -149,7 +144,15 @@ app.get('/customers/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
+})
+app.get('/customers/email/:email', async (request, response) => {
+    try {
+        const {email} = request.params;
+        const customer = await pool.query("SELECT * FROM customers WHERE customer_email = ($1)", [email])
+        response.json(customer.rows[0])
+    } catch (e) {
+        console.log(e.toString())
+    }
 })
 
 app.put('/customers/:id', async (request, response) => {
