@@ -13,16 +13,30 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static("build"));
 
+const isNameValid = (name = "") => {
+    return name.length && /^[A-ZА-Яa-zа-я -]+$/i.test(name);
+}
+const isRankingValid = (ranking = "") => {
+    return ranking.length && Number(ranking) <= 5 && Number(ranking) >= 1;
+}
+const isEmailValid = (email = "") => {
+    return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+}
+
 //region ROUTES
 //region masters
 app.post('/masters', async (request, response) => {
-    try {
-        const {master_name, photo, ranking} = request.body
-        const newMaster = await pool.query("INSERT INTO masters (master_name, photo, ranking) VALUES ($1, $2, $3) RETURNING *",
-            [master_name, photo, ranking]);
-        response.json(newMaster.rows[0])
-    } catch (e) {
-        console.log(e.toString())
+    const {master_name, photo, ranking} = request.body
+    if (isRankingValid(ranking) && isNameValid(master_name))
+        try {
+            const newMaster = await pool.query("INSERT INTO masters (master_name, photo, ranking) VALUES ($1, $2, $3) RETURNING *",
+                [master_name, photo, ranking]);
+            response.json(newMaster.rows[0])
+        } catch (e) {
+            console.log(e.toString())
+        }
+    else {
+        response.json("dapabachenya")
     }
 })
 app.get('/masters', async (request, response) => {
@@ -44,9 +58,10 @@ app.get('/masters/:id', async (request, response) => {
     }
 })
 app.put('/masters/:id', async (request, response) => {
+    const {id} = request.params;
+    const {master_name, photo, ranking} = request.body
+    if (isRankingValid(ranking) && isNameValid(master_name))
     try {
-        const {id} = request.params;
-        const {master_name, photo, ranking} = request.body
         await pool.query(
             "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
             [id, master_name, photo, ranking])
@@ -54,6 +69,9 @@ app.put('/masters/:id', async (request, response) => {
         response.json("Обновления мастера сохранены")
     } catch (e) {
         console.log(e.toString())
+    }
+    else {
+        response.json("dapabachenya")
     }
 })
 app.delete('/masters/:id', async (request, response) => {
@@ -68,13 +86,17 @@ app.delete('/masters/:id', async (request, response) => {
 //endregion
 //region cities
 app.post('/cities', async (request, response) => {
+    const {city_name} = request.body
+    if (isNameValid(city_name))
     try {
-        const {city_name} = request.body
         const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
             [city_name]);
         response.json(newCity.rows[0])
     } catch (e) {
         console.log(e.toString())
+    }
+    else {
+        response.json("dapabachenya")
     }
 })
 app.get('/cities', async (request, response) => {
@@ -95,9 +117,10 @@ app.get('/cities/:id', async (request, response) => {
     }
 })
 app.put('/cities/:id', async (request, response) => {
+    const {id} = request.params;
+    const {city_name} = request.body
+    if (isNameValid(city_name))
     try {
-        const {id} = request.params;
-        const {city_name} = request.body
         await pool.query(
             "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
             [id, city_name])
@@ -105,7 +128,9 @@ app.put('/cities/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
+    else {
+        response.json("dapabachenya")
+    }
 })
 app.delete('/cities/:id', async (request, response) => {
     try {
@@ -119,13 +144,17 @@ app.delete('/cities/:id', async (request, response) => {
 //endregion
 //region customers
 app.post('/customers', async (request, response) => {
+    const {customer_name, customer_email} = request.body
+    if (isNameValid(customer_name) && isNameValid(customer_email))
     try {
-        const {customer_name, customer_email} = request.body
         const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
             [customer_name, customer_email]);
         response.json(newCustomer.rows[0])
     } catch (e) {
         console.log(e.toString())
+    }
+    else {
+        response.json("dapabachenya")
     }
 })
 app.get('/customers', async (request, response) => {
@@ -156,15 +185,19 @@ app.get('/customers/email/:email', async (request, response) => {
 })
 
 app.put('/customers/:id', async (request, response) => {
+    const {id} = request.params;
+    const {customer_name, customer_email} = request.body
+    if (isNameValid(customer_name) && isNameValid(customer_email))
     try {
-        const {id} = request.params;
-        const {customer_name, customer_email} = request.body
         await pool.query(
             "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
             [id, customer_name, customer_email])
         response.json("Изменения данных покупателя сохранены")
     } catch (e) {
         console.log(e.toString())
+    }
+    else {
+        response.json("dapabachenya")
     }
 })
 app.delete('/customers/:id', async (request, response) => {
@@ -208,15 +241,14 @@ app.post('/send', function (req, res) {
 });
 
 app.post('/orders', async (request, response) => {
+    const order = request.body
     try {
-        const order = request.body
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
         response.json(newOrder.rows[0])
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.get('/orders', async (request, response) => {
     try {
@@ -237,9 +269,9 @@ app.get('/orders/:id', async (request, response) => {
 
 })
 app.put('/orders/:id', async (request, response) => {
+    const {id} = request.params;
+    const {customer_id, master_id, city_id, work_id, order_time} = request.body
     try {
-        const {id} = request.params;
-        const {customer_id, master_id, city_id, work_id, order_time} = request.body
         await pool.query(
             "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
             [id, customer_id, master_id, city_id, work_id, order_time])
