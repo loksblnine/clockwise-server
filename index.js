@@ -341,6 +341,16 @@ app.get("/login", authMiddleware, (req, res, next) => {
 })
 //endregion
 
+app.get('/deps/:id', async (request, response) => {
+    try {
+        const {id} = request.params;
+        const master = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
+        response.json(master.rows)
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
+
 //endregion
 
 app.listen(process.env.PORT, () =>
