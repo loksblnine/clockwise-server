@@ -145,7 +145,7 @@ app.delete('/cities/:id', async (request, response) => {
 //region customers
 app.post('/customers', async (request, response) => {
     const {customer_name, customer_email} = request.body
-    if (isNameValid(customer_name) && isNameValid(customer_email))
+    if (isNameValid(customer_name) && isEmailValid(customer_email))
     try {
         const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
             [customer_name, customer_email]);
