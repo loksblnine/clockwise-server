@@ -11,7 +11,7 @@ const authMiddleware = require('./middleware/authMiddleware')
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static("build"));
+app.use(express.static("static"));
 
 const isNameValid = (name = "") => {
     return name.length && /^[A-ZА-Яa-zа-я -]+$/i.test(name);
@@ -26,11 +26,11 @@ const isEmailValid = (email = "") => {
 //region ROUTES
 //region masters
 app.post('/masters', async (request, response) => {
-    const {master_name, photo, ranking} = request.body
-    if (isRankingValid(ranking) && isNameValid(master_name))
+    const {master_name, ranking} = request.body
+    if (isNameValid(master_name))
         try {
-            const newMaster = await pool.query("INSERT INTO masters (master_name, photo, ranking) VALUES ($1, $2, $3) RETURNING *",
-                [master_name, photo, ranking]);
+            const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
+                [master_name, ranking]);
             response.json(newMaster.rows[0])
         } catch (e) {
             console.log(e.toString())
