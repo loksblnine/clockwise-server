@@ -60,7 +60,7 @@ app.get('/masters/:id', async (request, response) => {
 app.put('/masters/:id', async (request, response) => {
     const {id} = request.params;
     const {master_name, photo, ranking} = request.body
-    if (isRankingValid(ranking) && isNameValid(master_name))
+    if (isNameValid(master_name))
         try {
             await pool.query(
                 "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
