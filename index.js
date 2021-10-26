@@ -61,15 +61,15 @@ app.put('/masters/:id', async (request, response) => {
     const {id} = request.params;
     const {master_name, photo, ranking} = request.body
     if (isRankingValid(ranking) && isNameValid(master_name))
-    try {
-        await pool.query(
-            "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
-            [id, master_name, photo, ranking])
+        try {
+            await pool.query(
+                "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
+                [id, master_name, photo, ranking])
 
-        response.json("Обновления мастера сохранены")
-    } catch (e) {
-        console.log(e.toString())
-    }
+            response.json("Обновления мастера сохранены")
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("dapabachenya")
     }
@@ -88,13 +88,13 @@ app.delete('/masters/:id', async (request, response) => {
 app.post('/cities', async (request, response) => {
     const {city_name} = request.body
     if (isNameValid(city_name))
-    try {
-        const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
-            [city_name]);
-        response.json(newCity.rows[0])
-    } catch (e) {
-        console.log(e.toString())
-    }
+        try {
+            const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
+                [city_name]);
+            response.json(newCity.rows[0])
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("dapabachenya")
     }
@@ -120,14 +120,14 @@ app.put('/cities/:id', async (request, response) => {
     const {id} = request.params;
     const {city_name} = request.body
     if (isNameValid(city_name))
-    try {
-        await pool.query(
-            "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
-            [id, city_name])
-        response.json("Обновления города сохранены")
-    } catch (e) {
-        console.log(e.toString())
-    }
+        try {
+            await pool.query(
+                "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
+                [id, city_name])
+            response.json("Обновления города сохранены")
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("dapabachenya")
     }
@@ -146,13 +146,13 @@ app.delete('/cities/:id', async (request, response) => {
 app.post('/customers', async (request, response) => {
     const {customer_name, customer_email} = request.body
     if (isNameValid(customer_name) && isEmailValid(customer_email))
-    try {
-        const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
-            [customer_name, customer_email]);
-        response.json(newCustomer.rows[0])
-    } catch (e) {
-        console.log(e.toString())
-    }
+        try {
+            const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
+                [customer_name, customer_email]);
+            response.json(newCustomer.rows[0])
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("dapabachenya")
     }
@@ -188,14 +188,14 @@ app.put('/customers/:id', async (request, response) => {
     const {id} = request.params;
     const {customer_name, customer_email} = request.body
     if (isNameValid(customer_name) && isNameValid(customer_email))
-    try {
-        await pool.query(
-            "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
-            [id, customer_name, customer_email])
-        response.json("Изменения данных покупателя сохранены")
-    } catch (e) {
-        console.log(e.toString())
-    }
+        try {
+            await pool.query(
+                "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
+                [id, customer_name, customer_email])
+            response.json("Изменения данных покупателя сохранены")
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("dapabachenya")
     }
@@ -350,7 +350,25 @@ app.get('/deps/:id', async (request, response) => {
         console.log(e.toString())
     }
 })
-
+app.get('/deps/master/:id', async (request, response) => {
+    try {
+        const {id} = request.params;
+        const master = await pool.query("SELECT * FROM connect_city_master WHERE master_id = ($1)", [id])
+        response.json(master.rows)
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
+app.post('/deps', async (request, response) => {
+    const {city_id, master_id} = request.body
+    try {
+        const newDeps = await pool.query("INSERT INTO connect_city_master (city_id, master_id) VALUES ($1, $2) RETURNING *",
+            [city_id, master_id]);
+        response.json(newDeps.rows[0])
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
 //endregion
 
 app.listen(process.env.PORT, () =>
