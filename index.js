@@ -59,13 +59,12 @@ app.get('/masters/:id', async (request, response) => {
 })
 app.put('/masters/:id', async (request, response) => {
     const {id} = request.params;
-    const {master_name, photo, ranking} = request.body
+    const {master_name, ranking} = request.body
     if (isNameValid(master_name))
         try {
             await pool.query(
-                "UPDATE masters SET master_name = $2, photo = $3, ranking = $4 WHERE master_id = ($1)",
-                [id, master_name, photo, ranking])
-
+                "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
+                [id, master_name, ranking])
             response.json("Обновления мастера сохранены")
         } catch (e) {
             console.log(e.toString())
