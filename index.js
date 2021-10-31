@@ -13,13 +13,15 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static("static"));
 
-const isNameValid = (name = "") => {
+const validation = {};
+
+validation.isNameValid = (name = "") => {
     return name.length && /^[A-ZА-Яa-zа-я -]+$/i.test(name);
 }
-const isRankingValid = (ranking = "") => {
+validation.isRankingValid = (ranking = "") => {
     return ranking.length && Number(ranking) <= 5 && Number(ranking) >= 1;
 }
-const isEmailValid = (email = "") => {
+validation.isEmailValid = (email = "") => {
     return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 }
 
@@ -27,7 +29,7 @@ const isEmailValid = (email = "") => {
 //region masters
 app.post('/masters', async (request, response) => {
     const {master_name, ranking} = request.body
-    if (isNameValid(master_name))
+    if (validation.isNameValid(master_name))
         try {
             const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
                 [master_name, ranking]);
@@ -60,7 +62,7 @@ app.get('/masters/:id', async (request, response) => {
 app.put('/masters/:id', async (request, response) => {
     const {id} = request.params;
     const {master_name, ranking} = request.body
-    if (isNameValid(master_name))
+    if (validation.isNameValid(master_name))
         try {
             await pool.query(
                 "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
@@ -86,7 +88,7 @@ app.delete('/masters/:id', async (request, response) => {
 //region cities
 app.post('/cities', async (request, response) => {
     const {city_name} = request.body
-    if (isNameValid(city_name))
+    if (validation.isNameValid(city_name))
         try {
             const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
                 [city_name]);
@@ -118,7 +120,7 @@ app.get('/cities/:id', async (request, response) => {
 app.put('/cities/:id', async (request, response) => {
     const {id} = request.params;
     const {city_name} = request.body
-    if (isNameValid(city_name))
+    if (validation.isNameValid(city_name))
         try {
             await pool.query(
                 "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
@@ -144,7 +146,7 @@ app.delete('/cities/:id', async (request, response) => {
 //region customers
 app.post('/customers', async (request, response) => {
     const {customer_name, customer_email} = request.body
-    if (isNameValid(customer_name) && isEmailValid(customer_email))
+    if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
         try {
             const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
                 [customer_name, customer_email]);
@@ -186,7 +188,7 @@ app.get('/customers/email/:email', async (request, response) => {
 app.put('/customers/:id', async (request, response) => {
     const {id} = request.params;
     const {customer_name, customer_email} = request.body
-    if (isNameValid(customer_name) && isNameValid(customer_email))
+    if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
         try {
             await pool.query(
                 "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
@@ -340,6 +342,14 @@ app.get("/login", authMiddleware, (req, res, next) => {
 })
 //endregion
 
+app.get('/deps', async (request, response) => {
+    try {
+        const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
+        response.json(allDeps.rows)
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
 app.get('/deps/:id', async (request, response) => {
     try {
         const {id} = request.params;
@@ -368,8 +378,18 @@ app.post('/deps', async (request, response) => {
         console.log(e.toString())
     }
 })
+app.delete('/deps', async (request, response) => {
+    const {city_id, master_id} = request.body
+    try {
+        await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
+        response.json("Город у мастера был удален")
+    } catch (e) {
+        console.log(e.toString())
+    }
+})
 //endregion
 
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
 )
+module.exports = validation
