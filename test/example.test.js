@@ -34,5 +34,12 @@ describe('Test validation', () => {
             const result = validation.isDateValid("2021-11-10T14:00:00.000000")
             expect(result).to.be.true;
         });
+        it('should return false', () => {
+            const result = validation.isDateValid("2021-11-26T4:00:00.000000")
+            expect(result).to.be.false;
+        }); it('should return false', () => {
+            const result = validation.isDateValid("2021-10-26T11:00:00.000Z")
+            expect(result).to.be.false;
+        });
     })
 });
