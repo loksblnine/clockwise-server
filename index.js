@@ -24,6 +24,16 @@ validation.isRankingValid = (ranking = "") => {
 validation.isEmailValid = (email = "") => {
     return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
 }
+validation.nowDate = () => {
+    return new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 2).toISOString().split('T')[0]
+}
+
+validation.finalDate = () => {
+    return new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()).toISOString().split('T')[0]
+}
+validation.isDateValid = (date = "") => {
+    return date.length && date.split('T')[0] <= validation.finalDate() && date.split('T')[0] >= validation.nowDate() && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
+}
 
 //region ROUTES
 //region masters
@@ -243,12 +253,16 @@ app.post('/send', function (req, res) {
 
 app.post('/orders', async (request, response) => {
     const order = request.body
+    if (validation.isDateValid(order.order_time))
     try {
         const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
         response.json(newOrder.rows[0])
     } catch (e) {
         console.log(e.toString())
+    }
+    else {
+        response.json("Wrong order params")
     }
 })
 app.get('/orders', async (request, response) => {
