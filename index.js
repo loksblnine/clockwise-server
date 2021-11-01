@@ -281,7 +281,6 @@ app.get('/orders/:id', async (request, response) => {
     } catch (e) {
         console.log(e.toString())
     }
-
 })
 app.put('/orders/:id', async (request, response) => {
     const {id} = request.params;
