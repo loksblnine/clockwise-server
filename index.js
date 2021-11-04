@@ -254,23 +254,34 @@ app.post('/send', function (req, res) {
 app.post('/orders', async (request, response) => {
     const order = request.body
     if (validation.isDateValid(order.order_time))
-    try {
-        const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
-        response.json(newOrder.rows[0])
-    } catch (e) {
-        console.log(e.toString())
-    }
+        try {
+            const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+                [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
+            response.json(newOrder.rows[0])
+        } catch (e) {
+            console.log(e.toString())
+        }
     else {
         response.json("Wrong order params")
     }
 })
 app.get('/orders', async (request, response) => {
     try {
-        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_id")
+        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC")
         response.json(allOrders.rows)
     } catch (e) {
         console.log(e.toString())
+    }
+})
+app.get('/orders/offset/:page', async (request, response) => {
+    try {
+        const itemsPerPage = 5
+        const page = request.params.page
+        const offset = itemsPerPage * page
+        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_id DESC LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
+        response.json(allOrders.rows)
+    } catch (e) {
+        response.json(e.toString())
     }
 })
 app.get('/orders/:id', async (request, response) => {
