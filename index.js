@@ -29,7 +29,6 @@ validation.isEmailValid = (email = "") => {
 validation.nowDate = () => {
     return new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 2).toISOString().split('T')[0]
 }
-
 validation.finalDate = () => {
     return new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()).toISOString().split('T')[0]
 }
@@ -42,7 +41,7 @@ validation.isDateValid = (date = "") => {
 //region masters
 app.post('/masters', async (request, response) => {
     const {master_name, ranking} = request.body
-    if (validation.isNameValid(master_name))
+    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
         try {
             const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
                 [master_name, ranking]);
@@ -61,7 +60,6 @@ app.get('/masters', async (request, response) => {
     } catch (e) {
         response.json(e.toString())
     }
-
 })
 app.get('/masters/:id', async (request, response) => {
     try {
@@ -72,7 +70,6 @@ app.get('/masters/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-
 app.post('/masters/free/:id', async (request, response) => {
     try {
         const {id} = request.params;
@@ -85,7 +82,7 @@ app.post('/masters/free/:id', async (request, response) => {
 app.put('/masters/:id', async (request, response) => {
     const {id} = request.params;
     const {master_name, ranking} = request.body
-    if (validation.isNameValid(master_name))
+    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
         try {
             await pool.query(
                 "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
@@ -207,7 +204,6 @@ app.get('/customers/email/:email', async (request, response) => {
         response.json(e.toString())
     }
 })
-
 app.put('/customers/:id', async (request, response) => {
     const {id} = request.params;
     const {customer_name, customer_email} = request.body
@@ -234,7 +230,7 @@ app.delete('/customers/:id', async (request, response) => {
     }
 })
 //endregion
-//region orders & send email
+//region send email
 app.get('/send', async (request, response) => {
     try {
         response.json("This is route for sending mail")
@@ -263,7 +259,8 @@ app.post('/send', function (req, res) {
             console.error(error)
         })
 });
-
+//endregion
+//region orders
 app.post('/orders', async (request, response) => {
     const order = request.body
     if (validation.isDateValid(order.order_time))
@@ -328,7 +325,7 @@ app.delete('/orders/:id', async (request, response) => {
     }
 })
 //endregion
-//region Login
+//region login
 const generateJwt = (id, email, role) => {
     return jwt.sign(
         {id, email, role},
@@ -378,7 +375,7 @@ app.get("/login", authMiddleware, (req, res, next) => {
     res.status(200).json({token});
 })
 //endregion
-
+//region Dependencies Master-City Many to Many
 app.get('/deps', async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
@@ -387,7 +384,7 @@ app.get('/deps', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.get('/deps/:id', async (request, response) => {
+app.get('/deps/city/:id', async (request, response) => {
     try {
         const {id} = request.params;
         const masterCities = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
@@ -425,7 +422,7 @@ app.delete('/deps', async (request, response) => {
     }
 })
 //endregion
-
+//endregion
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
 )
