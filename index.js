@@ -13,6 +13,8 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static("static"));
 
+
+//region validation
 const validation = {};
 
 validation.isNameValid = (name = "") => {
@@ -34,6 +36,7 @@ validation.finalDate = () => {
 validation.isDateValid = (date = "") => {
     return date.length && date.split('T')[0] <= validation.finalDate() && date.split('T')[0] >= validation.nowDate() && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
 }
+//endregion
 
 //region ROUTES
 //region masters
@@ -45,10 +48,10 @@ app.post('/masters', async (request, response) => {
                 [master_name, ranking]);
             response.json(newMaster.rows[0])
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
-        response.json("dapabachenya")
+        response.json("Возникли трудности")
     }
 })
 app.get('/masters', async (request, response) => {
@@ -56,7 +59,7 @@ app.get('/masters', async (request, response) => {
         const allMasters = await pool.query("SELECT * FROM masters ORDER BY master_id")
         response.json(allMasters.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 
 })
@@ -66,7 +69,17 @@ app.get('/masters/:id', async (request, response) => {
         const master = await pool.query("SELECT * FROM masters WHERE master_id = ($1)", [id])
         response.json(master.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
+    }
+})
+
+app.post('/masters/free/:id', async (request, response) => {
+    try {
+        const {id} = request.params;
+        const master = await pool.query("SELECT * FROM masters WHERE master_id = ($1)", [id])
+        response.json(master.rows[0])
+    } catch (e) {
+        response.json(e.toString())
     }
 })
 app.put('/masters/:id', async (request, response) => {
@@ -79,10 +92,10 @@ app.put('/masters/:id', async (request, response) => {
                 [id, master_name, ranking])
             response.json("Обновления мастера сохранены")
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
-        response.json("dapabachenya")
+        response.json("Возникли трудности")
     }
 })
 app.delete('/masters/:id', async (request, response) => {
@@ -91,7 +104,7 @@ app.delete('/masters/:id', async (request, response) => {
         await pool.query("DELETE FROM masters WHERE master_id = ($1)", [id])
         response.json("Мастер удален")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 //endregion
@@ -104,10 +117,10 @@ app.post('/cities', async (request, response) => {
                 [city_name]);
             response.json(newCity.rows[0])
         } catch (e) {
-            console.log(e.toString())
+            response.json("Ошибка со стороны сервера")
         }
     else {
-        response.json("dapabachenya")
+        response.json("Введите данные корректно")
     }
 })
 app.get('/cities', async (request, response) => {
@@ -115,7 +128,7 @@ app.get('/cities', async (request, response) => {
         const allCities = await pool.query("SELECT * FROM cities ORDER BY city_id")
         response.json(allCities.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/cities/:id', async (request, response) => {
@@ -124,7 +137,7 @@ app.get('/cities/:id', async (request, response) => {
         const city = await pool.query("SELECT * FROM cities WHERE city_id = ($1)", [id])
         response.json(city.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.put('/cities/:id', async (request, response) => {
@@ -137,10 +150,10 @@ app.put('/cities/:id', async (request, response) => {
                 [id, city_name])
             response.json("Обновления города сохранены")
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
-        response.json("dapabachenya")
+        response.json("Возникли трудности")
     }
 })
 app.delete('/cities/:id', async (request, response) => {
@@ -149,7 +162,7 @@ app.delete('/cities/:id', async (request, response) => {
         await pool.query("DELETE FROM cities WHERE city_id = ($1)", [id])
         response.json("Город удален")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 //endregion
@@ -162,10 +175,10 @@ app.post('/customers', async (request, response) => {
                 [customer_name, customer_email]);
             response.json(newCustomer.rows[0])
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
-        response.json("dapabachenya")
+        response.json("Возникли трудности")
     }
 })
 app.get('/customers', async (request, response) => {
@@ -173,7 +186,7 @@ app.get('/customers', async (request, response) => {
         const allCustomers = await pool.query("SELECT * FROM customers ORDER BY customer_id")
         response.json(allCustomers.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/customers/:id', async (request, response) => {
@@ -182,7 +195,7 @@ app.get('/customers/:id', async (request, response) => {
         const customer = await pool.query("SELECT * FROM customers WHERE customer_id = ($1)", [id])
         response.json(customer.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/customers/email/:email', async (request, response) => {
@@ -191,7 +204,7 @@ app.get('/customers/email/:email', async (request, response) => {
         const customer = await pool.query("SELECT * FROM customers WHERE customer_email = ($1)", [email])
         response.json(customer.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 
@@ -205,10 +218,10 @@ app.put('/customers/:id', async (request, response) => {
                 [id, customer_name, customer_email])
             response.json("Изменения данных покупателя сохранены")
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
-        response.json("dapabachenya")
+        response.json("Возникли трудности")
     }
 })
 app.delete('/customers/:id', async (request, response) => {
@@ -217,7 +230,7 @@ app.delete('/customers/:id', async (request, response) => {
         await pool.query("DELETE FROM customers WHERE customer_id = ($1)", [id])
         response.json("Покупатель был удален")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 //endregion
@@ -226,7 +239,7 @@ app.get('/send', async (request, response) => {
     try {
         response.json("This is route for sending mail")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 });
 
@@ -259,7 +272,7 @@ app.post('/orders', async (request, response) => {
                 [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
             response.json(newOrder.rows[0])
         } catch (e) {
-            console.log(e.toString())
+            response.json(e.toString())
         }
     else {
         response.json("Wrong order params")
@@ -270,7 +283,7 @@ app.get('/orders', async (request, response) => {
         const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC")
         response.json(allOrders.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/orders/offset/:page', async (request, response) => {
@@ -290,7 +303,7 @@ app.get('/orders/:id', async (request, response) => {
         const order = await pool.query("SELECT * FROM orders WHERE order_id = ($1)", [id])
         response.json(order.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.put('/orders/:id', async (request, response) => {
@@ -302,7 +315,7 @@ app.put('/orders/:id', async (request, response) => {
             [id, customer_id, master_id, city_id, work_id, order_time])
         response.json("Данные заказа были обновлены")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.delete('/orders/:id', async (request, response) => {
@@ -311,7 +324,7 @@ app.delete('/orders/:id', async (request, response) => {
         await pool.query("DELETE FROM orders WHERE order_id = ($1)", [id])
         response.json("Заказ удален")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 //endregion
@@ -338,7 +351,7 @@ app.post("/register", async (req, res) => {
         const token = generateJwt(newUser.user_id, email, "ADMIN")
         return res.status(201).json({token});
     } catch (err) {
-        console.log(err);
+        res.status(500).json("Ошибка регистрации");
     }
 });
 
@@ -356,7 +369,7 @@ app.post("/login", async (req, res) => {
         }
         res.status(400).send("Invalid Credentials");
     } catch (err) {
-        console.log(err);
+        res.json(err);
     }
 });
 
@@ -371,16 +384,16 @@ app.get('/deps', async (request, response) => {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
         response.json(allDeps.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/deps/:id', async (request, response) => {
     try {
         const {id} = request.params;
-        const master = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
-        response.json(master.rows)
+        const masterCities = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
+        response.json(masterCities.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.get('/deps/master/:id', async (request, response) => {
@@ -389,7 +402,7 @@ app.get('/deps/master/:id', async (request, response) => {
         const master = await pool.query("SELECT * FROM connect_city_master WHERE master_id = ($1)", [id])
         response.json(master.rows)
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.post('/deps', async (request, response) => {
@@ -399,7 +412,7 @@ app.post('/deps', async (request, response) => {
             [city_id, master_id]);
         response.json(newDeps.rows[0])
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 app.delete('/deps', async (request, response) => {
@@ -408,7 +421,7 @@ app.delete('/deps', async (request, response) => {
         await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
         response.json("Город у мастера был удален")
     } catch (e) {
-        console.log(e.toString())
+        response.json(e.toString())
     }
 })
 //endregion
