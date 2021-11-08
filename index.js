@@ -33,9 +33,9 @@ validation.finalDate = () => {
     return new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()).toISOString().split('T')[0]
 }
 validation.isDateValid = (date = "") => {
-    return date.length && date.split('T')[0] <= validation.finalDate() && date.split('T')[0] >= validation.nowDate() && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
+    return date.length && Date.parse(date.split('T')[0]) <= Date.parse(validation.finalDate()) && Date.parse(date.split('T')[0]) >= Date.parse(validation.nowDate()) && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
 }
-validation.isAdmin = (data) =>{
+validation.isAdmin = (data) => {
     return process.env.SECRET_KEY === data
 }
 //endregion
@@ -74,10 +74,26 @@ app.get('/masters/:id', async (request, response) => {
     }
 })
 app.post('/masters/free/:id', async (request, response) => {
+    const order = request.body //work_id time
     try {
         const {id} = request.params;
-        const master = await pool.query("SELECT * FROM masters WHERE master_id = ($1)", [id])
-        response.json(master.rows[0])
+        const orders = await pool.query("SELECT * FROM orders WHERE master_id = ($1)", [id])
+        const startHour = Number(order.order_time.split('T')[1].split(':')[0])
+        const finishHour = Number(order.work_id) + startHour
+        const date ='"'+ order.order_time.split('T')[0]+'"'
+        const actualOrders = orders.rows.filter(r => validation.isDateValid(JSON.stringify(r.order_time)))
+        let isFree = true;
+        actualOrders.forEach(t => {
+            const orderTime = JSON.stringify(t.order_time)
+            const dateOrder = orderTime.split('T')[0] + '"'
+            const hourOrder = Number(orderTime.split('T')[1].split(':')[0])
+            if (Date.parse(dateOrder) === Date.parse(date)) {
+                if (hourOrder <= finishHour && hourOrder >= startHour) {
+                    isFree = false
+                }
+            }
+        })
+        response.json(isFree)
     } catch (e) {
         response.json(e.toString())
     }
@@ -150,10 +166,10 @@ app.put('/cities/:id', async (request, response) => {
                 [id, city_name])
             response.json("Обновления города сохранены")
         } catch (e) {
-            response.json(e.toString())
+            response.json("Возникли трудности")
         }
     else {
-        response.json("Возникли трудности")
+        response.json("Введите данные корректно")
     }
 })
 app.delete('/cities/:id', async (request, response) => {
@@ -378,7 +394,7 @@ app.get("/login", authMiddleware, (req, res, next) => {
     res.status(200).json({token});
 })
 //endregion
-//region Dependencies Master-City Many to Many
+//region dependencies Master-City Many to Many
 app.get('/deps', async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
@@ -390,8 +406,8 @@ app.get('/deps', async (request, response) => {
 app.get('/deps/city/:id', async (request, response) => {
     try {
         const {id} = request.params;
-        const masterCities = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
-        response.json(masterCities.rows)
+        const mastersInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
+        response.json(mastersInCity.rows.map(r => r.master_id))
     } catch (e) {
         response.json(e.toString())
     }
@@ -399,8 +415,8 @@ app.get('/deps/city/:id', async (request, response) => {
 app.get('/deps/master/:id', async (request, response) => {
     try {
         const {id} = request.params;
-        const master = await pool.query("SELECT * FROM connect_city_master WHERE master_id = ($1)", [id])
-        response.json(master.rows)
+        const masterCities = await pool.query("SELECT * FROM connect_city_master WHERE master_id = ($1)", [id])
+        response.json(masterCities.rows.map(r => r.city_id))
     } catch (e) {
         response.json(e.toString())
     }
