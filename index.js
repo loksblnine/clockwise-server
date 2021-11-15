@@ -73,27 +73,33 @@ app.get('/masters/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.post('/masters/free/:id', async (request, response) => {
-    const order = request.body //work_id time
+app.post('/masters/free', async (request, response) => {
     try {
-        const {id} = request.params;
-        const orders = await pool.query("SELECT * FROM orders WHERE master_id = ($1)", [id])
-        const startHour = Number(order.order_time.split('T')[1].split(':')[0])
+        const order = request.body
+        order.order_time = new Date(order.order_time)
+        const startHour = order.order_time.getHours()
         const finishHour = Number(order.work_id) + startHour
-        const date ='"'+ order.order_time.split('T')[0]+'"'
-        const actualOrders = orders.rows.filter(r => validation.isDateValid(JSON.stringify(r.order_time)))
-        let isFree = true;
-        actualOrders.forEach(t => {
-            const orderTime = JSON.stringify(t.order_time)
-            const dateOrder = orderTime.split('T')[0] + '"'
-            const hourOrder = Number(orderTime.split('T')[1].split(':')[0])
-            if (Date.parse(dateOrder) === Date.parse(date)) {
-                if (hourOrder <= finishHour && hourOrder >= startHour) {
-                    isFree = false
-                }
+        const mInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [order.city_id])
+        const orders = await pool.query("SELECT * FROM orders WHERE city_id = ($1)", [order.city_id])
+        let mastersId = mInCity.rows.map(r => r.master_id)
+
+        mastersId = mastersId.map(
+            (id) => {
+                const mastersOrders = orders.rows.filter(o => o.master_id === id)
+                const todayMastersOrders = mastersOrders.map(mo => mo.order_time).filter(elem =>
+                    elem.getDate() === order.order_time.getDate()
+                    && elem.getMonth() === order.order_time.getMonth()
+                    && elem.getFullYear() === order.order_time.getFullYear()
+                ).filter(
+                    m => {
+                        const hour = m.getHours()
+                        return !(hour >= startHour && hour <= finishHour);
+                    }
+                )
+                return todayMastersOrders.length > 0 ? id : null
             }
-        })
-        response.json(isFree)
+        )
+        response.json(mastersId.map(elem => elem))
     } catch (e) {
         response.json(e.toString())
     }
