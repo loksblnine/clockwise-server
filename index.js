@@ -77,6 +77,7 @@ app.post('/masters/free', async (request, response) => {
     try {
         const order = request.body
         order.order_time = new Date(order.order_time)
+        console.log(order)
         const startHour = order.order_time.getHours()
         const finishHour = Number(order.work_id) + startHour
         const mInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [order.city_id])
@@ -93,7 +94,7 @@ app.post('/masters/free', async (request, response) => {
                 ).filter(
                     m => {
                         const hour = m.getHours()
-                        return !(hour >= startHour && hour <= finishHour);
+                        return (hour >= startHour && hour <= finishHour);
                     }
                 )
                 return todayMastersOrders.length > 0 ? id : null
