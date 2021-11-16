@@ -130,7 +130,7 @@ app.delete('/masters/:id', async (request, response) => {
 })
 //endregion
 //region cities
-app.post('/cities', async (request, response) => {
+app.post('/cities', authMiddleware, async (request, response) => {
     const {city_name} = request.body
     if (validation.isNameValid(city_name))
         try {
@@ -161,7 +161,7 @@ app.get('/cities/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.put('/cities/:id', async (request, response) => {
+app.put('/cities/:id', authMiddleware,async (request, response) => {
     const {id} = request.params;
     const {city_name} = request.body
     if (validation.isNameValid(city_name))
@@ -177,7 +177,7 @@ app.put('/cities/:id', async (request, response) => {
         response.json("Введите данные корректно")
     }
 })
-app.delete('/cities/:id', async (request, response) => {
+app.delete('/cities/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM cities WHERE city_id = ($1)", [id])
