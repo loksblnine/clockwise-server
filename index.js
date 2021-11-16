@@ -35,9 +35,7 @@ validation.finalDate = () => {
 validation.isDateValid = (date = "") => {
     return date.length && Date.parse(date.split('T')[0]) <= Date.parse(validation.finalDate()) && Date.parse(date.split('T')[0]) >= Date.parse(validation.nowDate()) && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
 }
-validation.isAdmin = (data) => {
-    return process.env.SECRET_KEY === data
-}
+
 //endregion
 
 //region ROUTES
