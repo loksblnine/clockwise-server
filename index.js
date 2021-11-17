@@ -1,260 +1,34 @@
 const express = require("express");
 const app = express();
+
 const cors = require("cors");
 require("dotenv").config();
+
 const pool = require("./db")
+
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+
 const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SG_API_KEY)
+
 const authMiddleware = require('./middleware/authMiddleware')
+const cityRoutes = require('./routes/cityRoutes')
+const masterRoutes = require('./routes/masterRoutes')
+const orderRoutes = require('./routes/orderRoutes')
+const customerRoutes = require('./routes/customerRoutes')
+const validation = require('./validation/validation')
 
 app.use(cors())
 app.use(express.json())
+app.use("/cities", cityRoutes)
+app.use("/masters", masterRoutes)
+app.use("/orders", orderRoutes)
+app.use("/customers", customerRoutes)
+
 app.use(express.static("static"));
 
-
-//region validation
-const validation = {};
-
-validation.isNameValid = (name = "") => {
-    return name.length && /^[A-ZА-Яa-zа-я -]+$/i.test(name);
-}
-// validation.isRankingValid = (ranking = "") => {
-//     return ranking.length && Number(ranking.toString()) <= 5 && Number(ranking) >= 1;
-// }
-validation.isEmailValid = (email = "") => {
-    return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
-}
-validation.nowDate = () => {
-    return new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 2).toISOString().split('T')[0]
-}
-validation.finalDate = () => {
-    return new Date(new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()).toISOString().split('T')[0]
-}
-validation.isDateValid = (date = "") => {
-    return date.length && Date.parse(date.split('T')[0]) <= Date.parse(validation.finalDate()) && Date.parse(date.split('T')[0]) >= Date.parse(validation.nowDate()) && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
-}
-//endregion
-
 //region ROUTES
-//region masters
-app.post('/masters', authMiddleware, async (request, response) => {
-    const {master_name, ranking} = request.body
-    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
-        try {
-            const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
-                [master_name, ranking]);
-            response.json(newMaster.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
-    }
-})
-app.get('/masters', async (request, response) => {
-    try {
-        const allMasters = await pool.query("SELECT * FROM masters ORDER BY master_id")
-        response.json(allMasters.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/masters/:id', async (request, response) => {
-    try {
-        const {id} = request.params;
-        const master = await pool.query("SELECT * FROM masters WHERE master_id = ($1)", [id])
-        response.json(master.rows[0])
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.post('/masters/free', async (request, response) => {
-    try {
-        const order = request.body
-        order.order_time = new Date(order.order_time)
-        console.log(order)
-        const startHour = order.order_time.getHours()
-        const finishHour = Number(order.work_id) + startHour
-        const mInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [order.city_id])
-        const orders = await pool.query("SELECT * FROM orders WHERE city_id = ($1)", [order.city_id])
-        let mastersId = mInCity.rows.map(r => r.master_id)
-
-        mastersId = mastersId.map(
-            (id) => {
-                const mastersOrders = orders.rows.filter(o => o.master_id === id)
-                const todayMastersOrders = mastersOrders.map(mo => mo.order_time).filter(elem =>
-                    elem.getDate() === order.order_time.getDate()
-                    && elem.getMonth() === order.order_time.getMonth()
-                    && elem.getFullYear() === order.order_time.getFullYear()
-                ).filter(
-                    m => {
-                        const hour = m.getHours()
-                        return (hour >= startHour && hour <= finishHour);
-                    }
-                )
-                return todayMastersOrders.length > 0 ? id : null
-            }
-        )
-        response.json(mastersId.map(elem => elem))
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.put('/masters/:id', authMiddleware, async (request, response) => {
-    const {id} = request.params;
-    const {master_name, ranking} = request.body
-    console.log(validation.isNameValid(master_name))
-    console.log(ranking)
-    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
-        try {
-            await pool.query(
-                "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
-                [id, master_name, ranking])
-            response.json("Обновления мастера сохранены")
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
-    }
-})
-app.delete('/masters/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM masters WHERE master_id = ($1)", [id])
-        response.json("Мастер удален")
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-//endregion
-//region cities
-app.post('/cities', authMiddleware, async (request, response) => {
-    const {city_name} = request.body
-    if (validation.isNameValid(city_name))
-        try {
-            const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
-                [city_name]);
-            response.json(newCity.rows[0])
-        } catch (e) {
-            response.json("Ошибка со стороны сервера")
-        }
-    else {
-        response.json("Введите данные корректно")
-    }
-})
-app.get('/cities', async (request, response) => {
-    try {
-        const allCities = await pool.query("SELECT * FROM cities ORDER BY city_id")
-        response.json(allCities.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/cities/:id', async (request, response) => {
-    try {
-        const {id} = request.params;
-        const city = await pool.query("SELECT * FROM cities WHERE city_id = ($1)", [id])
-        response.json(city.rows[0])
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.put('/cities/:id', authMiddleware, async (request, response) => {
-    const {id} = request.params;
-    const {city_name} = request.body
-    if (validation.isNameValid(city_name))
-        try {
-            await pool.query(
-                "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
-                [id, city_name])
-            response.json("Обновления города сохранены")
-        } catch (e) {
-            response.json("Возникли трудности")
-        }
-    else {
-        response.json("Введите данные корректно")
-    }
-})
-app.delete('/cities/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM cities WHERE city_id = ($1)", [id])
-        response.json("Город удален")
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-//endregion
-//region customers
-app.post('/customers', async (request, response) => {
-    const {customer_name, customer_email} = request.body
-    if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
-        try {
-            const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
-                [customer_name, customer_email]);
-            response.json(newCustomer.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
-    }
-})
-app.get('/customers', authMiddleware, async (request, response) => {
-    try {
-        const allCustomers = await pool.query("SELECT * FROM customers ORDER BY customer_id")
-        response.json(allCustomers.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/customers/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        const customer = await pool.query("SELECT * FROM customers WHERE customer_id = ($1)", [id])
-        response.json(customer.rows[0])
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/customers/email/:email', async (request, response) => {
-    try {
-        const {email} = request.params;
-        const customer = await pool.query("SELECT * FROM customers WHERE customer_email = ($1)", [email])
-        response.json(customer.rows[0])
-    } catch (e) {
-        response.status(404).json(e.toString())
-    }
-})
-app.put('/customers/:id', authMiddleware, async (request, response) => {
-    const {id} = request.params;
-    const {customer_name, customer_email} = request.body
-    if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
-        try {
-            await pool.query(
-                "UPDATE customers SET customer_name = $2, customer_email = $3 WHERE customer_id = ($1)",
-                [id, customer_name, customer_email])
-            response.json("Изменения данных покупателя сохранены")
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
-    }
-})
-app.delete('/customers/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM customers WHERE customer_id = ($1)", [id])
-        response.json("Покупатель был удален")
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-//endregion
 //region send email
 app.get('/send', async (request, response) => {
     try {
@@ -263,7 +37,6 @@ app.get('/send', async (request, response) => {
         response.json(e.toString())
     }
 });
-
 app.post('/send', function (req, res) {
     const msg = {
         to: req.body.email,
@@ -285,63 +58,7 @@ app.post('/send', function (req, res) {
         })
 });
 //endregion
-//region orders
-app.post('/orders', async (request, response) => {
-    const order = request.body
-    if (validation.isDateValid(order.order_time))
-        try {
-            const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-                [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
-            response.json(newOrder.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Wrong order params")
-    }
-})
-app.get('/orders/offset/:page', authMiddleware, async (request, response) => {
-    try {
-        const itemsPerPage = 5
-        const page = request.params.page
-        const offset = itemsPerPage * page
-        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
-        response.json(allOrders.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/orders/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        const order = await pool.query("SELECT * FROM orders WHERE order_id = ($1)", [id])
-        response.json(order.rows[0])
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.put('/orders/:id', authMiddleware, async (request, response) => {
-    const {id} = request.params;
-    const {customer_id, master_id, city_id, work_id, order_time} = request.body
-    try {
-        await pool.query(
-            "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
-            [id, customer_id, master_id, city_id, work_id, order_time])
-        response.json("Данные заказа были обновлены")
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.delete('/orders/:id', authMiddleware, async (request, response) => {
-    try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM orders WHERE order_id = ($1)", [id])
-        response.json("Заказ удален")
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-//endregion
+
 //region login
 const generateJwt = (id, email, role) => {
     return jwt.sign(
@@ -445,4 +162,3 @@ app.delete('/deps', authMiddleware, async (request, response) => {
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
 )
-module.exports = validation
