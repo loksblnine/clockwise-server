@@ -35,12 +35,11 @@ validation.finalDate = () => {
 validation.isDateValid = (date = "") => {
     return date.length && Date.parse(date.split('T')[0]) <= Date.parse(validation.finalDate()) && Date.parse(date.split('T')[0]) >= Date.parse(validation.nowDate()) && Number(date.split('T')[1].split(':')[0]) <= 17 && Number(date.split('T')[1].split(':')[0]) >= 8;
 }
-
 //endregion
 
 //region ROUTES
 //region masters
-app.post('/masters', async (request, response) => {
+app.post('/masters', authMiddleware, async (request, response) => {
     const {master_name, ranking} = request.body
     if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
         try {
@@ -103,7 +102,7 @@ app.post('/masters/free', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.put('/masters/:id', async (request, response) => {
+app.put('/masters/:id', authMiddleware,async (request, response) => {
     const {id} = request.params;
     const {master_name, ranking} = request.body
     if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
@@ -119,7 +118,7 @@ app.put('/masters/:id', async (request, response) => {
         response.json("Возникли трудности")
     }
 })
-app.delete('/masters/:id', async (request, response) => {
+app.delete('/masters/:id', authMiddleware,async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM masters WHERE master_id = ($1)", [id])
@@ -202,7 +201,7 @@ app.post('/customers', async (request, response) => {
         response.json("Возникли трудности")
     }
 })
-app.get('/customers', async (request, response) => {
+app.get('/customers', authMiddleware, async (request, response) => {
     try {
         const allCustomers = await pool.query("SELECT * FROM customers ORDER BY customer_id")
         response.json(allCustomers.rows)
@@ -210,7 +209,7 @@ app.get('/customers', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.get('/customers/:id', async (request, response) => {
+app.get('/customers/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         const customer = await pool.query("SELECT * FROM customers WHERE customer_id = ($1)", [id])
@@ -225,10 +224,10 @@ app.get('/customers/email/:email', async (request, response) => {
         const customer = await pool.query("SELECT * FROM customers WHERE customer_email = ($1)", [email])
         response.json(customer.rows[0])
     } catch (e) {
-        response.json(e.toString())
+        response.status(404).json(e.toString())
     }
 })
-app.put('/customers/:id', async (request, response) => {
+app.put('/customers/:id', authMiddleware,async (request, response) => {
     const {id} = request.params;
     const {customer_name, customer_email} = request.body
     if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
@@ -244,7 +243,7 @@ app.put('/customers/:id', async (request, response) => {
         response.json("Возникли трудности")
     }
 })
-app.delete('/customers/:id', async (request, response) => {
+app.delete('/customers/:id', authMiddleware,async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM customers WHERE customer_id = ($1)", [id])
@@ -299,26 +298,27 @@ app.post('/orders', async (request, response) => {
         response.json("Wrong order params")
     }
 })
-app.get('/orders', async (request, response) => {
-    try {
-        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC")
-        response.json(allOrders.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
-})
-app.get('/orders/offset/:page', async (request, response) => {
+// OLD UNUSED ROUTE
+// app.get('/orders', async (request, response) => {
+//     try {
+//         const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC")
+//         response.json(allOrders.rows)
+//     } catch (e) {
+//         response.json(e.toString())
+//     }
+// })
+app.get('/orders/offset/:page', authMiddleware, async (request, response) => {
     try {
         const itemsPerPage = 5
         const page = request.params.page
         const offset = itemsPerPage * page
-        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_id DESC LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
+        const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
         response.json(allOrders.rows)
     } catch (e) {
         response.json(e.toString())
     }
 })
-app.get('/orders/:id', async (request, response) => {
+app.get('/orders/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         const order = await pool.query("SELECT * FROM orders WHERE order_id = ($1)", [id])
@@ -327,7 +327,7 @@ app.get('/orders/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.put('/orders/:id', async (request, response) => {
+app.put('/orders/:id', authMiddleware, async (request, response) => {
     const {id} = request.params;
     const {customer_id, master_id, city_id, work_id, order_time} = request.body
     try {
@@ -339,7 +339,7 @@ app.put('/orders/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.delete('/orders/:id', async (request, response) => {
+app.delete('/orders/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM orders WHERE order_id = ($1)", [id])
@@ -368,8 +368,8 @@ app.post("/register", async (req, res) => {
         }
         const encryptedPassword = await bcrypt.hash(password, 5);
         const newUser = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
-            [email, encryptedPassword, "ADMIN"]);
-        const token = generateJwt(newUser.user_id, email, "ADMIN")
+            [email, encryptedPassword, "MASTER"]);
+        const token = generateJwt(newUser.user_id, email, "MASTER")
         return res.status(201).json({token});
     } catch (err) {
         res.status(500).json("Ошибка регистрации");
@@ -394,13 +394,13 @@ app.post("/login", async (req, res) => {
     }
 });
 
-app.get("/login", authMiddleware, (req, res, next) => {
+app.get("/login", authMiddleware, (req, res) => {
     const token = generateJwt(req.user.id, req.user.email, req.user.role)
     res.status(200).json({token});
 })
 //endregion
 //region dependencies Master-City Many to Many
-app.get('/deps', async (request, response) => {
+app.get('/deps', authMiddleware, async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
         response.json(allDeps.rows)
@@ -426,7 +426,7 @@ app.get('/deps/master/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.post('/deps', async (request, response) => {
+app.post('/deps', authMiddleware, async (request, response) => {
     const {city_id, master_id} = request.body
     try {
         const newDeps = await pool.query("INSERT INTO connect_city_master (city_id, master_id) VALUES ($1, $2) RETURNING *",
@@ -436,7 +436,7 @@ app.post('/deps', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.delete('/deps', async (request, response) => {
+app.delete('/deps', authMiddleware,async (request, response) => {
     const {city_id, master_id} = request.body
     try {
         await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
