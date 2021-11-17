@@ -102,7 +102,7 @@ app.post('/masters/free', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.put('/masters/:id', authMiddleware,async (request, response) => {
+app.put('/masters/:id', authMiddleware, async (request, response) => {
     const {id} = request.params;
     const {master_name, ranking} = request.body
     if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
@@ -118,7 +118,7 @@ app.put('/masters/:id', authMiddleware,async (request, response) => {
         response.json("Возникли трудности")
     }
 })
-app.delete('/masters/:id', authMiddleware,async (request, response) => {
+app.delete('/masters/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM masters WHERE master_id = ($1)", [id])
@@ -160,7 +160,7 @@ app.get('/cities/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.put('/cities/:id', authMiddleware,async (request, response) => {
+app.put('/cities/:id', authMiddleware, async (request, response) => {
     const {id} = request.params;
     const {city_name} = request.body
     if (validation.isNameValid(city_name))
@@ -227,7 +227,7 @@ app.get('/customers/email/:email', async (request, response) => {
         response.status(404).json(e.toString())
     }
 })
-app.put('/customers/:id', authMiddleware,async (request, response) => {
+app.put('/customers/:id', authMiddleware, async (request, response) => {
     const {id} = request.params;
     const {customer_name, customer_email} = request.body
     if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
@@ -243,7 +243,7 @@ app.put('/customers/:id', authMiddleware,async (request, response) => {
         response.json("Возникли трудности")
     }
 })
-app.delete('/customers/:id', authMiddleware,async (request, response) => {
+app.delete('/customers/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         await pool.query("DELETE FROM customers WHERE customer_id = ($1)", [id])
@@ -298,15 +298,6 @@ app.post('/orders', async (request, response) => {
         response.json("Wrong order params")
     }
 })
-// OLD UNUSED ROUTE
-// app.get('/orders', async (request, response) => {
-//     try {
-//         const allOrders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC")
-//         response.json(allOrders.rows)
-//     } catch (e) {
-//         response.json(e.toString())
-//     }
-// })
 app.get('/orders/offset/:page', authMiddleware, async (request, response) => {
     try {
         const itemsPerPage = 5
@@ -400,7 +391,7 @@ app.get("/login", authMiddleware, (req, res) => {
 })
 //endregion
 //region dependencies Master-City Many to Many
-app.get('/deps', authMiddleware, async (request, response) => {
+app.get('/deps', async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
         response.json(allDeps.rows)
@@ -426,7 +417,7 @@ app.get('/deps/master/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.post('/deps', authMiddleware, async (request, response) => {
+app.post('/deps', async (request, response) => {
     const {city_id, master_id} = request.body
     try {
         const newDeps = await pool.query("INSERT INTO connect_city_master (city_id, master_id) VALUES ($1, $2) RETURNING *",
@@ -436,9 +427,11 @@ app.post('/deps', authMiddleware, async (request, response) => {
         response.json(e.toString())
     }
 })
-app.delete('/deps', authMiddleware,async (request, response) => {
+app.delete('/deps', authMiddleware, async (request, response) => {
     const {city_id, master_id} = request.body
     try {
+        console.log(city_id)
+        console.log(master_id)
         await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
         response.json("Город у мастера был удален")
     } catch (e) {
