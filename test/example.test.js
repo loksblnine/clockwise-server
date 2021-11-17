@@ -74,18 +74,8 @@ describe('Test validation', () => {
             expect(result).to.be.true;
         });
         it('should return true', () => {
-            const result = validation.isRankingValid("4.85")
+            const result = validation.isRankingValid(4.5)
             expect(result).to.be.true;
-        });
-    })
-    describe('Test validation.isAdmin()', () => {
-        it('should return false', () => {
-            const result = validation.isAdmin("randomwrong")
-            expect(result).to.be.false;
-        });
-        it('should return false', () => {
-            const result = validation.isAdmin("сука неправильный имеил)")
-            expect(result).to.be.false;
         });
     })
 });
