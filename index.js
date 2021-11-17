@@ -21,7 +21,7 @@ validation.isNameValid = (name = "") => {
     return name.length && /^[A-ZА-Яa-zа-я -]+$/i.test(name);
 }
 // validation.isRankingValid = (ranking = "") => {
-//     return ranking.length && Number(ranking+"") <= 5 && Number(ranking+"") >= 1;
+//     return ranking.length && Number(ranking.toString()) <= 5 && Number(ranking) >= 1;
 // }
 validation.isEmailValid = (email = "") => {
     return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
@@ -41,7 +41,7 @@ validation.isDateValid = (date = "") => {
 //region masters
 app.post('/masters', authMiddleware, async (request, response) => {
     const {master_name, ranking} = request.body
-    if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
+    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
         try {
             const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
                 [master_name, ranking]);
@@ -107,7 +107,7 @@ app.put('/masters/:id', authMiddleware, async (request, response) => {
     const {master_name, ranking} = request.body
     console.log(validation.isNameValid(master_name))
     console.log(ranking)
-    if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
+    if (validation.isNameValid(master_name) && validation.isRankingValid(ranking))
         try {
             await pool.query(
                 "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
