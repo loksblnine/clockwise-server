@@ -149,8 +149,6 @@ app.post('/deps', async (request, response) => {
 app.delete('/deps', authMiddleware, async (request, response) => {
     const {city_id, master_id} = request.body
     try {
-        console.log(city_id)
-        console.log(master_id)
         await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
         response.json("Город у мастера был удален")
     } catch (e) {
