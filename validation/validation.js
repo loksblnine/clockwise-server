@@ -9,7 +9,7 @@ validation.isNameValid = (name = "") => {
 //     return ranking.length && Number(ranking.toString()) <= 5 && Number(ranking) >= 1;
 // }
 validation.isEmailValid = (email = "") => {
-    return email.length && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+    return email.length && /^[A-Za-z0-9._%+-]+@[A-Za-z]+\.[A-Za-z]+/i.test(email);
 }
 validation.nowDate = () => {
     return new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() + 2).toISOString().split('T')[0]
