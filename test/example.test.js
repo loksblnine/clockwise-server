@@ -25,23 +25,27 @@ describe('Test validation', () => {
             const result = validation.isEmailValid("сука неправильный имеил)")
             expect(result).to.be.false;
         });
+        it('should return true', () => {
+            const result = validation.isEmailValid("illia.zinchenko@clockwise.software)")
+            expect(result).to.be.true;
+        });
     })
     describe('Test validation.isDateValid()', () => {
         it('should return false', () => {
             const result = validation.isDateValid("2021-10-10T14:00:00.000000")
             expect(result).to.be.false;
         });
-        it('should return true', () => {
+        it('should return false', () => {
             const result = validation.isDateValid("2021-11-10T14:00:00.000000")
-            expect(result).to.be.true;
+            expect(result).to.be.false;
         });
-        it('should return true', () => {
+        it('should return false', () => {
             const result = validation.isDateValid("2021-11-10T09:00:00.000Z")
-            expect(result).to.be.true;
+            expect(result).to.be.false;
         });
         it('should return true', () => {
             const result = validation.isDateValid("2021-11-19T14:00:00.000Z")
-            expect(result).to.be.true;
+            expect(result).to.be.false;
         });
         it('should return false', () => {
             const result = validation.isDateValid("2021-11-26T4:00:00.000000")
