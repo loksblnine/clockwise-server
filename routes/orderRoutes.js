@@ -25,10 +25,14 @@ router
     .route('/offset/:page')
     .get(authMiddleware, async (request, response) => {
         try {
-            const itemsPerPage = 20
+            const itemsPerPage = 5
             const page = request.params.page
             const offset = itemsPerPage * page
-            const orders = await pool.query("SELECT * FROM orders ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
+            const orders = await pool.query(`SELECT order_id, orders.master_id, master_name, orders.city_id, city_name, orders.customer_id, customer_name, order_time, work_id FROM orders 
+            INNER JOIN masters on orders.master_id = masters.master_id
+            INNER JOIN customers on orders.customer_id = customers.customer_id
+            INNER JOIN cities on orders.city_id = cities.city_id
+            ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)`, [itemsPerPage, offset])
             response.json(orders.rows)
         } catch (e) {
             response.json(e.toString())
