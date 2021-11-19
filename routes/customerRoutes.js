@@ -29,7 +29,19 @@ router
             response.json(e.toString())
         }
     })
-
+router
+    .route('/offset/:page')
+    .get(async (request, response) => {
+        try {
+            const itemsPerPage = 10
+            const page = request.params.page
+            const offset = itemsPerPage * page
+            const masters = await pool.query("SELECT * FROM customers ORDER BY customer_id ASC LIMIT ($1) OFFSET ($2)", [itemsPerPage, offset])
+            response.json(masters.rows)
+        } catch (e) {
+            response.json(e.toString())
+        }
+    })
 router
     .route('/:id')
     .get(authMiddleware, async (request, response) => {
