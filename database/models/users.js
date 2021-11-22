@@ -31,6 +31,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
+        indexes: [
+            {
+                unique: true,
+                fields: ['email', 'password']
+            }
+        ]
+    },{
         sequelize,
         modelName: 'users',
     });

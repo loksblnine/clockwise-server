@@ -4,13 +4,7 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class customers extends Model {
-        static associate(models) {
-            // define association here
-        }
-    }
-
-    customers.init({
+    sequelize.define('customers', {
         customer_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -24,8 +18,19 @@ module.exports = (sequelize, DataTypes) => {
         },
         customer_email: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }
+    })
+
+    class customers extends Model {
+        static associate(models) {
+            // define association here
+        }
+    }
+
+    customers.init({
+
     }, {
         sequelize,
         modelName: 'customers',

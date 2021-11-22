@@ -20,7 +20,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         city_name: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
     }, {
         sequelize,
