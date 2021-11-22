@@ -2,6 +2,7 @@
 const express = require("express");
 let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
+const authMasterMiddleware = require('../middleware/authMasterMiddleware')
 const validation = require('../validation/validation')
 const pool = require("../db");
 
@@ -9,11 +10,11 @@ const pool = require("../db");
 router
     .route("/")
     .post(authMiddleware, async (request, response) => {
-        const {master_name, ranking} = request.body
+        const {master_name, master_email, ranking} = request.body
         if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
             try {
-                const newMaster = await pool.query("INSERT INTO masters (master_name, ranking) VALUES ($1, $2) RETURNING *",
-                    [master_name, ranking]);
+                const newMaster = await pool.query("INSERT INTO masters (master_name, email, ranking) VALUES ($1, $2, $3) RETURNING *",
+                    [master_name, master_email, ranking]);
                 response.json(newMaster.rows[0])
             } catch (e) {
                 response.json(e.toString())
@@ -43,12 +44,12 @@ router
     })
     .put(authMiddleware, async (request, response) => {
         const {id} = request.params;
-        const {master_name, ranking} = request.body
+        const {master_name, master_email, ranking} = request.body
         if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
             try {
                 await pool.query(
-                    "UPDATE masters SET master_name = $2, ranking = $3 WHERE master_id = ($1)",
-                    [id, master_name, ranking])
+                    "UPDATE masters SET master_name = $2, ranking = $3, email = $4 WHERE master_id = ($1)",
+                    [id, master_name, ranking, master_email])
                 response.json("Обновления мастера сохранены")
             } catch (e) {
                 response.json(e.toString())
@@ -77,6 +78,17 @@ router
             response.json(masters.rows)
         } catch (e) {
             response.json(e.toString())
+        }
+    })
+router
+    .route('/email/:email')
+    .get(authMasterMiddleware, async (request, response) => {
+        try {
+            const {email} = request.params;
+            const customer = await pool.query("SELECT * FROM masters WHERE email = ($1)", [email])
+            response.json(customer.rows[0])
+        } catch (e) {
+            response.status(404).json(e.toString())
         }
     })
 
