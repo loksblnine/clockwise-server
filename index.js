@@ -13,11 +13,11 @@ const sgMail = require('@sendgrid/mail')
 sgMail.setApiKey(process.env.SG_API_KEY)
 
 const authMiddleware = require('./middleware/authMiddleware')
+const authMasterMiddleware = require('./middleware/authMasterMiddleware')
 const cityRoutes = require('./routes/cityRoutes')
 const masterRoutes = require('./routes/masterRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const customerRoutes = require('./routes/customerRoutes')
-const validation = require('./validation/validation')
 
 app.use(cors())
 app.use(express.json())
@@ -28,7 +28,6 @@ app.use("/customers", customerRoutes)
 
 app.use(express.static("static"));
 
-//region ROUTES
 //region send email
 app.get('/send', async (request, response) => {
     try {
@@ -110,7 +109,7 @@ app.get("/login", authMiddleware, (req, res) => {
 })
 //endregion
 //region dependencies Master-City Many to Many
-app.get('/deps', async (request, response) => {
+app.get('/deps', authMiddleware, async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
         response.json(allDeps.rows)
@@ -118,7 +117,7 @@ app.get('/deps', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.get('/deps/city/:id', async (request, response) => {
+app.get('/deps/city/:id', authMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         const mastersInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [id])
@@ -127,7 +126,7 @@ app.get('/deps/city/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.get('/deps/master/:id', async (request, response) => {
+app.get('/deps/master/:id', authMasterMiddleware, async (request, response) => {
     try {
         const {id} = request.params;
         const masterCities = await pool.query("SELECT * FROM connect_city_master WHERE master_id = ($1)", [id])
@@ -136,7 +135,7 @@ app.get('/deps/master/:id', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.post('/deps', async (request, response) => {
+app.post('/deps', authMasterMiddleware, async (request, response) => {
     const {city_id, master_id} = request.body
     try {
         const newDeps = await pool.query("INSERT INTO connect_city_master (city_id, master_id) VALUES ($1, $2) RETURNING *",
@@ -146,7 +145,7 @@ app.post('/deps', async (request, response) => {
         response.json(e.toString())
     }
 })
-app.delete('/deps', authMiddleware, async (request, response) => {
+app.delete('/deps', authMasterMiddleware, async (request, response) => {
     const {city_id, master_id} = request.body
     try {
         await pool.query("DELETE FROM connect_city_master WHERE city_id = ($1) AND master_id = ($2)", [city_id, master_id])
@@ -155,7 +154,6 @@ app.delete('/deps', authMiddleware, async (request, response) => {
         response.json(e.toString())
     }
 })
-//endregion
 //endregion
 app.listen(process.env.PORT, () =>
     console.log(`server is started on port ${process.env.PORT}`)
