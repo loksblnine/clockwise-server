@@ -2,6 +2,7 @@
 const express = require("express");
 let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
+const authMasterMiddleware = require('../middleware/authMasterMiddleware')
 const validation = require('../validation/validation')
 const pool = require("../db");
 //region orders
@@ -33,6 +34,25 @@ router
             INNER JOIN customers on orders.customer_id = customers.customer_id
             INNER JOIN cities on orders.city_id = cities.city_id
             ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)`, [itemsPerPage, offset])
+            response.json(orders.rows)
+        } catch (e) {
+            response.json(e.toString())
+        }
+    })
+router
+    .route('/master/:id/offset/:page')
+    .get(authMasterMiddleware, async (request, response) => {
+        try {
+            const itemsPerPage = 5
+            const page = request.params.page
+            const master_id = request.params.id
+            const offset = itemsPerPage * page
+            const orders = await pool.query(`SELECT order_id, orders.master_id, master_name, orders.city_id, city_name, orders.customer_id, customer_name, order_time, work_id FROM orders 
+            INNER JOIN masters on orders.master_id = masters.master_id
+            INNER JOIN customers on orders.customer_id = customers.customer_id
+            INNER JOIN cities on orders.city_id = cities.city_id
+            WHERE orders.master_id = ($3)
+            ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)`, [itemsPerPage, offset, master_id])
             response.json(orders.rows)
         } catch (e) {
             response.json(e.toString())
