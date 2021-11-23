@@ -1,6 +1,10 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
 
+const models = require('../database/models/index');
+const City = models.City;
+const Sequelize = require('sequelize');
+
 const createCity = async (request, response) => {
     const {city_name} = request.body
     if (validation.isNameValid(city_name))
@@ -16,12 +20,18 @@ const createCity = async (request, response) => {
     }
 }
 const getAllCities = async (request, response) => {
-    try {
-        const allCities = await pool.query("SELECT * FROM cities ORDER BY city_id")
-        response.json(allCities.rows)
-    } catch (e) {
-        response.json(e.toString())
-    }
+    // try {
+    //     const allCities = await pool.query("SELECT * FROM cities ORDER BY city_id")
+    //     response.json(allCities.rows)
+    // } catch (e) {
+    //     response.json(e.toString())
+    // }
+
+    City.findAll()
+        .then(cities => response.render('cities', {
+            cities
+        }))
+        .catch(err => response.render('error', {error: err}))
 }
 
 const getCityById = async (request, response) => {

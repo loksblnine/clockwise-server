@@ -1,4 +1,3 @@
-require("dotenv").config();
 const citiesModel = require('./City')
 const customersModel = require('./Customer')
 const mastersModel = require('./Master')
