@@ -27,7 +27,7 @@ app.use("/masters", masterRoutes)
 app.use("/orders", orderRoutes)
 app.use("/customers", customerRoutes)
 app.use("/auth/", usersRoutes)
-
+//TODO на фронте роуты изменить на +аус!!!
 app.use(express.static("static"));
 
 //region send email
