@@ -1,47 +1,31 @@
-const express = require("express");
-const app = express();
-
 require("dotenv").config();
-
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-
-const basename = path.basename(__filename);
-const db = {};
+const Sequelize = require('sequelize')
+const citiesModel = require('./cities')
+const customersModel = require('./customers')
+const mastersModel = require('./masters')
+const ordersModel = require('./orders')
+const workTypeModel = require('./work_type')
+const usersModel = require('./users')
+const rolesModel = require('./roles')
+const connectionModel = require('./connect_city_master')
 
 const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.env.DB_PASSWORD, {
     host: process.env.DB_HOST,
     dialect: 'postgres'
 });
 
-// fs
-//     .readdirSync(__dirname)
-//     .filter(file => {
-//         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-//     })
-//     .forEach(file => {
-//         const model = sequelize['import'](path.join(__dirname, file));
-//         db[model.name] = model;
-//     });
-//
-// Object.keys(db).forEach(modelName => {
-//     if (db[modelName].associate) {
-//         db[modelName].associate(db);
-//     }
-// });
+sequelize.sync({force: true})
+    .then(() => {
+        console.log(`Database & tables created!`)
+    })
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-module.exports = db;
-
-const abc = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error);
-    }
+module.exports = {
+    mastersModel,
+    customersModel,
+    citiesModel,
+    ordersModel,
+    workTypeModel,
+    usersModel,
+    rolesModel,
+    connectionModel
 }
-console.log(abc())
