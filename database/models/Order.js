@@ -1,10 +1,10 @@
-'use strict';
 const {
-    Model
+    sequelize,
+    DataTypes
 } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-    const orders = sequelize.define('orders', {
+module.exports = () => {
+    const Order = sequelize.define('order', {
         order_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -39,31 +39,31 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {})
 
-    orders.associate = function (models){
-        orders.hasMany(models.customers, {
+    Order.associate = function (models){
+        Order.hasMany(models.Customer, {
             foreignKey: 'customer_id',
             as: 'customer_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
-        orders.hasMany(models.masters, {
+        Order.hasMany(models.Master, {
             foreignKey: 'master_id',
             as: 'master_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
-        orders.hasMany(models.cities, {
+        Order.hasMany(models.City, {
             foreignKey: 'city_id',
             as: 'city_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
-        orders.hasMany(models.work_type, {
+        Order.hasMany(models.workType, {
             foreignKey: 'work_id',
             as: 'work_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
     }
-    return orders;
+    return Order;
 };

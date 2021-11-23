@@ -1,5 +1,10 @@
-module.exports = (sequelize, DataTypes) => {
-    const users = sequelize.define('users', {
+const {
+    sequelize,
+    DataTypes
+} = require('sequelize');
+
+module.exports = () => {
+    const User = sequelize.define('user', {
             user_id: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
@@ -29,13 +34,13 @@ module.exports = (sequelize, DataTypes) => {
             ]
         })
 
-    users.associate = function(models) {
-        users.hasMany(models.roles, {
+    User.associate = function(models) {
+        User.hasMany(models.Role, {
             foreignKey: 'role_id',
             as: 'role',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         });
     };
-    return users;
+    return User;
 }

@@ -1,5 +1,10 @@
-module.exports = (sequelize, DataTypes) => {
-    const roles = sequelize.define({
+const {
+    sequelize,
+    DataTypes
+} = require('sequelize');
+
+module.exports = () => {
+    const Role = sequelize.define('role', {
         role_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -13,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
         },
     }, {})
 
-    roles.associate = function (models) {
-        roles.belongsTo(models.users, {
+    Role.associate = function (models) {
+        Role.belongsTo(models.User, {
             foreignKey: 'role_id',
             as: 'role_id',
             onDelete: 'RESTRICT',
@@ -22,5 +27,5 @@ module.exports = (sequelize, DataTypes) => {
         });
     }
 
-    return roles;
+    return Role;
 };

@@ -1,10 +1,10 @@
-'use strict';
 const {
-    Model
+    sequelize,
+    DataTypes
 } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-    const masters = sequelize.define('masters', {
+module.exports = () => {
+    const Master = sequelize.define('master', {
         master_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -25,19 +25,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DOUBLE
         }
     }, {})
-    masters.associate = function (models) {
-        masters.belongsTo(models.connect_city_master, {
+    Master.associate = function (models) {
+        Master.belongsTo(models.connect_city_master, {
             foreignKey: 'master_id',
             as: 'master_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         });
-        masters.belongsTo(models.orders, {
+        Master.belongsTo(models.Order, {
             foreignKey: 'master_id',
             as: 'master_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         });
     }
-    return masters;
+    return Master;
 };

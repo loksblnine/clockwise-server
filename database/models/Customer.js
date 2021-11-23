@@ -1,10 +1,10 @@
-'use strict';
 const {
-    Model
+    sequelize,
+    DataTypes
 } = require('sequelize');
 
-module.exports = (sequelize, DataTypes) => {
-    const customers = sequelize.define('customers', {
+module.exports = () => {
+    const Customer = sequelize.define('customer', {
         customer_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -22,13 +22,13 @@ module.exports = (sequelize, DataTypes) => {
             unique: true
         }
     })
-    customers.associate = function (models) {
-        customers.belongsToMany(models.orders, {
+    Customer.associate = function (models) {
+        Customer.belongsToMany(models.Order, {
             foreignKey: 'customer_id',
             as: 'customer_id',
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
     }
-    return customers;
+    return Customer;
 };
