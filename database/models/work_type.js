@@ -4,13 +4,7 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class work_type extends Model {
-        static associate(models) {
-            // define association here
-        }
-    }
-
-    work_type.init({
+    const work_type = sequelize.define('work_type', {
         work_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -26,9 +20,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TIME,
             allowNull: false
         },
-    }, {
-        sequelize,
-        modelName: 'work_type',
-    });
+    }, {});
+    work_type.associate = function (models) {
+        work_type.belongsTo(models.orders, {
+            foreignKey: 'work_id',
+            as: 'work_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        })
+    }
     return work_type;
 };

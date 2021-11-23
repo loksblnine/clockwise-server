@@ -1,16 +1,5 @@
-'use strict';
-const {
-    Model
-} = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
-    class roles extends Model {
-        static associate(models) {
-            // define association here
-        }
-    }
-
-    roles.init({
+    const roles = sequelize.define({
         role_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -22,9 +11,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-    }, {
-        sequelize,
-        modelName: 'roles',
-    });
+    }, {})
+
+    roles.associate = function (models) {
+        roles.belongsTo(models.users, {
+            foreignKey: 'role_id',
+            as: 'role_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        });
+    }
+
     return roles;
 };

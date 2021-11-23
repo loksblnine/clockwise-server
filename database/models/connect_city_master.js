@@ -4,31 +4,40 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class connect_city_master extends Model {
-        static associate(models) {
-            // define association here
-        }
+    const connect_city_master = sequelize.define('connect_city_master',
+        {
+            city_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            master_id: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+        }, {
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['city_id', 'master_id']
+                }
+            ]
+        })
+
+    connect_city_master.associate = function (models) {
+        connect_city_master.belongsToMany(models.cities, {
+            foreignKey: 'city_id',
+            as: 'city_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        });
+        connect_city_master.belongsToMany(models.masters, {
+            foreignKey: 'master_id',
+            as: 'master_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        });
     }
 
-    connect_city_master.init({
-        city_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        master_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-    }, {
-        indexes: [
-            {
-                unique: true,
-                fields: ['city_id', 'master_id']
-            }
-        ]
-    }, {
-        sequelize,
-        modelName: 'connect_city_master',
-    });
-    return connect_city_master;
-};
+
+    return connect_city_master
+}

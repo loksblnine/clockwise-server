@@ -4,13 +4,7 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class orders extends Model {
-        static associate(models) {
-            // define association here
-        }
-    }
-
-    orders.init({
+    const orders = sequelize.define('orders', {
         order_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -43,9 +37,33 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: false
         }
-    }, {
-        sequelize,
-        modelName: 'orders',
-    });
+    }, {})
+
+    orders.associate = function (models){
+        orders.hasMany(models.customers, {
+            foreignKey: 'customer_id',
+            as: 'customer_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        })
+        orders.hasMany(models.masters, {
+            foreignKey: 'master_id',
+            as: 'master_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        })
+        orders.hasMany(models.cities, {
+            foreignKey: 'city_id',
+            as: 'city_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        })
+        orders.hasMany(models.work_type, {
+            foreignKey: 'work_id',
+            as: 'work_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        })
+    }
     return orders;
 };

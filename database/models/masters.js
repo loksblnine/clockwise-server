@@ -4,13 +4,7 @@ const {
 } = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
-    class masters extends Model {
-        static associate(models) {
-            // define association here
-        }
-    }
-
-    masters.init({
+    const masters = sequelize.define('masters', {
         master_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -27,12 +21,23 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true
         },
-        ranking:{
+        ranking: {
             type: DataTypes.DOUBLE
         }
-    }, {
-        sequelize,
-        modelName: 'masters',
-    });
+    }, {})
+    masters.associate = function (models) {
+        masters.belongsTo(models.connect_city_master, {
+            foreignKey: 'master_id',
+            as: 'master_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        });
+        masters.belongsTo(models.orders, {
+            foreignKey: 'master_id',
+            as: 'master_id',
+            onDelete: 'RESTRICT',
+            onUpdate: 'CASCADE'
+        });
+    }
     return masters;
 };
