@@ -1,10 +1,8 @@
-"use strict";
 const express = require("express");
 let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const citiesController = require('../controllers/citiesController')
 
-//region cities
 router
     .route("/")
     .post(authMiddleware, citiesController.createCity)
@@ -14,4 +12,5 @@ router
     .get(authMiddleware, citiesController.getCityById)
     .put(authMiddleware, citiesController.updateCity)
     .delete(authMiddleware, citiesController.deleteCity)
+
 module.exports = router

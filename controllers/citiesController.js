@@ -1,7 +1,6 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
-const models = require("../database/models/index")
-const {citiesModel} = require("../database/models");
+
 const createCity = async (request, response) => {
     const {city_name} = request.body
     if (validation.isNameValid(city_name))
