@@ -26,7 +26,7 @@ app.use("/cities", cityRoutes)
 app.use("/masters", masterRoutes)
 app.use("/orders", orderRoutes)
 app.use("/customers", customerRoutes)
-app.use("/", usersRoutes)
+app.use("/auth/", usersRoutes)
 
 app.use(express.static("static"));
 

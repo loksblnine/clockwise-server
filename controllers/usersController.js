@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const pool = require("../db");
 
 const generateJwt = (id, email, role) => {
     return jwt.sign(
@@ -54,5 +55,4 @@ module.exports = {
     registerUser,
     loginUser,
     isTokenValid
-
 }
