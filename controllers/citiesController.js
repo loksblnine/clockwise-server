@@ -3,7 +3,6 @@ const pool = require("../db");
 
 const models = require('../database/models/index');
 const City = models.City;
-const Sequelize = require('sequelize');
 
 const createCity = async (request, response) => {
     const {city_name} = request.body
@@ -27,11 +26,7 @@ const getAllCities = async (request, response) => {
     //     response.json(e.toString())
     // }
 
-    City.findAll()
-        .then(cities => response.render('cities', {
-            cities
-        }))
-        .catch(err => response.render('error', {error: err}))
+    // const cities = City.findAll().then(r => response.data)
 }
 
 const getCityById = async (request, response) => {
