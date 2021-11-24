@@ -17,7 +17,6 @@ const cityRoutes = require('./routes/cityRoutes')
 const masterRoutes = require('./routes/masterRoutes')
 const orderRoutes = require('./routes/orderRoutes')
 const customerRoutes = require('./routes/customerRoutes')
-const validation = require('./validation/validation')
 
 app.use(cors())
 app.use(express.json())

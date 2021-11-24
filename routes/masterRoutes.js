@@ -11,7 +11,7 @@ router
     .route("/")
     .post(authMiddleware, async (request, response) => {
         const {master_name, master_email, ranking} = request.body
-        if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
+        if (validation.isNameValid(master_name))
             try {
                 const newMaster = await pool.query("INSERT INTO masters (master_name, email, ranking) VALUES ($1, $2, $3) RETURNING *",
                     [master_name, master_email, ranking]);
@@ -45,7 +45,7 @@ router
     .put(authMiddleware, async (request, response) => {
         const {id} = request.params;
         const {master_name, master_email, ranking} = request.body
-        if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
+        if (validation.isNameValid(master_name))
             try {
                 await pool.query(
                     "UPDATE masters SET master_name = $2, ranking = $3, email = $4 WHERE master_id = ($1)",
