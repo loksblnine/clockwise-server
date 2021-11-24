@@ -40,9 +40,9 @@ const createDependency = async (request, response) => {
         const depcy = await models.initModels(sequelize).connect_city_master.create(
             request.body
         )
-        return response.status(201).json({
+        return response.status(201).json(
             depcy
-        })
+        )
     } catch
         (e) {
         response.json(e.toString())

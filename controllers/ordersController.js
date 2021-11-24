@@ -7,9 +7,9 @@ const createOrder = async (request, response) => {
         const order = await models.initModels(sequelize).order.create(
             request.body
         )
-        return response.status(201).json({
+        return response.status(201).json(
             order
-        })
+        )
     } catch
         (e) {
         response.json(e.toString())

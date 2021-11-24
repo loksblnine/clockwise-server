@@ -7,9 +7,9 @@ const createMaster = async (request, response) => {
         const master = await models.initModels(sequelize).master.create(
             request.body
         )
-        return response.status(201).json({
+        return response.status(201).json(
             master
-        })
+        )
     } catch
         (e) {
         response.json(e.toString())

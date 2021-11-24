@@ -8,9 +8,9 @@ const createCustomer = async (request, response) => {
         const customer = await models.initModels(sequelize).customer.create(
             request.body
         )
-        return response.status(201).json({
+        return response.status(201).json(
             customer
-        })
+        )
     } catch
         (e) {
         response.json(e.toString())

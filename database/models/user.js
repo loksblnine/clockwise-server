@@ -9,7 +9,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     email: {
       type: DataTypes.TEXT,
-      allowNull: true
+      allowNull: true,
+      validate: {
+        is: /^[A-Za-z0-9._%+-]+@[A-Za-z]+\.[A-Za-z]+/i
+      }
     },
     password: {
       type: DataTypes.TEXT,

@@ -9,9 +9,9 @@ const createCity = async (request, response) => {
         const city = await models.initModels(sequelize).city.create(
             request.body
         )
-        return response.status(201).json({
+        return response.status(201).json(
             city
-        })
+        )
     } catch
         (e) {
         response.json(e.toString())
