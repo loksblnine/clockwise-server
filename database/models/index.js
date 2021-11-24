@@ -8,7 +8,8 @@ const workTypeModel = require('./workType')
 const usersModel = require('./User')
 const rolesModel = require('./Role')
 const connectionModel = require('./connect_city_master')
-
+const sequelize = require('sequelize')
+const Sequelize = require('sequelize')
 db.authenticate()
     .then(() => console.log('Database connected...'))
     .catch(err => console.log('Error: ' + err))
@@ -27,5 +28,7 @@ Object.keys(db).forEach(modelName => {
         db[modelName].associate(db);
     }
 });
+db.sequelize = sequelize
+db.Sequelize = Sequelize
 
 module.exports = db

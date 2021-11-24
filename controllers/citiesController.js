@@ -1,21 +1,21 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
 
-const models = require('../database/models/index');
+const {db} = require('../database/models/index');
 
 const createCity = async (request, response) => {
-    const {city_name} = request.body
-    if (validation.isNameValid(city_name))
-        try {
-            const newCity = await pool.query("INSERT INTO cities (city_name) VALUES ($1) RETURNING *",
-                [city_name]);
-            response.json(newCity.rows[0])
-        } catch (e) {
-            response.json("Ошибка со стороны сервера")
-        }
-    else {
-        response.json("Введите данные корректно")
+    try {
+        console.log(request.body)
+        console.log(db)
+        const city = await db.City.create(request.body)
+        return response.status(201).json({
+            city
+        })
+    } catch
+        (e) {
+        response.json(e.toString())
     }
+
 }
 const getAllCities = async (request, response) => {
     // try {
@@ -24,9 +24,7 @@ const getAllCities = async (request, response) => {
     // } catch (e) {
     //     response.json(e.toString())
     // }
-
-    // const cities = City.findAll().then(r => response.data)
-    // const cities = models.City
+    db.City.findAll().then()
 }
 
 const getCityById = async (request, response) => {

@@ -26,7 +26,6 @@
   "scripts": {
     "start": "node index.js",
     "test": "mocha",
-    "start test orm": "node ./database/models/index.js",
-    "start seq-auto": "sequelize-auto -h localhost -d dev_db -u postgres -x Nutter123@ -p 5432  --dialect postgres -c ./database/config/config -o ./models -t city customer connect_city_master order user workType role master"
+    "start test orm": "node ./database/models/index.js && sequelize-auto -h localhost -d dev_db -u postgres -x Nutter123@ -p 5432  --dialect postgres -c ./database/config/config -o ./models -t city customer connect_city_master order user workType role master"
   }
 }

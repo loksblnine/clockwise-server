@@ -2,7 +2,7 @@ const {
     sequelize,
     DataTypes
 } = require('sequelize');
-// const db = require('../config/config')
+
 module.exports = () => {
     const City = sequelize.define('city', {
         city_id: {
