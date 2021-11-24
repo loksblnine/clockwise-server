@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const pool = require("../db");
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 
 const generateJwt = (id, email, role) => {
     return jwt.sign(
@@ -34,7 +36,12 @@ const loginUser = async (req, res) => {
         if (!(email && password)) {
             res.status(400).send("All input is required");
         }
-        const oldUser = await pool.query("SELECT * FROM users WHERE email = ($1)", [email])
+        const oldUser = await models.initModels(sequelize).user.findAll({
+            where: {
+                email
+            }
+        })
+        console.log(oldUser)
         const passwordMatch = await bcrypt.compare(password, oldUser.rows[0].password)
         if (oldUser && passwordMatch) {
             const token = generateJwt(oldUser.rows[0].user_id, oldUser.rows[0].email, oldUser.rows[0].role)

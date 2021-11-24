@@ -3,6 +3,7 @@ const pool = require("../db");
 
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
+const {where} = require("sequelize");
 
 const createCity = async (request, response) => {
     try {
@@ -18,19 +19,29 @@ const createCity = async (request, response) => {
     }
 }
 const getAllCities = async (request, response) => {
-    // try {
-    //     const allCities = await pool.query("SELECT * FROM cities ORDER BY city_id")
-    //     response.json(allCities.rows)
-    // } catch (e) {
-    //     response.json(e.toString())
-    // }
+    try {
+        const cities = await models.initModels(sequelize).city.findAll()
+        return response.status(201).json(
+            cities
+        )
+    } catch
+        (e) {
+        response.json(e.toString())
+    }
 }
 const getCityById = async (request, response) => {
     try {
-        const {id} = request.params;
-        const city = await pool.query("SELECT * FROM cities WHERE city_id = ($1)", [id])
-        response.json(city.rows[0])
-    } catch (e) {
+        const {id}= request.body
+        const cities = await models.initModels(sequelize).city.findAll({
+            where:{
+                city_id: id
+            }
+    })
+        return response.status(201).json(
+            cities
+        )
+    } catch
+        (e) {
         response.json(e.toString())
     }
 }

@@ -1,4 +1,3 @@
-const validation = require("../validation/validation");
 const pool = require("../db");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");

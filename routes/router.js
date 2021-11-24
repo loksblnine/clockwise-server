@@ -16,6 +16,6 @@ router.use("/customers", customerRoutes)
 router.use("/deps", depsRoutes)
 router.use("/send", sendMailRoutes)
 //TODO на фронте роуты изменить на +аус!!!
-router.use("/auth/", usersRoutes)
+router.use("/auth", usersRoutes)
 
 module.exports = router
