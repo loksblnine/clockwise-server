@@ -2,7 +2,7 @@ const {
     sequelize,
     DataTypes
 } = require('sequelize');
-
+// const db = require('../config/config')
 module.exports = () => {
     const City = sequelize.define('city', {
         city_id: {
@@ -19,7 +19,7 @@ module.exports = () => {
         },
     }, {})
 
-    City.associate = function (models){
+    City.associate = function (models) {
         City.belongsTo(models.connectionModel, {
             foreignKey: 'city_id',
             as: 'city_id',

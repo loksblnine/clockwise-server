@@ -58,7 +58,7 @@ module.exports = () => {
             onDelete: 'RESTRICT',
             onUpdate: 'CASCADE'
         })
-        Order.hasMany(models.workType, {
+        Order.hasMany(models.workTypeModel, {
             foreignKey: 'work_id',
             as: 'work_id',
             onDelete: 'RESTRICT',

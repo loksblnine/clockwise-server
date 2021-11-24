@@ -2,7 +2,6 @@ const validation = require("../validation/validation");
 const pool = require("../db");
 
 const models = require('../database/models/index');
-const City = models.City;
 
 const createCity = async (request, response) => {
     const {city_name} = request.body
@@ -27,6 +26,7 @@ const getAllCities = async (request, response) => {
     // }
 
     // const cities = City.findAll().then(r => response.data)
+    // const cities = models.City
 }
 
 const getCityById = async (request, response) => {

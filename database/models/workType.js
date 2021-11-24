@@ -22,7 +22,7 @@ module.exports = () => {
         },
     }, {});
     workType.associate = function (models) {
-        workType.belongsTo(models.orders, {
+        workType.belongsTo(models.Order, {
             foreignKey: 'work_id',
             as: 'work_id',
             onDelete: 'RESTRICT',

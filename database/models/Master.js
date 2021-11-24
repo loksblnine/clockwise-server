@@ -26,7 +26,7 @@ module.exports = () => {
         }
     }, {})
     Master.associate = function (models) {
-        Master.belongsTo(models.connect_city_master, {
+        Master.belongsTo(models.connectionModel, {
             foreignKey: 'master_id',
             as: 'master_id',
             onDelete: 'RESTRICT',
