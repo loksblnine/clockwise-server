@@ -1,6 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('workType', {
-    work_id: {
+  return sequelize.define('role', {
+    role_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -9,29 +9,25 @@ module.exports = function(sequelize, DataTypes) {
     description: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    time: {
-      type: DataTypes.TIME,
-      allowNull: false
     }
   }, {
     sequelize,
-    tableName: 'workType',
+    tableName: 'role',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "worktype_pk",
+        name: "role_pk",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "role_id" },
         ]
       },
       {
-        name: "worktype_work_id_uindex",
+        name: "role_role_id_uindex",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "role_id" },
         ]
       },
     ]

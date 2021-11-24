@@ -1,13 +1,14 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
 
-const {db} = require('../database/models/index');
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 
 const createCity = async (request, response) => {
     try {
-        console.log(request.body)
-        console.log(db)
-        const city = await db.City.create(request.body)
+        const city = await models.initModels(sequelize).city.create(
+            request.body
+        )
         return response.status(201).json({
             city
         })
@@ -15,7 +16,6 @@ const createCity = async (request, response) => {
         (e) {
         response.json(e.toString())
     }
-
 }
 const getAllCities = async (request, response) => {
     // try {
@@ -24,9 +24,7 @@ const getAllCities = async (request, response) => {
     // } catch (e) {
     //     response.json(e.toString())
     // }
-    db.City.findAll().then()
 }
-
 const getCityById = async (request, response) => {
     try {
         const {id} = request.params;

@@ -1,37 +1,37 @@
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('workType', {
-    work_id: {
+  return sequelize.define('city', {
+    city_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+      default: "nextval('city_city_id_seq'::regclass)"
     },
-    description: {
+    city_name: {
       type: DataTypes.TEXT,
-      allowNull: true
-    },
-    time: {
-      type: DataTypes.TIME,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        is: /^[A-ZА-Яa-zа-я -]+$/i
+      }
     }
   }, {
     sequelize,
-    tableName: 'workType',
+    tableName: 'city',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "worktype_pk",
+        name: "city_city_id_uindex",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "city_id" },
         ]
       },
       {
-        name: "worktype_work_id_uindex",
+        name: "city_pk",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "city_id" },
         ]
       },
     ]

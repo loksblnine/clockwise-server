@@ -1,17 +1,18 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 const createOrder = async (request, response) => {
-    const order = request.body
-    if (validation.isDateValid(order.order_time))
-        try {
-            const newOrder = await pool.query("INSERT INTO orders (customer_id, master_id, city_id, work_id, order_time) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-                [order.customer_id, order.master_id, order.city_id, order.work_id, order.order_time]);
-            response.json(newOrder.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Wrong order params")
+    try {
+        const order = await models.initModels(sequelize).order.create(
+            request.body
+        )
+        return response.status(201).json({
+            order
+        })
+    } catch
+        (e) {
+        response.json(e.toString())
     }
 }
 const updateOrder = async (request, response) => {

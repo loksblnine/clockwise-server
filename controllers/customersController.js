@@ -1,18 +1,19 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 
 const createCustomer = async (request, response) => {
-    const {customer_name, customer_email} = request.body
-    if (validation.isNameValid(customer_name) && validation.isEmailValid(customer_email))
-        try {
-            const newCustomer = await pool.query("INSERT INTO customers (customer_name, customer_email) VALUES ($1, $2) RETURNING *",
-                [customer_name, customer_email]);
-            response.json(newCustomer.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
+    try {
+        const customer = await models.initModels(sequelize).customer.create(
+            request.body
+        )
+        return response.status(201).json({
+            customer
+        })
+    } catch
+        (e) {
+        response.json(e.toString())
     }
 }
 

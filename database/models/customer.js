@@ -1,37 +1,38 @@
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('workType', {
-    work_id: {
+  return sequelize.define('customer', {
+    customer_id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
+      default: "nextval('customer_customer_id_seq'::regclass)"
     },
-    description: {
+    customer_name: {
       type: DataTypes.TEXT,
       allowNull: true
     },
-    time: {
-      type: DataTypes.TIME,
-      allowNull: false
+    customer_email: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,
-    tableName: 'workType',
+    tableName: 'customer',
     schema: 'public',
     timestamps: false,
     indexes: [
       {
-        name: "worktype_pk",
+        name: "customer_customer_id_uindex",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "customer_id" },
         ]
       },
       {
-        name: "worktype_work_id_uindex",
+        name: "customer_pk",
         unique: true,
         fields: [
-          { name: "work_id" },
+          { name: "customer_id" },
         ]
       },
     ]

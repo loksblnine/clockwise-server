@@ -1,17 +1,18 @@
 const validation = require("../validation/validation");
 const pool = require("../db");
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 const createMaster = async (request, response) => {
-    const {master_name, master_email, ranking} = request.body
-    if (validation.isNameValid(master_name) /*&& validation.isRankingValid(ranking)*/)
-        try {
-            const newMaster = await pool.query("INSERT INTO masters (master_name, email, ranking) VALUES ($1, $2, $3) RETURNING *",
-                [master_name, master_email, ranking]);
-            response.json(newMaster.rows[0])
-        } catch (e) {
-            response.json(e.toString())
-        }
-    else {
-        response.json("Возникли трудности")
+    try {
+        const master = await models.initModels(sequelize).master.create(
+            request.body
+        )
+        return response.status(201).json({
+            master
+        })
+    } catch
+        (e) {
+        response.json(e.toString())
     }
 }
 const getMasters = async (request, response) => {

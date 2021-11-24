@@ -1,3 +1,5 @@
+const models = require("../database/models");
+const sequelize = require("../database/config/config");
 const getAllDeps = async (request, response) => {
     try {
         const allDeps = await pool.query("SELECT * FROM connect_city_master ORDER BY master_id")
@@ -34,12 +36,15 @@ const deleteDependency = async (request, response) => {
     }
 }
 const createDependency = async (request, response) => {
-    const {city_id, master_id} = request.body
     try {
-        const newDeps = await pool.query("INSERT INTO connect_city_master (city_id, master_id) VALUES ($1, $2) RETURNING *",
-            [city_id, master_id]);
-        response.json(newDeps.rows[0])
-    } catch (e) {
+        const depcy = await models.initModels(sequelize).connect_city_master.create(
+            request.body
+        )
+        return response.status(201).json({
+            depcy
+        })
+    } catch
+        (e) {
         response.json(e.toString())
     }
 }
