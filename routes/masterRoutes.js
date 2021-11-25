@@ -18,7 +18,6 @@ router
 router
     .route('/email')
     .post(authMasterMiddleware, masterController.getMasterByEmail)
-
 router
     .route('/free')
     .post(masterController.getFreeMasters)

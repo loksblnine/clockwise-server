@@ -47,15 +47,19 @@ const getOrders = async (request, response) => {
         const {page} = request.params
         const offset = 10 * page
         const orders = await models.initModels(sequelize).order.findAndCountAll({
+            attributes: ['order_id', 'order_time', 'master_id', 'city_id', 'customer_id', 'isDone', 'work_id'],
             include: [{
                 model: models.initModels(sequelize).master,
-                as: "master"
+                as: "master",
+                attributes: ['master_name']
             }, {
                 model: models.initModels(sequelize).city,
                 as: 'city',
+                attributes: ['city_name']
             }, {
                 model: models.initModels(sequelize).customer,
                 as: 'customer',
+                attributes: ['customer_name']
             },
             ],
             offset,

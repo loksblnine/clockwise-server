@@ -1,4 +1,3 @@
-const pool = require("../db");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 const createMaster = async (request, response) => {
@@ -43,27 +42,37 @@ const getMasterById = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-//TODO переписать эту срань
+//TODO переписать эту срань нерабочую ыыыыыы)
 const getFreeMasters = async (request, response) => {
     try {
+        console.log(request.body)
         const order = request.body
         order.order_time = new Date(order.order_time)
         const startHour = order.order_time.getHours()
         const finishHour = Number(order.work_id) + startHour
-        const mInCity = await pool.query("SELECT * FROM connect_city_master WHERE city_id = ($1)", [order.city_id])
-        const orders = await pool.query("SELECT * FROM orders WHERE city_id = ($1)", [order.city_id])
-        let mastersId = mInCity.rows.map(r => r.master_id)
 
+        const mInCity = await models.initModels(sequelize).connect_city_master.findAll({
+            attributes: ['city_id', 'master_id'],
+            where: {
+                city_id: order.city_id
+            }
+        })
+        const orders = await models.initModels(sequelize).order.findAll({
+            where: {
+                city_id: order.city_id
+            }
+        })
+        let mastersId = mInCity.map(r => r.master_id)
         mastersId = mastersId.map(
             (id) => {
-                const mastersOrders = orders.rows.filter(o => o.master_id === id)
+                const mastersOrders = orders.filter(o => o.master_id === id)
                 const todayMastersOrders = mastersOrders.map(mo => mo.order_time).filter(elem =>
                     elem.getDate() === order.order_time.getDate()
                     && elem.getMonth() === order.order_time.getMonth()
                     && elem.getFullYear() === order.order_time.getFullYear()
                 ).filter(
-                    m => {
-                        const hour = m.getHours()
+                    o => {
+                        const hour = o.getHours()
                         return (hour >= startHour && hour <= finishHour);
                     }
                 )
@@ -119,7 +128,6 @@ const getMasterByEmail = async (request, response) => {
         )
     } catch
         (e) {
-        console.log(e)
         response.json("Ошибка со стороны сервера")
     }
 }
