@@ -16,8 +16,8 @@ router
     .route('/offset/:page')
     .get(masterController.getMasters)
 router
-    .route('/email/:email')
-    .get(authMasterMiddleware, masterController.getMasterByEmail)
+    .route('/email')
+    .post(authMasterMiddleware, masterController.getMasterByEmail)
 
 router
     .route('/free')
