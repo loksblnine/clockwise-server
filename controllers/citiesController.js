@@ -3,7 +3,6 @@ const pool = require("../db");
 
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
-const {where} = require("sequelize");
 
 const createCity = async (request, response) => {
     try {
@@ -15,7 +14,7 @@ const createCity = async (request, response) => {
         )
     } catch
         (e) {
-        response.json(e.toString())
+        response.json("Ошибка со стороны сервера")
     }
 }
 const getAllCities = async (request, response) => {
@@ -26,49 +25,54 @@ const getAllCities = async (request, response) => {
         )
     } catch
         (e) {
-        response.json(e.toString())
+        response.json("Ошибка со стороны сервера")
     }
 }
 const getCityById = async (request, response) => {
     try {
-        const {id}= request.body
+        const {id} = request.params
         const cities = await models.initModels(sequelize).city.findAll({
-            where:{
+            where: {
                 city_id: id
             }
-    })
+        })
         return response.status(201).json(
             cities
         )
     } catch
         (e) {
-        response.json(e.toString())
+        response.json("Ошибка со стороны сервера")
     }
 }
 const updateCity = async (request, response) => {
-    const {id} = request.params;
-    const {city_name} = request.body
-    if (validation.isNameValid(city_name))
-        try {
-            await pool.query(
-                "UPDATE cities SET city_name = $2 WHERE city_id = ($1)",
-                [id, city_name])
-            response.json("Обновления города сохранены")
-        } catch (e) {
-            response.json("Возникли трудности")
-        }
-    else {
-        response.json("Введите данные корректно")
+    try {
+        const {id} = request.params
+        const {city_name} = request.body
+        await models.initModels(sequelize).city.update({
+                city_name
+            },
+            {
+                where:
+                    {city_id: id}
+            })
+        response.json("Изменения сохранены!")
+    } catch (err) {
+        response.json("Ошибка со стороны сервера")
     }
+
 }
 
 const deleteCity = async (request, response) => {
     try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM cities WHERE city_id = ($1)", [id])
+        const {id} = request.params
+        await models.initModels(sequelize).city.destroy({
+            where: {
+                city_id: id
+            }
+        })
         response.json("Город удален")
-    } catch (e) {
-        response.json(e.toString())
+    } catch (err) {
+        response.json("Ошибка со стороны сервера")
     }
 }
 

@@ -20,7 +20,7 @@ const sendMail =  function (req, res) {
     }
     sgMail
         .send(msg)
-        .then((response) => {
+        .then(() => {
             res.json({
                 "success": true
             })

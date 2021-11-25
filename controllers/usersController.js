@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const pool = require("../db");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 
@@ -16,14 +15,16 @@ const generateJwt = (id, email, role) => {
 
 const registerUser = async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const {email, password, role = 2} = req.body;
         if (!(email && password)) {
             return res.status(400).send("Проверьте логин и пароль");
         }
         const encryptedPassword = await bcrypt.hash(password, 5);
-        const newUser = await pool.query("INSERT INTO users (email, password, role) VALUES ($1, $2, $3) RETURNING *",
-            [email, encryptedPassword, "MASTER"]);
-        const token = generateJwt(newUser.user_id, email, "MASTER")
+        const newUser = await models.initModels(sequelize).user.create({
+            email, password: encryptedPassword, role
+        })
+        console.log(newUser)
+        const token = generateJwt(newUser.user_id, email, 2)
         return res.status(201).json({token});
     } catch (err) {
         res.status(500).json("Ошибка регистрации");
@@ -36,15 +37,14 @@ const loginUser = async (req, res) => {
         if (!(email && password)) {
             res.status(400).send("All input is required");
         }
-        const oldUser = await models.initModels(sequelize).user.findAll({
+        const oldUser = await models.initModels(sequelize).user.findOne({
             where: {
                 email
             }
         })
-        console.log(oldUser)
-        const passwordMatch = await bcrypt.compare(password, oldUser.rows[0].password)
+        const passwordMatch = await bcrypt.compare(password, oldUser.password)
         if (oldUser && passwordMatch) {
-            const token = generateJwt(oldUser.rows[0].user_id, oldUser.rows[0].email, oldUser.rows[0].role)
+            const token = generateJwt(oldUser.user_id, oldUser.email, oldUser.role)
             return res.status(200).json({token});
         }
         res.status(400).send("Invalid Credentials");
