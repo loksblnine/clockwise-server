@@ -23,11 +23,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     ranking: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
-      validate: {
-        gt: 1,
-        lt: 5
-      }
+      allowNull: false
     }
   }, {
     sequelize,
