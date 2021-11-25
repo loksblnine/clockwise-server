@@ -15,7 +15,9 @@ const createDependency = async (request, response) => {
 }
 const getAllDeps = async (request, response) => {
     try {
-        const deps = await models.initModels(sequelize).connect_city_master.findAll()
+        const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            attributes:['city_id', 'master_id']
+        })
         return response.status(201).json(
             deps
         )
