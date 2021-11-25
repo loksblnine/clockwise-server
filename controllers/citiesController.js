@@ -1,6 +1,5 @@
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
-
 const createCity = async (request, response) => {
     try {
         const city = await models.initModels(sequelize).city.create(
@@ -57,7 +56,6 @@ const updateCity = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-
 const deleteCity = async (request, response) => {
     try {
         const {id} = request.params
@@ -71,7 +69,6 @@ const deleteCity = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-
 module.exports = {
     createCity,
     getAllCities,

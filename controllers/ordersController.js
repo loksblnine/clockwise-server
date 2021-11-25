@@ -1,4 +1,3 @@
-const pool = require("../db");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 const createOrder = async (request, response) => {
@@ -15,66 +14,98 @@ const createOrder = async (request, response) => {
     }
 }
 const updateOrder = async (request, response) => {
-    const {id} = request.params;
-    const {customer_id, master_id, city_id, work_id, order_time} = request.body
     try {
-        await pool.query(
-            "UPDATE orders SET customer_id = $2, master_id = $3, city_id = $4, work_id = $5, order_time = $6 WHERE order_id = ($1)",
-            [id, customer_id, master_id, city_id, work_id, order_time])
-        response.json("Данные заказа были обновлены")
-    } catch (e) {
-        response.json(e.toString())
+        const {id} = request.params
+        const {customer_id, master_id, city_id, work_id, order_time} = request.body
+        await models.initModels(sequelize).order.update({
+                customer_id, master_id, city_id, work_id, order_time
+            },
+            {
+                where:
+                    {order_id: id}
+            })
+        response.json("Изменения сохранены!")
+    } catch (err) {
+        response.json("Ошибка со стороны сервера")
     }
-
 }
 const deleteOrder = async (request, response) => {
     try {
-        const {id} = request.params;
-        await pool.query("DELETE FROM orders WHERE order_id = ($1)", [id])
+        const {id} = request.params
+        await models.initModels(sequelize).order.destroy({
+            where: {
+                order_id: id
+            }
+        })
         response.json("Заказ удален")
-    } catch (e) {
-        response.json(e.toString())
+    } catch (err) {
+        response.json("Ошибка со стороны сервера")
     }
 }
 const getOrders = async (request, response) => {
     try {
-        const itemsPerPage = 5
-        const page = request.params.page
-        const offset = itemsPerPage * page
-        const orders = await pool.query(`SELECT order_id, orders.master_id, master_name, orders.city_id, city_name, orders.customer_id, customer_name, order_time, work_id FROM orders 
-            INNER JOIN masters on orders.master_id = masters.master_id
-            INNER JOIN customers on orders.customer_id = customers.customer_id
-            INNER JOIN cities on orders.city_id = cities.city_id
-            ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)`, [itemsPerPage, offset])
-        response.json(orders.rows)
-    } catch (e) {
-        response.json(e.toString())
+        const {page} = request.params
+        const offset = 10 * page
+        const orders = await models.initModels(sequelize).order.findAndCountAll({
+            include: [{
+                model: models.initModels(sequelize).master,
+                as: "master"
+            }, {
+                model: models.initModels(sequelize).city,
+                as: 'city',
+            }, {
+                model: models.initModels(sequelize).customer,
+                as: 'customer',
+            },
+            ],
+            offset,
+            limit: 10
+        })
+        response.status(201).json(orders.rows)
+    } catch
+        (e) {
+        response.json("Ошибка со стороны сервера")
     }
 }
 const getOrderById = async (request, response) => {
     try {
-        const {id} = request.params;
-        const order = await pool.query("SELECT * FROM orders WHERE order_id = ($1)", [id])
-        response.json(order.rows[0])
-    } catch (e) {
-        response.json(e.toString())
+        const {id} = request.params
+        const order = await models.initModels(sequelize).order.findAll({
+            where: {
+                order_id: id
+            }
+        })
+        return response.status(201).json(
+            order
+        )
+    } catch
+        (e) {
+        response.json("Ошибка со стороны сервера")
     }
 }
 const getMasterOrders = async (request, response) => {
     try {
-        const itemsPerPage = 5
-        const page = request.params.page
         const master_id = request.params.id
-        const offset = itemsPerPage * page
-        const orders = await pool.query(`SELECT order_id, orders.master_id, master_name, orders.city_id, city_name, orders.customer_id, customer_name, order_time, work_id FROM orders 
-            INNER JOIN masters on orders.master_id = masters.master_id
-            INNER JOIN customers on orders.customer_id = customers.customer_id
-            INNER JOIN cities on orders.city_id = cities.city_id
-            WHERE orders.master_id = ($3)
-            ORDER BY order_time DESC, order_id LIMIT ($1) OFFSET ($2)`, [itemsPerPage, offset, master_id])
-        response.json(orders.rows)
+        const {page} = request.params
+        const offset = 10 * page
+        const orders = await models.initModels(sequelize).order.findAndCountAll({
+            include: [{
+                model: models.initModels(sequelize).city,
+                as: 'city',
+            }, {
+                model: models.initModels(sequelize).customer,
+                as: 'customer',
+            },
+            ],
+            where: {
+                master_id
+            },
+            offset,
+            limit: 10
+        })
+        response.status(201).json(orders.rows)
     } catch (e) {
-        response.json(e.toString())
+        response.json("Ошибка со стороны сервера")
     }
 }
 
