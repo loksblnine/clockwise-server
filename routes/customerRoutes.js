@@ -14,7 +14,7 @@ router
     .get(authMiddleware, customerController.getCustomerById)
     .put(authMiddleware, customerController.updateCustomer)
     .delete(authMiddleware, customerController.deleteCustomer)
-router.route('/email/:email')
-    .get(customerController.getCustomerByEmail)
+router.route('/email')
+    .post(customerController.getCustomerByEmail)
 
 module.exports = router

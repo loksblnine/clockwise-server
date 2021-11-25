@@ -1,6 +1,3 @@
-const validation = require("../validation/validation");
-const pool = require("../db");
-
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 
@@ -59,7 +56,6 @@ const updateCity = async (request, response) => {
     } catch (err) {
         response.json("Ошибка со стороны сервера")
     }
-
 }
 
 const deleteCity = async (request, response) => {
