@@ -1,4 +1,3 @@
-const validation = require("../validation/validation");
 const pool = require("../db");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
@@ -105,7 +104,6 @@ const deleteMaster = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-
 const getMasterByEmail = async (request, response) => {
     try {
         const master = await models.initModels(sequelize).master.findCreateFind({
@@ -125,7 +123,6 @@ const getMasterByEmail = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-
 module.exports = {
     createMaster,
     getMasters,

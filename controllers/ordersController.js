@@ -25,6 +25,7 @@ const updateOrder = async (request, response) => {
     } catch (e) {
         response.json(e.toString())
     }
+
 }
 const deleteOrder = async (request, response) => {
     try {
