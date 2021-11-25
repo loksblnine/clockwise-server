@@ -42,7 +42,6 @@ const getMasterById = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-//TODO переписать эту срань нерабочую ыыыыыы)
 const getFreeMasters = async (request, response) => {
     try {
         console.log(request.body)
@@ -50,7 +49,6 @@ const getFreeMasters = async (request, response) => {
         order.order_time = new Date(order.order_time)
         const startHour = order.order_time.getHours()
         const finishHour = Number(order.work_id) + startHour
-
         const mInCity = await models.initModels(sequelize).connect_city_master.findAll({
             attributes: ['city_id', 'master_id'],
             where: {
