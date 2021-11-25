@@ -25,7 +25,7 @@ function models(sequelize) {
     order.belongsTo(customer, {as: "customer", foreignKey: "customer_id"});
     customer.hasMany(order, {as: "orders", foreignKey: "customer_id"});
     connect_city_master.belongsTo(master, {as: "master", foreignKey: "master_id"});
-    master.hasMany(connect_city_master, {as: "connect_city_masters", foreignKey: "master_id"});
+    master.hasMany(connect_city_master, {as: "connect_city_master", foreignKey: "master_id"});
     order.belongsTo(master, {as: "master", foreignKey: "master_id"});
     master.hasMany(order, {as: "orders", foreignKey: "master_id"});
     order.belongsTo(workType, {as: "work", foreignKey: "work_id"});

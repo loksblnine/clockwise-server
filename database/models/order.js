@@ -9,7 +9,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     customer_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'customer',
         key: 'customer_id'
@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     master_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'master',
         key: 'master_id'
@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     city_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'city',
         key: 'city_id'
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     work_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'workType',
         key: 'work_id'
@@ -41,7 +41,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     order_time: {
       type: DataTypes.DATE,
-      allowNull: true
+      allowNull: false
     },
     isDone: {
       type: DataTypes.BOOLEAN,
