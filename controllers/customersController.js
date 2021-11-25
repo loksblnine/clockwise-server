@@ -16,9 +16,8 @@ const createCustomer = async (request, response) => {
 }
 const getCustomers = async (request, response) => {
     try {
-        const itemsPerPage = 10
         const {page} = request.params
-        const offset = itemsPerPage * page
+        const offset = 10 * page
         const customers = await models.initModels(sequelize).customer.findAndCountAll({
             offset,
             limit: 10
