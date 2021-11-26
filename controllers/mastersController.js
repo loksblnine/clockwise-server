@@ -1,6 +1,5 @@
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
-const {Op} = require("sequelize");
 const createMaster = async (request, response) => {
     try {
         const master = await models.initModels(sequelize).master.create(
@@ -11,7 +10,7 @@ const createMaster = async (request, response) => {
         )
     } catch
         (e) {
-        response.json(e.toString())
+        response.json("Ошибка валидации")
     }
 }
 const getMasters = async (request, response) => {
@@ -83,7 +82,7 @@ const updateMaster = async (request, response) => {
             })
         response.status(201).json("Изменения сохранены!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.json("Ошибка валидации")
     }
 }
 const deleteMaster = async (request, response) => {
