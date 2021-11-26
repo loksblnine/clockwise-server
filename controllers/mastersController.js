@@ -1,5 +1,6 @@
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
+const {Op} = require("sequelize");
 const createMaster = async (request, response) => {
     try {
         const master = await models.initModels(sequelize).master.create(
@@ -44,17 +45,14 @@ const getMasterById = async (request, response) => {
 }
 const getFreeMasters = async (request, response) => {
     try {
-        // const order = request.body
-        // order.order_time = new Date(order.order_time)
-        // const startHour = order.order_time.getHours()
-        // const finishHour = Number(order.work_id) + startHour
-        // const endDate = new Date(order.order_time).setHours(finishHour)
-        const {id} = request.params
+        const {city_id, order_time, work_id} = request.body
+        const startDate = new Date(order_time)
+        const startHour = startDate.getHours()
+        const finishHour = Number(work_id) + startHour
+        const endDate = new Date(order_time).setHours(finishHour)
         let deps = (await models.initModels(sequelize).connect_city_master.findAll({
             attributes: ['city_id', 'master_id'],
-            where: {
-                city_id: id
-            },
+            where: {city_id: city_id},
             include: [{
                 model: models.initModels(sequelize).master,
                 as: "master",
@@ -63,7 +61,21 @@ const getFreeMasters = async (request, response) => {
             ],
             raw: true
         }))
-        response.status(201).json(deps)
+        const masters = []
+        for (const dep of deps) {
+            const orders = await models.initModels(sequelize).order.findAll({
+                where: {
+                    master_id: dep.master_id,
+                    "order_time": {
+                        [Op.between]: [startDate, endDate]
+                    }
+                },
+                raw: true
+            })
+            if (!orders.length)
+                masters.push(dep)
+        }
+        response.status(201).json(masters)
     } catch (e) {
         console.log(e)
         response.json("Ошибка со стороны сервера")

@@ -5,8 +5,8 @@ const authMasterMiddleware = require('../middleware/authMasterMiddleware')
 const masterController = require('../controllers/mastersController')
 
 router
-    .route('/free/:id')
-    .get(masterController.getFreeMasters)
+    .route('/free')
+    .post(masterController.getFreeMasters)
 router
     .route("/")
     .post(authMiddleware, masterController.createMaster)
