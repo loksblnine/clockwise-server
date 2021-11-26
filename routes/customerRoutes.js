@@ -3,8 +3,6 @@ let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const customerController = require('../controllers/customersController')
 
-router.route('/email')
-    .post(customerController.getCustomerByEmail)
 router
     .route('/')
     .post(customerController.createCustomer)

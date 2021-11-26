@@ -2,8 +2,17 @@ const models = require("../database/models");
 const sequelize = require("../database/config/config");
 const createOrder = async (request, response) => {
     try {
+        const customer = await models.initModels(sequelize).customer.findCreateFind({
+                where: {customer_email: request.body.customer_email},
+                defaults: {
+                    customer_name: request.body.customer_name,
+                    customer_email: request.body.customer_email
+                },
+                raw: true
+            }
+        )
         const order = await models.initModels(sequelize).order.create(
-            request.body
+            {...request.body, customer_id: customer[0].customer_id}
         )
         return response.status(201).json(
             order

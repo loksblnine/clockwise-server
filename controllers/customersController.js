@@ -72,30 +72,11 @@ const deleteCustomer = async (request, response) => {
         response.json("Ошибка со стороны сервера")
     }
 }
-const getCustomerByEmail = async (request, response) => {
-    try {
-        const customer = await models.initModels(sequelize).customer.findCreateFind({
-                where: {customer_email: request.body.customer_email},
-                defaults: {
-                    customer_name: request.body.customer_name,
-                    customer_email: request.body.customer_email
-                }
-            }
-        )
-        return response.status(201).json(
-            customer[0]
-        )
-    } catch
-        (e) {
-        response.json("Ошибка со стороны сервера")
-    }
-}
 
 module.exports = {
     createCustomer,
     getCustomers,
     getCustomerById,
     updateCustomer,
-    deleteCustomer,
-    getCustomerByEmail
+    deleteCustomer
 }
