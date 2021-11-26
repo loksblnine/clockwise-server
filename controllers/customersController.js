@@ -11,7 +11,7 @@ const createCustomer = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getCustomers = async (request, response) => {
@@ -24,7 +24,7 @@ const getCustomers = async (request, response) => {
         })
         response.status(201).json(customers.rows)
     } catch (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getCustomerById = async (request, response) => {
@@ -40,7 +40,7 @@ const getCustomerById = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const updateCustomer = async (request, response) => {
@@ -54,9 +54,9 @@ const updateCustomer = async (request, response) => {
                 where:
                     {customer_id: id}
             })
-        response.status(201).json("Изменения сохранены!")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const deleteCustomer = async (request, response) => {
@@ -67,9 +67,9 @@ const deleteCustomer = async (request, response) => {
                 customer_id: id
             }
         })
-        response.status(201).json("Покупатель удален")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 

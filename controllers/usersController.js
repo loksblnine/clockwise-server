@@ -13,11 +13,11 @@ const generateJwt = (id, email, role) => {
     );
 }
 
-const registerUser = async (req, res) => {
+const registerUser = async (request, response) => {
     try {
-        const {email, password, role = 2} = req.body;
+        const {email, password, role = 2} = request.body;
         if (!(email && password)) {
-            return res.status(400).send("Проверьте логин и пароль");
+            return response.status(400).send("Invalid credentials");
         }
         const encryptedPassword = await bcrypt.hash(password, 5);
         const newUser = await models.initModels(sequelize).user.create({
@@ -25,17 +25,17 @@ const registerUser = async (req, res) => {
         })
         console.log(newUser)
         const token = generateJwt(newUser.user_id, email, 2)
-        return res.status(201).json({token});
+        return response.status(201).json({token});
     } catch (err) {
-        res.status(500).json("Ошибка регистрации");
+        response.status(500).json("Something went wrong");
     }
 }
 
-const loginUser = async (req, res) => {
+const loginUser = async (request, response) => {
     try {
-        const {email, password} = req.body;
+        const {email, password} = request.body;
         if (!(email && password)) {
-            res.status(400).send("All input is required");
+            response.status(400).send("All input is required");
         }
         const oldUser = await models.initModels(sequelize).user.findOne({
             where: {
@@ -45,17 +45,17 @@ const loginUser = async (req, res) => {
         const passwordMatch = await bcrypt.compare(password, oldUser.password)
         if (oldUser && passwordMatch) {
             const token = generateJwt(oldUser.user_id, oldUser.email, oldUser.role)
-            return res.status(200).json({token});
+            return response.status(200).json({token});
         }
-        res.status(400).send("Invalid Credentials");
+        response.status(400).send("Invalid Credentials");
     } catch (err) {
-        res.json(err);
+        response.status(500).send("Something went wrong");
     }
 }
 
-const isTokenValid = (req, res) => {
-    const token = generateJwt(req.user.id, req.user.email, req.user.role)
-    res.status(200).json({token});
+const isTokenValid = (request, response) => {
+    const token = generateJwt(request.user.id, request.user.email, request.user.role)
+    response.status(200).json({token});
 }
 
 module.exports = {

@@ -23,7 +23,7 @@ const getAllDeps = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getMasterCities = async (request, response) => {
@@ -40,7 +40,7 @@ const getMasterCities = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getCityMasters = async (request, response) => {
@@ -57,7 +57,7 @@ const getCityMasters = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const deleteDependency = async (request, response) => {
@@ -68,9 +68,9 @@ const deleteDependency = async (request, response) => {
                 city_id, master_id
             }
         })
-        response.json("Город у мастера удален")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 module.exports = {

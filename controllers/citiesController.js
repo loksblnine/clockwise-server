@@ -10,7 +10,7 @@ const createCity = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getAllCities = async (request, response) => {
@@ -21,7 +21,7 @@ const getAllCities = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getCityById = async (request, response) => {
@@ -37,7 +37,7 @@ const getCityById = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const updateCity = async (request, response) => {
@@ -51,9 +51,9 @@ const updateCity = async (request, response) => {
                 where:
                     {city_id: id}
             })
-        response.json("Изменения сохранены!")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const deleteCity = async (request, response) => {
@@ -64,9 +64,9 @@ const deleteCity = async (request, response) => {
                 city_id: id
             }
         })
-        response.json("Город удален")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 module.exports = {

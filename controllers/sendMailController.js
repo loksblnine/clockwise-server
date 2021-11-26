@@ -9,24 +9,22 @@ const testRoute = async (request, response) => {
     }
 }
 
-const sendMail =  function (req, res) {
+const sendMail =  function (request, response) {
     const msg = {
-        to: req.body.email,
+        to: request.body.email,
         from: process.env.USER,
         template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
         dynamic_template_data: {
-            message: req.body.message
+            message: request.body.message
         }
     }
     sgMail
         .send(msg)
         .then(() => {
-            res.json({
-                "success": true
-            })
+            response.json("Success!")
         })
-        .catch((error) => {
-            console.error(error)
+        .catch((e) => {
+            response.status(500).json("Something went wrong")
         })
 }
 

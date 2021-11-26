@@ -77,8 +77,7 @@ const getFreeMasters = async (request, response) => {
         }
         response.status(201).json(masters)
     } catch (e) {
-        console.log(e)
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const updateMaster = async (request, response) => {
@@ -92,9 +91,9 @@ const updateMaster = async (request, response) => {
                 where:
                     {master_id: id}
             })
-        response.status(201).json("Изменения сохранены!")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка валидации")
+        response.status(500).json("Something went wrong")
     }
 }
 const deleteMaster = async (request, response) => {
@@ -105,9 +104,9 @@ const deleteMaster = async (request, response) => {
                 master_id: id
             }
         })
-        response.status(201).json("Мастер удален")
+        response.status(201).json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getMasterByEmail = async (request, response) => {
@@ -125,7 +124,7 @@ const getMasterByEmail = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 module.exports = {

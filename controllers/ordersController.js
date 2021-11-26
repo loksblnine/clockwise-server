@@ -19,7 +19,7 @@ const createOrder = async (request, response) => {
         )
     } catch
         (e) {
-        response.json(e.toString())
+        response.status(500).json("Something went wrong")
     }
 }
 const updateOrder = async (request, response) => {
@@ -33,9 +33,9 @@ const updateOrder = async (request, response) => {
                 where:
                     {order_id: id}
             })
-        response.json("Изменения сохранены!")
+        response.json("Success!")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const deleteOrder = async (request, response) => {
@@ -46,9 +46,9 @@ const deleteOrder = async (request, response) => {
                 order_id: id
             }
         })
-        response.json("Заказ удален")
+        response.json("Success")
     } catch (err) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getOrders = async (request, response) => {
@@ -81,7 +81,7 @@ const getOrders = async (request, response) => {
         response.status(201).json(orders.rows)
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getOrderById = async (request, response) => {
@@ -97,7 +97,7 @@ const getOrderById = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getMasterOrders = async (request, response) => {
@@ -128,7 +128,7 @@ const getMasterOrders = async (request, response) => {
         })
         response.status(201).json(orders.rows)
     } catch (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 
