@@ -30,6 +30,7 @@ const getMasterCities = async (request, response) => {
     try {
         const {id} = request.params;
         const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            attributes:['city_id', 'master_id'],
             where: {
                 master_id: id
             }
@@ -46,6 +47,7 @@ const getCityMasters = async (request, response) => {
     try {
         const {id} = request.params;
         const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            attributes:['city_id', 'master_id'],
             where: {
                 city_id: id
             }

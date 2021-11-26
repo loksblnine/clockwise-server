@@ -45,70 +45,26 @@ const getMasterById = async (request, response) => {
 }
 const getFreeMasters = async (request, response) => {
     try {
-        // let mInCity = await models.initModels(sequelize).connect_city_master.findAll({
-        //     attributes: ['city_id', 'master_id'],
-        //     where: {
-        //         city_id: order.city_id
-        //     }
-        // })
-        // const orders = await models.initModels(sequelize).order.findAll({
-        //     where: {
-        //         city_id: order.city_id
-        //     }
-        // })
-        // mInCity.map(
-        //     (id) => {
-        //         const mastersOrders = orders.filter(o => o.master_id === id)
-        //         const todayMastersOrders = mastersOrders.map(mo => mo.order_time).filter(elem =>
-        //             elem.getDate() === order.order_time.getDate()
-        //             && elem.getMonth() === order.order_time.getMonth()
-        //             && elem.getFullYear() === order.order_time.getFullYear()
-        //         ).filter(
-        //             o => {
-        //                 const hour = o.getHours()
-        //                 return (hour >= startHour && hour <= finishHour);
-        //             }
-        //         )
-        //         return todayMastersOrders.length < 0 ? id : null
-        //     }
-        // )
-        // response.json(mInCity.map((elem) => {
-        //     elem.master_id
-        // }))
-        const order = request.body
-        order.order_time = new Date(order.order_time)
-        const startHour = order.order_time.getHours()
-        const finishHour = Number(order.work_id) + startHour
-        const endDate = new Date(order.order_time).setHours(finishHour)
-
-        const mastersInCity = await models.initModels(sequelize).connect_city_master.findAll({
+        // const order = request.body
+        // order.order_time = new Date(order.order_time)
+        // const startHour = order.order_time.getHours()
+        // const finishHour = Number(order.work_id) + startHour
+        // const endDate = new Date(order.order_time).setHours(finishHour)
+        const {id} = request.params
+        let deps = (await models.initModels(sequelize).connect_city_master.findAll({
             attributes: ['city_id', 'master_id'],
             where: {
-                city_id: order.city_id
-            }
-        })
-        let idsAvailable = []
-        mastersInCity.map(async (master) => {
-            const masterOrdersInDate = await models.initModels(sequelize).order.findOne({
-                where: {
-                    "order_time": {
-                        [Op.notBetween]: [order.order_time, endDate]
-                    },
-                    master_id: master.master_id
-                }
-            })
-            console.log(mastersInCity)
-            if (masterOrdersInDate.length === 0) {
-                idsAvailable.push(master.master_id)
-            }
-        })
-        let masters = []
-        idsAvailable.map(async (id) => {
-            const a = await models.initModels(sequelize).master.findOne({where: {master_id: id}})
-            console.log(a)
-            masters.push(a)
-        })
-        response.json(masters)
+                city_id: id
+            },
+            include: [{
+                model: models.initModels(sequelize).master,
+                as: "master",
+                attributes: ['master_name', 'ranking']
+            },
+            ],
+            raw: true
+        }))
+        response.status(201).json(deps)
     } catch (e) {
         console.log(e)
         response.json("Ошибка со стороны сервера")
