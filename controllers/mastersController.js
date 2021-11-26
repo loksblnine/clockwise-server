@@ -45,11 +45,6 @@ const getMasterById = async (request, response) => {
 }
 const getFreeMasters = async (request, response) => {
     try {
-        // const order = request.body
-        // order.order_time = new Date(order.order_time)
-        // const startHour = order.order_time.getHours()
-        // const finishHour = Number(order.work_id) + startHour
-        // const endDate = new Date(order.order_time).setHours(finishHour)
         // let mInCity = await models.initModels(sequelize).connect_city_master.findAll({
         //     attributes: ['city_id', 'master_id'],
         //     where: {
@@ -80,7 +75,39 @@ const getFreeMasters = async (request, response) => {
         // response.json(mInCity.map((elem) => {
         //     elem.master_id
         // }))
-        const masters = await models.initModels(sequelize).master.findAll()
+        const order = request.body
+        order.order_time = new Date(order.order_time)
+        const startHour = order.order_time.getHours()
+        const finishHour = Number(order.work_id) + startHour
+        const endDate = new Date(order.order_time).setHours(finishHour)
+
+        const mastersInCity = await models.initModels(sequelize).connect_city_master.findAll({
+            attributes: ['city_id', 'master_id'],
+            where: {
+                city_id: order.city_id
+            }
+        })
+        let idsAvailable = []
+        mastersInCity.map(async (master) => {
+            const masterOrdersInDate = await models.initModels(sequelize).order.findOne({
+                where: {
+                    "order_time": {
+                        [Op.notBetween]: [order.order_time, endDate]
+                    },
+                    master_id: master.master_id
+                }
+            })
+            console.log(mastersInCity)
+            if (masterOrdersInDate.length === 0) {
+                idsAvailable.push(master.master_id)
+            }
+        })
+        let masters = []
+        idsAvailable.map(async (id) => {
+            const a = await models.initModels(sequelize).master.findOne({where: {master_id: id}})
+            console.log(a)
+            masters.push(a)
+        })
         response.json(masters)
     } catch (e) {
         console.log(e)
