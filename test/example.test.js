@@ -56,30 +56,30 @@ describe('Test validation', () => {
             expect(result).to.be.false;
         });
     })
-    // describe('Test validation.isRankingValid()', () => {
-    //     it('should return false', () => {
-    //         const result = validation.isRankingValid("0")
-    //         expect(result).to.be.false;
-    //     });
-    //     it('should return false', () => {
-    //         const result = validation.isRankingValid("8")
-    //         expect(result).to.be.false;
-    //     });
-    //     it('should return false', () => {
-    //         const result = validation.isRankingValid("-4")
-    //         expect(result).to.be.false;
-    //     });
-    //     it('should return false', () => {
-    //         const result = validation.isRankingValid("3,5")
-    //         expect(result).to.be.false;
-    //     });
-    //     it('should return true', () => {
-    //         const result = validation.isRankingValid("3.5")
-    //         expect(result).to.be.true;
-    //     });
-    //     it('should return true', () => {
-    //         const result = validation.isRankingValid(4.5)
-    //         expect(result).to.be.true;
-    //     });
-    // })
+    describe('Test validation.isRankingValid()', () => {
+        it('should return false', () => {
+            const result = validation.isRankingValid("0")
+            expect(result).to.be.false;
+        });
+        it('should return false', () => {
+            const result = validation.isRankingValid("8")
+            expect(result).to.be.false;
+        });
+        it('should return false', () => {
+            const result = validation.isRankingValid("-4")
+            expect(result).to.be.false;
+        });
+        it('should return false', () => {
+            const result = validation.isRankingValid("3,5")
+            expect(result).to.be.false;
+        });
+        it('should return true', () => {
+            const result = validation.isRankingValid("3.5")
+            expect(result).to.be.true;
+        });
+        it('should return true', () => {
+            const result = validation.isRankingValid(4.5)
+            expect(result).to.be.true;
+        });
+    })
 });
