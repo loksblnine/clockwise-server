@@ -5,8 +5,8 @@ const citiesController = require('../controllers/citiesController')
 
 router
     .route("/")
-    .post(/*authMiddleware,*/ citiesController.createCity)
     .get(citiesController.getAllCities)
+    .post(authMiddleware, citiesController.createCity)
 router
     .route("/:id")
     .get(authMiddleware, citiesController.getCityById)
