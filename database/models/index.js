@@ -18,6 +18,7 @@ function models(sequelize) {
     const user = _user(sequelize, DataTypes);
     const workType = _workType(sequelize, DataTypes);
 
+    connect_city_master.removeAttribute('id')
     connect_city_master.belongsTo(city, {as: "city", foreignKey: "city_id"});
     city.hasMany(connect_city_master, {as: "connect_city_masters", foreignKey: "city_id"});
     order.belongsTo(city, {as: "city", foreignKey: "city_id"});
