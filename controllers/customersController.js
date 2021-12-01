@@ -51,10 +51,19 @@ const updateCustomer = async (request, response) => {
                 customer_name, customer_email
             },
             {
-                where:
-                    {customer_id: id}
-            })
-        response.status(201).json("Success!")
+                where: {
+                    customer_id: id
+                }
+            }
+        )
+        const customer = await models.initModels(sequelize).customer.findOne({
+            where: {
+                customer_id: id
+            }
+        })
+        return response.status(201).json(
+            customer
+        )
     } catch (err) {
         response.status(500).json("Something went wrong")
     }

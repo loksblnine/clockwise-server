@@ -33,7 +33,29 @@ const updateOrder = async (request, response) => {
                 where:
                     {order_id: id}
             })
-        response.json("Success!")
+        const order = await models.initModels(sequelize).order.findOne({
+            where: {
+                order_id: id
+            },
+            attributes: ['order_id', 'order_time', 'master_id', 'city_id', 'customer_id', 'isDone', 'work_id'],
+            include: [{
+                model: models.initModels(sequelize).master,
+                as: "master",
+                attributes: ['master_name']
+            }, {
+                model: models.initModels(sequelize).city,
+                as: 'city',
+                attributes: ['city_name']
+            }, {
+                model: models.initModels(sequelize).customer,
+                as: 'customer',
+                attributes: ['customer_name']
+            },
+            ]
+        })
+        return response.status(201).json(
+            order
+        )
     } catch (err) {
         response.status(500).json("Something went wrong")
     }
@@ -87,10 +109,25 @@ const getOrders = async (request, response) => {
 const getOrderById = async (request, response) => {
     try {
         const {id} = request.params
-        const order = await models.initModels(sequelize).order.findAll({
+        const order = await models.initModels(sequelize).order.findOne({
             where: {
                 order_id: id
-            }
+            },
+            attributes: ['order_id', 'order_time', 'master_id', 'city_id', 'customer_id', 'isDone', 'work_id'],
+            include: [{
+                model: models.initModels(sequelize).master,
+                as: "master",
+                attributes: ['master_name']
+            }, {
+                model: models.initModels(sequelize).city,
+                as: 'city',
+                attributes: ['city_name']
+            }, {
+                model: models.initModels(sequelize).customer,
+                as: 'customer',
+                attributes: ['customer_name']
+            },
+            ],
         })
         return response.status(201).json(
             order

@@ -91,7 +91,14 @@ const updateMaster = async (request, response) => {
                 where:
                     {master_id: id}
             })
-        response.status(201).json("Success!")
+        const master = await models.initModels(sequelize).master.findOne({
+            where: {
+                master_id: id
+            }
+        })
+        return response.status(201).json(
+            master
+        )
     } catch (err) {
         response.status(500).json("Something went wrong")
     }

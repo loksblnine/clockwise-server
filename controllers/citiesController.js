@@ -27,13 +27,13 @@ const getAllCities = async (request, response) => {
 const getCityById = async (request, response) => {
     try {
         const {id} = request.params
-        const cities = await models.initModels(sequelize).city.findAll({
+        const city = await models.initModels(sequelize).city.findAll({
             where: {
                 city_id: id
             }
         })
         return response.status(201).json(
-            cities
+            city
         )
     } catch
         (e) {
@@ -51,7 +51,14 @@ const updateCity = async (request, response) => {
                 where:
                     {city_id: id}
             })
-        response.status(201).json("Success!")
+        const city = await models.initModels(sequelize).city.findAll({
+            where: {
+                city_id: id
+            }
+        })
+        return response.status(201).json(
+            city
+        )
     } catch (err) {
         response.status(500).json("Something went wrong")
     }
