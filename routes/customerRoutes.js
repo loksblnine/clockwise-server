@@ -8,7 +8,7 @@ router
     .post(customerController.createCustomer)
 router
     .route('/offset/:page')
-    .get(customerController.getCustomers)
+    .get(authMiddleware, customerController.getCustomers)
 router
     .route('/:id')
     .get(authMiddleware, customerController.getCustomerById)

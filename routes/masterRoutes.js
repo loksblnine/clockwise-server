@@ -17,7 +17,7 @@ router
     .delete(authMiddleware, masterController.deleteMaster)
 router
     .route('/offset/:page')
-    .get(masterController.getMasters)
+    .get(authMasterMiddleware, asterController.getMasters)
 router
     .route('/email')
     .post(authMasterMiddleware, masterController.getMasterByEmail)
