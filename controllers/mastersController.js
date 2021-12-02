@@ -18,11 +18,21 @@ const getMasters = async (request, response) => {
     try {
         const {page} = request.params
         const offset = 10 * page
-        const masters = await models.initModels(sequelize).master.findAndCountAll({
+        const masters = await models.initModels(sequelize).master.findAll({
             offset,
-            limit: 10
+            limit: 10,
+            raw: true
         })
-        response.status(201).json(masters.rows)
+        const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            raw: true
+        })
+        console.log(deps)
+        response.status(201).json(masters.map((master)=>{
+            return {
+                ...master,
+                deps: deps.filter(d=>d.master_id===master.master_id).map(d=>d.city_id)
+            }
+        }))
     } catch (e) {
         response.json("Ошибка со стороны сервера")
     }

@@ -31,7 +31,6 @@ function models(sequelize) {
     master.hasMany(order, {as: "orders", foreignKey: "master_id"});
     order.belongsTo(workType, {as: "work", foreignKey: "work_id"});
     workType.hasMany(order, {as: "orders", foreignKey: "work_id"});
-
     return {
         city,
         connect_city_master,
