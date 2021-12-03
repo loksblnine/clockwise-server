@@ -9,18 +9,14 @@ router
     .post(masterController.getFreeMasters)
 router
     .route("/")
-    .post(authMiddleware, masterController.createMaster)
+    .post(authMasterMiddleware, masterController.createMaster)
 router
     .route("/:id")
     .get(authMiddleware, masterController.getMasterById)
     .put(authMiddleware, masterController.updateMaster)
     .delete(authMiddleware, masterController.deleteMaster)
-
 router
     .route('/offset/:page')
     .get(authMasterMiddleware, masterController.getMasters)
-router
-    .route('/email')
-    .post(authMasterMiddleware, masterController.getMasterByEmail)
 
 module.exports = router
