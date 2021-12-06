@@ -9,7 +9,7 @@ const testRoute = async (request, response) => {
     }
 }
 
-const sendMail =  function (request, response) {
+const sendConfirmOrderMail =  function (request, response) {
     const msg = {
         to: request.body.email,
         from: process.env.USER,
@@ -27,8 +27,27 @@ const sendMail =  function (request, response) {
             response.status(500).json("Something went wrong")
         })
 }
+const sendConfirmRegistrationMail =  function (request, response) {
+    const msg = {
+        to: request.body.email,
+        from: process.env.USER,
+        template_id: process.env.SG_TEMPLATE_ID_CONFIRM_REGISTRATION,
+        dynamic_template_data: {
+            link: "localhost:5000/"
+        }
+    }
+    sgMail
+        .send(msg)
+        .then(() => {
+            response.json("Success!")
+        })
+        .catch((e) => {
+            response.status(500).json("Something went wrong")
+        })
+}
 
 module.exports = {
-    sendMail,
+    sendConfirmRegistrationMail,
+    sendConfirmOrderMail,
     testRoute
 }
