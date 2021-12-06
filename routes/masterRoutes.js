@@ -12,9 +12,12 @@ router
     .post(authMasterMiddleware, masterController.createMaster)
 router
     .route("/:id")
-    .get(authMiddleware, masterController.getMasterById)
-    .put(authMiddleware, masterController.updateMaster)
+    .get(authMasterMiddleware, masterController.getMasterById)
+    .put(authMasterMiddleware, masterController.updateMaster)
     .delete(authMiddleware, masterController.deleteMaster)
+router
+    .route("/email/:email")
+    .get(authMasterMiddleware, masterController.getMasterByEmail)
 router
     .route('/offset/:page')
     .get(authMasterMiddleware, masterController.getMasters)

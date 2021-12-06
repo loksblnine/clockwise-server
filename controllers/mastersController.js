@@ -26,10 +26,10 @@ const getMasters = async (request, response) => {
         const deps = await models.initModels(sequelize).connect_city_master.findAll({
             raw: true
         })
-        response.status(201).json(masters.map((master)=>{
+        response.status(201).json(masters.map((master) => {
             return {
                 ...master,
-                deps: deps.filter(d=>d.master_id===master.master_id).map(d=>d.city_id)
+                deps: deps.filter(d => d.master_id === master.master_id).map(d => d.city_id)
             }
         }))
     } catch (e) {
@@ -128,11 +128,11 @@ const deleteMaster = async (request, response) => {
 const getMasterByEmail = async (request, response) => {
     try {
         const master = await models.initModels(sequelize).master.findCreateFind({
-                where: {email: request.body.email},
+                where: {email: request.params.email},
                 defaults: {
-                    master_name: request.body.master_name,
-                    ranking: request.body.ranking
-                }
+                    master_name: "Inactive Master1",
+                    ranking: 5
+                },
             }
         )
         return response.status(201).json(

@@ -12,13 +12,10 @@ router
     .route('/offset/:page')
     .get(authMiddleware, ordersController.getOrders)
 router
-    .route('/master/:email/offset/:page')
+    .route('/master/:id/offset/:page')
     .get(authMasterMiddleware, ordersController.getMasterOrders)
 router
-    .route('/master/:email/offset/:page')
-    .get(authMasterMiddleware, ordersController.getMasterOrders)
-router
-    .route('/customer/:email/offset/:page')
+    .route('/customer/:id/offset/:page')
     .get(authCustomerMiddleware, ordersController.getCustomerOrders)
 router
     .route('/:id')

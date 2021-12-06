@@ -15,7 +15,7 @@ const generateJwt = (id, email, role) => {
 
 const registerUser = async (request, response) => {
     try {
-        const {email, password, role = 2} = request.body;
+        const {email, password, role} = request.body;
         if (!(email && password)) {
             return response.status(400).send("Invalid credentials");
         }
@@ -23,7 +23,27 @@ const registerUser = async (request, response) => {
         const newUser = await models.initModels(sequelize).user.create({
             email, password: encryptedPassword, role
         })
-        const token = generateJwt(newUser.user_id, email, 2)
+        const token = generateJwt(newUser.user_id, email, role)
+        switch (role) {
+            case 1: {
+                break;
+            }
+            case 2: {
+                await models.initModels(sequelize).master.create({
+                    master_name: "Inactive Master", email, ranking: 5
+                })
+                break;
+            }
+            case 3: {
+                await models.initModels(sequelize).customer.create({
+                    customer_name: "Inactive Customer", customer_email: email
+                })
+                break;
+            }
+            default: {
+                break;
+            }
+        }
         return response.status(201).json({token});
     } catch (err) {
         response.status(500).json("Something went wrong");

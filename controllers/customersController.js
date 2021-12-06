@@ -43,6 +43,22 @@ const getCustomerById = async (request, response) => {
         response.status(500).json("Something went wrong")
     }
 }
+const getCustomerByEmail = async (request, response) => {
+    try {
+        const {email} = request.params
+        const customer = await models.initModels(sequelize).customer.findOne({
+            where: {
+                customer_email: email
+            }
+        })
+        return response.status(201).json(
+            customer
+        )
+    } catch
+        (e) {
+        response.status(500).json("Something went wrong")
+    }
+}
 const updateCustomer = async (request, response) => {
     try {
         const {id} = request.params
@@ -87,5 +103,6 @@ module.exports = {
     getCustomers,
     getCustomerById,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    getCustomerByEmail
 }

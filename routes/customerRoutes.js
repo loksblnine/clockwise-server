@@ -1,6 +1,7 @@
 const express = require("express");
 let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
+const authCustomerMiddleware = require('../middleware/authCustomerMiddleware')
 const customerController = require('../controllers/customersController')
 
 router
@@ -14,6 +15,9 @@ router
     .get(authMiddleware, customerController.getCustomerById)
     .put(authMiddleware, customerController.updateCustomer)
     .delete(authMiddleware, customerController.deleteCustomer)
+router
+    .route("/email/:email")
+    .get(authCustomerMiddleware, customerController.getCustomerByEmail)
 
 
 module.exports = router

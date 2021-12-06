@@ -139,16 +139,7 @@ const getOrderById = async (request, response) => {
 }
 const getMasterOrders = async (request, response) => {
     try {
-        const {email, page} = request.params
-        const master = await models.initModels(sequelize).master.findOrCreate({
-                where: {email: email},
-                defaults: {
-                    master_name: "Unactive user",
-                    email,
-                    ranking: 5
-                }
-            }
-        )
+        const {id, page} = request.params
         const offset = 10 * page
         const orders = await models.initModels(sequelize).order.findAndCountAll({
             order: [
@@ -166,27 +157,19 @@ const getMasterOrders = async (request, response) => {
             },
             ],
             where: {
-                master_id: master[0].master_id
+                master_id: id
             },
             offset,
             limit: 10
         })
-        response.status(201).json([master[0], {orders: [...orders.rows]}])
+        response.status(201).json(orders.rows)
     } catch (e) {
         response.status(500).json("Something went wrong")
     }
 }
 const getCustomerOrders = async (request, response) => {
     try {
-        const {email, page} = request.params
-        const customer = await models.initModels(sequelize).customer.findOrCreate({
-                where: {customer_email: email},
-                defaults: {
-                    customer_name: "Unactive user",
-                    customer_email: email
-                }
-            }
-        )
+        const {id, page} = request.params
         const offset = 10 * page
         const orders = await models.initModels(sequelize).order.findAndCountAll({
             order: [
@@ -198,18 +181,18 @@ const getCustomerOrders = async (request, response) => {
                 as: 'city',
                 attributes: ['city_name']
             }, {
-                model: models.initModels(sequelize).customer,
-                as: 'customer',
-                attributes: ['customer_name']
+                model: models.initModels(sequelize).master,
+                as: 'master',
+                attributes: ['master_name']
             },
             ],
             where: {
-                customer_id: customer[0].customer_id
+                customer_id: id
             },
             offset,
             limit: 10
         })
-        response.status(201).json([customer[0], {orders: [...orders.rows]}])
+        response.status(201).json(orders.rows)
     } catch (e) {
         response.status(500).json("Something went wrong")
     }
