@@ -26,7 +26,6 @@ const getMasters = async (request, response) => {
         const deps = await models.initModels(sequelize).connect_city_master.findAll({
             raw: true
         })
-        console.log(deps)
         response.status(201).json(masters.map((master)=>{
             return {
                 ...master,

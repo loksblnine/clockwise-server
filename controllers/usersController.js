@@ -23,7 +23,6 @@ const registerUser = async (request, response) => {
         const newUser = await models.initModels(sequelize).user.create({
             email, password: encryptedPassword, role
         })
-        console.log(newUser)
         const token = generateJwt(newUser.user_id, email, 2)
         return response.status(201).json({token});
     } catch (err) {
@@ -40,7 +39,8 @@ const loginUser = async (request, response) => {
         const oldUser = await models.initModels(sequelize).user.findOne({
             where: {
                 email
-            }
+            },
+            raw: true
         })
         const passwordMatch = await bcrypt.compare(password, oldUser.password)
         if (oldUser && passwordMatch) {
