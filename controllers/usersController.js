@@ -3,6 +3,9 @@ const jwt = require("jsonwebtoken");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SG_API_KEY)
+
 const generateJwt = (id, email, role) => {
     return jwt.sign(
         {id, email, role},
@@ -77,9 +80,57 @@ const isTokenValid = (request, response) => {
     const token = generateJwt(request.user.id, request.user.email, request.user.role)
     response.status(200).json({token});
 }
+const approveMaster = async (request, response) => {
+    try {
+        const {id} = request.params
+        const master = await models.initModels(sequelize).master.update({
+                isApproved: true
+            },
+            {
+                where:
+                    {master_id: id}
+            })
+        const msg = {
+            to: master.email,
+            from: process.env.USER,
+            template_id: process.env.SG_TEMPLATE_ID_ACCOUNT_APPROVE,
+            dynamic_template_data: {
+                link: process.env.FRONT_URL
+            }
+        }
+        sgMail
+            .send(msg)
+            .then(() => {
+                response.json("Success!")
+            })
+            .catch((e) => {
+                response.status(500).json("Something went wrong")
+            })
+    } catch (e) {
+        response.status(500).send("Something went wrong");
+
+    }
+}
+const approveOrder = async (request, response) => {
+    try {
+        const {id} = request.params
+        await models.initModels(sequelize).order.update({
+                isDone: true
+            },
+            {
+                where:
+                    {order: id}
+            })
+        response.status(201).json("Success")
+    } catch (e) {
+        response.status(500).send("Something went wrong");
+    }
+}
 
 module.exports = {
     registerUser,
     loginUser,
-    isTokenValid
+    isTokenValid,
+    approveMaster,
+    approveOrder
 }

@@ -21,7 +21,7 @@ const sendConfirmOrderMail =  function (request, response) {
     sgMail
         .send(msg)
         .then(() => {
-            response.json("Success!")
+            response.status(201).json("Success!")
         })
         .catch((e) => {
             response.status(500).json("Something went wrong")
@@ -33,15 +33,15 @@ const sendConfirmRegistrationMail =  function (request, response) {
         from: process.env.USER,
         template_id: process.env.SG_TEMPLATE_ID_CONFIRM_REGISTRATION,
         dynamic_template_data: {
-            link: "localhost:5000/"
+            link: process.env.NODE_ENV === "production" ? "https://clockwise-clockware-test.herokuapp.com/" : "http://localhost:5000/"
         }
     }
     sgMail
         .send(msg)
         .then(() => {
-            response.json("Success!")
+            response.status(201).json("Success!")
         })
-        .catch((e) => {
+        .catch(() => {
             response.status(500).json("Something went wrong")
         })
 }
