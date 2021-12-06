@@ -24,6 +24,11 @@ module.exports = function(sequelize, DataTypes) {
     ranking: {
       type: DataTypes.DOUBLE,
       allowNull: false
+    },
+    isApproved: {
+      type: DataTypes.BOOL,
+      allowNull: false,
+      default: false
     }
   }, {
     sequelize,
