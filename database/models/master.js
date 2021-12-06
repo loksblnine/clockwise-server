@@ -26,7 +26,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     isApproved: {
-      type: DataTypes.BOOL,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       default: false
     }
