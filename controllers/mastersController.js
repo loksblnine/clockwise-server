@@ -61,11 +61,16 @@ const getFreeMasters = async (request, response) => {
         const endDate = new Date(order_time).setHours(finishHour)
         let deps = (await models.initModels(sequelize).connect_city_master.findAll({
             attributes: ['city_id', 'master_id'],
-            where: {city_id: city_id},
+            where: {
+                city_id: city_id,
+            },
             include: [{
                 model: models.initModels(sequelize).master,
                 as: "master",
-                attributes: ['master_name', 'ranking']
+                attributes: ['master_name', 'ranking'],
+                where: {
+                    isApproved: true,
+                }
             },
             ],
             raw: true
