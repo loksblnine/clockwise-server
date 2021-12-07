@@ -103,7 +103,7 @@ const approveMaster = async (request, response) => {
             .then(() => {
                 response.json("Success!")
             })
-            .catch((e) => {
+            .catch(() => {
                 response.status(500).json("Something went wrong")
             })
     } catch (e) {
@@ -114,14 +114,11 @@ const approveMaster = async (request, response) => {
 const approveOrder = async (request, response) => {
     try {
         const {id} = request.params
-        const resp = await models.initModels(sequelize).order.update({
-                isDone: request.body.isDone
-            },
-            {
+        await models.initModels(sequelize).order.update(
+            {isDone: true}, {
                 where:
-                    {order: id}
+                    {order_id: id}
             })
-        console.log(resp)
         response.status(201).json("Success")
     } catch (e) {
         response.status(500).send(e.toString());
