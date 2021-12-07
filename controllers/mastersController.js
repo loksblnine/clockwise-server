@@ -140,12 +140,18 @@ const getMasterByEmail = async (request, response) => {
                 },
             }
         )
+        const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            where: {
+                master_id: master[0].master_id
+            },
+            raw: true
+        })
         return response.status(201).json(
-            master[0]
+            {master: master[0], deps: deps.map(e => e.city_id)}
         )
     } catch
         (e) {
-        response.status(500).json("Something went wrong")
+        response.status(500).json(e.toString())
     }
 }
 module.exports = {
