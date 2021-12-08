@@ -98,9 +98,9 @@ const getFreeMasters = async (request, response) => {
 const updateMaster = async (request, response) => {
     try {
         const {id} = request.params
-        const {master_name, master_email, ranking} = request.body
+        const {master_name, master_email, email, ranking} = request.body
         await models.initModels(sequelize).master.update({
-                master_name, master_email, ranking
+                master_name, master_email, email, ranking
             },
             {
                 where:
