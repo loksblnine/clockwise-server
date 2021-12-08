@@ -33,7 +33,7 @@ const registerUser = async (request, response) => {
             }
             case 2: {
                 await models.initModels(sequelize).master.create({
-                    master_name: "Inactive Master", email, ranking: 5
+                    master_name: "Inactive Master", email: email, ranking: 5
                 })
                 break;
             }

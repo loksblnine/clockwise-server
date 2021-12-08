@@ -9,14 +9,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     customer_name: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
       validate: {
         is: /^[A-ZА-Яa-zа-я -]+$/i
       }
     },
     customer_email: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: false,
       validate: {
         is: /^[A-Za-z0-9._%+-]+@[A-Za-z]+\.[A-Za-z]+/i
       }

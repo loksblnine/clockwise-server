@@ -1,6 +1,7 @@
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 const {Op} = require("sequelize");
+
 const createMaster = async (request, response) => {
     try {
         const master = await models.initModels(sequelize).master.create(
@@ -11,7 +12,7 @@ const createMaster = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка валидации")
+        response.status(500).json("Something went wrong")
     }
 }
 const getMasters = async (request, response) => {
@@ -33,7 +34,7 @@ const getMasters = async (request, response) => {
             }
         }))
     } catch (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getMasterById = async (request, response) => {
@@ -49,7 +50,7 @@ const getMasterById = async (request, response) => {
         )
     } catch
         (e) {
-        response.json("Ошибка со стороны сервера")
+        response.status(500).json("Something went wrong")
     }
 }
 const getFreeMasters = async (request, response) => {
