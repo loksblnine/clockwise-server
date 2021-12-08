@@ -60,7 +60,7 @@ const getFreeMasters = async (request, response) => {
         const startHour = startDate.getHours()
         const finishHour = Number(work_id) + startHour
         const endDate = new Date(order_time).setHours(finishHour)
-        let deps = (await models.initModels(sequelize).connect_city_master.findAll({
+        const deps = await models.initModels(sequelize).connect_city_master.findAll({
             attributes: ['city_id', 'master_id'],
             where: {
                 city_id: city_id,
@@ -75,7 +75,7 @@ const getFreeMasters = async (request, response) => {
             },
             ],
             raw: true
-        }))
+        })
         const masters = []
         for (const dep of deps) {
             const orders = await models.initModels(sequelize).order.findAll({
@@ -109,10 +109,17 @@ const updateMaster = async (request, response) => {
         const master = await models.initModels(sequelize).master.findOne({
             where: {
                 master_id: id
-            }
+            },
+            raw: true
+        })
+        const deps = await models.initModels(sequelize).connect_city_master.findAll({
+            where: {
+                master_id: id
+            },
+            raw: true
         })
         return response.status(201).json(
-            master
+            {...master, deps: deps.map(d => d.city_id)}
         )
     } catch (err) {
         response.status(500).json("Something went wrong")
