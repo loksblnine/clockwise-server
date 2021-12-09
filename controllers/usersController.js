@@ -111,6 +111,33 @@ const approveMaster = async (request, response) => {
 
     }
 }
+const approveUser = async (request, response) => {
+    try {
+        const token = request.headers.authorization.split(' ')[1]
+        if (!token) {
+            return response.status(401).json({message: "Не авторизован"})
+        }
+        const {activated} = jwt.verify(token, process.env.SECRET_KEY)
+        const user = await models.initModels(sequelize).user.update({
+                isActive: true
+            },
+            {
+                where:
+                    {email: activated}
+            })
+        const newToken = jwt.sign(
+            {user: user.id, email: user.email, role: user.role},
+            process.env.SECRET_KEY,
+            {
+                expiresIn: "2h",
+            }
+        )
+        response.status(201).json({token: newToken})
+    } catch (e) {
+        response.status(500).send("Something went wrong");
+
+    }
+}
 const approveOrder = async (request, response) => {
     try {
         const {id} = request.params
@@ -130,5 +157,6 @@ module.exports = {
     loginUser,
     isTokenValid,
     approveMaster,
-    approveOrder
+    approveOrder,
+    approveUser
 }

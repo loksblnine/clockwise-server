@@ -15,6 +15,9 @@ router
     .route("/approve-master/:id")
     .get(authMiddleware, usersController.approveMaster)
 router
+    .route("/approve-user")
+    .get(authMiddleware, usersController.approveUser)
+router
     .route("/approve-order/:id")
     .put(authMasterMiddleware, usersController.approveOrder)
 
