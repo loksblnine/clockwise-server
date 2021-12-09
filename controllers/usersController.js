@@ -141,11 +141,26 @@ const approveUser = async (request, response) => {
 const approveOrder = async (request, response) => {
     try {
         const {id} = request.params
-        await models.initModels(sequelize).order.update(
-            {isDone: true}, {
-                where:
-                    {order_id: id}
-            })
+        await models.initModels(sequelize).order.update({
+            isDone: true
+        }, {
+            where:
+                {order_id: id}
+        })
+        response.status(201).json("Success")
+    } catch (e) {
+        response.status(500).send(e.toString());
+    }
+}
+const setMarkOrder = async (request, response) => {
+    try {
+        const {id} = request.params
+        await models.initModels(sequelize).order.update({
+            mark: request.body.mark
+        }, {
+            where:
+                {order_id: id}
+        })
         response.status(201).json("Success")
     } catch (e) {
         response.status(500).send(e.toString());
@@ -158,5 +173,6 @@ module.exports = {
     isTokenValid,
     approveMaster,
     approveOrder,
-    approveUser
+    approveUser,
+    setMarkOrder
 }

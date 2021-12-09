@@ -2,6 +2,7 @@ const express = require("express");
 let router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const authMasterMiddleware = require('../middleware/authMasterMiddleware')
+const authCustomerMiddleware = require('../middleware/authCustomerMiddleware')
 const usersController = require('../controllers/usersController')
 
 router
@@ -20,5 +21,8 @@ router
 router
     .route("/approve-order/:id")
     .put(authMasterMiddleware, usersController.approveOrder)
+router
+    .route("/set-mark/:id")
+    .put(authCustomerMiddleware, usersController.approveOrder)
 
 module.exports = router
