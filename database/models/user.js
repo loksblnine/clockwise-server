@@ -21,6 +21,10 @@ module.exports = function(sequelize, DataTypes) {
     role: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },
+    isActive: {
+      type: DataTypes.BOOLEAN,
+      default: false
     }
   }, {
     sequelize,
@@ -33,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         fields: [
           { name: "email" },
-          { name: "password" },
+          { name: "role" },
         ]
       },
       {

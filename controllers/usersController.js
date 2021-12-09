@@ -61,7 +61,7 @@ const loginUser = async (request, response) => {
         }
         const oldUser = await models.initModels(sequelize).user.findOne({
             where: {
-                email
+                email, isActive: true
             },
             raw: true
         })
