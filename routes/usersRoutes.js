@@ -23,6 +23,6 @@ router
     .put(authMasterMiddleware, usersController.approveOrder)
 router
     .route("/set-mark/:id")
-    .put(authCustomerMiddleware, usersController.approveOrder)
+    .put(authCustomerMiddleware, usersController.setMarkOrder)
 
 module.exports = router
