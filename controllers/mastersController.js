@@ -100,12 +100,11 @@ const updateMaster = async (request, response) => {
         const {id} = request.params
         const {master_name, master_email, email, ranking} = request.body
         await models.initModels(sequelize).master.update({
-                master_name, master_email, email, ranking
-            },
-            {
-                where:
-                    {master_id: id}
-            })
+            master_name, master_email, email, ranking
+        }, {
+            where:
+                {master_id: id}
+        })
         const master = await models.initModels(sequelize).master.findOne({
             where: {
                 master_id: id
