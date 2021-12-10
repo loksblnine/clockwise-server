@@ -83,32 +83,16 @@ const isTokenValid = (request, response) => {
 const approveMaster = async (request, response) => {
     try {
         const {id} = request.params
-        const master = await models.initModels(sequelize).master.update({
+        await models.initModels(sequelize).master.update({
                 isApproved: true
             },
             {
                 where:
                     {master_id: id}
             })
-        const msg = {
-            to: master.email,
-            from: process.env.USER,
-            template_id: process.env.SG_TEMPLATE_ID_ACCOUNT_APPROVE,
-            dynamic_template_data: {
-                link: process.env.FRONT_URL
-            }
-        }
-        sgMail
-            .send(msg)
-            .then(() => {
-                response.json("Success!")
-            })
-            .catch(() => {
-                response.status(500).json("Something went wrong")
-            })
+        response.status(201).json("Success")
     } catch (e) {
-        response.status(500).send("Something went wrong");
-
+        response.status(500).send(e.toString());
     }
 }
 const approveUser = async (request, response) => {
@@ -144,6 +128,7 @@ const approveOrder = async (request, response) => {
         await models.initModels(sequelize).order.update({
             isDone: true
         }, {
+            raw: true,
             where:
                 {order_id: id}
         })
