@@ -15,13 +15,17 @@
     "jsonwebtoken": "^8.5.1",
     "mocha": "^9.1.3",
     "nodemon": "^2.0.12",
-    "pg": "^8.6.0"
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.12.0-alpha.1",
+    "sequelize-cli": "^6.3.0"
   },
   "engines": {
     "node": "14.x"
   },
   "scripts": {
     "start": "node index.js",
-    "test": "mocha"
+    "test": "mocha",
+    "start test orm": "node ./database/models/index.js && sequelize-auto -h localhost -d dev_db -u postgres -x Nutter123@ -p 5432  --dialect postgres -c ./database/config/config -o database/models -t city customer connect_city_master order user workType role master"
   }
 }
