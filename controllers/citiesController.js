@@ -21,7 +21,7 @@ const getAllCities = async (request, response) => {
         )
     } catch
         (e) {
-        response.status(500).json("Something went wrong")
+        response.status(500).json(e.toString())
     }
 }
 const getCityById = async (request, response) => {
