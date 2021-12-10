@@ -71,7 +71,7 @@ const loginUser = async (request, response) => {
         }
         response.status(400).send("Invalid Credentials");
     } catch (err) {
-        response.status(500).send("Something went wrong");
+        response.status(500).send(err);
     }
 }
 const isTokenValid = (request, response) => {
