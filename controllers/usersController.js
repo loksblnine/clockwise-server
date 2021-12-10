@@ -52,7 +52,6 @@ const registerUser = async (request, response) => {
         response.status(500).json("Something went wrong");
     }
 }
-
 const loginUser = async (request, response) => {
     try {
         const {email, password} = request.body;
@@ -75,7 +74,6 @@ const loginUser = async (request, response) => {
         response.status(500).send("Something went wrong");
     }
 }
-
 const isTokenValid = (request, response) => {
     const token = generateJwt(request.user.id, request.user.email, request.user.role)
     response.status(200).json({token});
@@ -83,32 +81,38 @@ const isTokenValid = (request, response) => {
 const approveMaster = async (request, response) => {
     try {
         const {id} = request.params
-        const master = await models.initModels(sequelize).master.update({
+        await models.initModels(sequelize).master.update({
                 isApproved: true
             },
             {
                 where:
                     {master_id: id}
             })
+        const master = await models.initModels(sequelize).master.findOne({
+            where: {
+                master_id: id
+            }
+        })
+        const LINK = process.env.NODE_ENV === "production" ? (process.env.PROD_FRONT_URL) : (process.env.DEV_FRONT_URL)
         const msg = {
             to: master.email,
             from: process.env.USER,
             template_id: process.env.SG_TEMPLATE_ID_ACCOUNT_APPROVE,
             dynamic_template_data: {
-                link: process.env.FRONT_URL
+                link: LINK
             }
         }
         sgMail
             .send(msg)
             .then(() => {
-                response.json("Success!")
+                response.status(201).json("Success!")
             })
             .catch(() => {
                 response.status(500).json("Something went wrong")
             })
+        response.status(201).json("Success")
     } catch (e) {
         response.status(500).send("Something went wrong");
-
     }
 }
 const approveUser = async (request, response) => {
@@ -144,12 +148,47 @@ const approveOrder = async (request, response) => {
         await models.initModels(sequelize).order.update({
             isDone: true
         }, {
+            raw: true,
             where:
                 {order_id: id}
         })
+        const order = await models.initModels(sequelize).order.findOne({
+            where: {
+                order_id: id
+            }
+        })
+        const customer = await models.initModels(sequelize).customer.findOne({
+            where: {
+                customer_id: order.customer_id
+            }
+        })
+        const master = await models.initModels(sequelize).master.findOne({
+            where: {
+                master_id: order.master_id
+            }
+        })
+        const LINK = process.env.NODE_ENV === "production" ? (process.env.PROD_FRONT_URL) : (process.env.DEV_FRONT_URL)
+        const msg = {
+            to: customer.customer_email,
+            from: process.env.USER,
+            template_id: process.env.SG_TEMPLATE_ID_FINISH_ORDER,
+            dynamic_template_data: {
+                master_name: master.master_name,
+                order_id: id,
+                link: LINK
+            }
+        }
+        sgMail
+            .send(msg)
+            .then(() => {
+                response.status(201).json("Success!")
+            })
+            .catch(() => {
+                response.status(500).json("Something went wrong")
+            })
         response.status(201).json("Success")
     } catch (e) {
-        response.status(500).send(e.toString());
+        response.status(500).send("Something went wrong");
     }
 }
 const setMarkOrder = async (request, response) => {
@@ -163,7 +202,7 @@ const setMarkOrder = async (request, response) => {
         })
         response.status(201).json("Success")
     } catch (e) {
-        response.status(500).send(e.toString());
+        response.status(500).send("Something went wrong");
     }
 }
 

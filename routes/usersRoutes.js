@@ -14,7 +14,7 @@ router
     .get(authMiddleware, usersController.isTokenValid)
 router
     .route("/approve-master/:id")
-    .get(authMiddleware, usersController.approveMaster)
+    .put(authMiddleware, usersController.approveMaster)
 router
     .route("/approve-user")
     .get(authMiddleware, usersController.approveUser)

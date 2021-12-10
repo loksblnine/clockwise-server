@@ -36,7 +36,7 @@ const sendConfirmRegistrationMail = function (request, response) {
             expiresIn: "900s",
         }
     );
-    const LINK_WITH_TOKEN = (process.env.NODE_ENV === "production" ? (process.env.PROD_FRONT_URL + '/activate') : (process.env.DEV_FRONT_URL + '/activate')) + token
+    const LINK_WITH_TOKEN = (process.env.NODE_ENV === "production" ? (process.env.PROD_FRONT_URL + '/activate/') : (process.env.DEV_FRONT_URL + '/activate/')) + token
     const msg = {
         to: request.body.email,
         from: process.env.USER,
