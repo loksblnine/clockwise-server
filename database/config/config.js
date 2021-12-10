@@ -5,7 +5,7 @@ const db = new Sequelize(process.env.DB_DATABASE, process.env.DB_USER, process.e
     host: process.env.DB_HOST,
     dialect: 'postgres',
     ssl: {
-        rejectUnauthorized: true
+        rejectUnauthorized: false
     }
 });
 
