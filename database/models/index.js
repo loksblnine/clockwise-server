@@ -7,6 +7,7 @@ const _order = require("./order");
 const _role = require("./role");
 const _user = require("./user");
 const _workType = require("./workType");
+const _photo = require("./photo");
 
 function models(sequelize) {
     const city = _city(sequelize, DataTypes);
@@ -17,8 +18,12 @@ function models(sequelize) {
     const role = _role(sequelize, DataTypes);
     const user = _user(sequelize, DataTypes);
     const workType = _workType(sequelize, DataTypes);
+    const photo = _photo(sequelize, DataTypes);
 
     connect_city_master.removeAttribute('id')
+    photo.removeAttribute('id')
+    photo.belongsTo(order, {as: "photo", foreignKey: "order_id"})
+    order.hasMany(photo, {as: "orders", foreignKey: "order_id"})
     connect_city_master.belongsTo(city, {as: "city", foreignKey: "city_id"});
     city.hasMany(connect_city_master, {as: "connect_city_masters", foreignKey: "city_id"});
     order.belongsTo(city, {as: "city", foreignKey: "city_id"});
@@ -31,6 +36,7 @@ function models(sequelize) {
     master.hasMany(order, {as: "orders", foreignKey: "master_id"});
     order.belongsTo(workType, {as: "work", foreignKey: "work_id"});
     workType.hasMany(order, {as: "orders", foreignKey: "work_id"});
+
     return {
         city,
         connect_city_master,
@@ -40,6 +46,7 @@ function models(sequelize) {
         role,
         user,
         workType,
+        photo
     };
 }
 

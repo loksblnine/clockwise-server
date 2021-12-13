@@ -1,3 +1,4 @@
+const {cloudinary} = require("../utils/cloudinary");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
 const createOrder = async (request, response) => {
@@ -14,11 +15,21 @@ const createOrder = async (request, response) => {
         const order = await models.initModels(sequelize).order.create(
             {...request.body, customer_id: customer[0].customer_id}
         )
+        const fileStr = request.body.data;
+        for (let i = 0; i < fileStr.length; i++) {
+            const uploadResponse = await cloudinary.uploader.upload(fileStr[i], {
+                folder: `order_photos/order${order.order_id}`
+            });
+            await models.initModels(sequelize).photo.create(
+                {order_id: order.order_id, photo_url: uploadResponse.secure_url}
+            )
+        }
         return response.status(201).json(
             order
         )
     } catch
         (e) {
+        console.log(e)
         response.status(500).json("Something went wrong")
     }
 }
