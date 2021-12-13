@@ -29,7 +29,6 @@ const createOrder = async (request, response) => {
         )
     } catch
         (e) {
-        console.log(e)
         response.status(500).json("Something went wrong")
     }
 }
