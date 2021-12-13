@@ -58,16 +58,18 @@ const loginUser = async (request, response) => {
         if (!(email && password)) {
             response.status(400).send("All input is required");
         }
-        const oldUser = await models.initModels(sequelize).user.findOne({
+        const oldUsers = await models.initModels(sequelize).user.findAll({
             where: {
                 email, isActive: true
             },
             raw: true
         })
-        const passwordMatch = await bcrypt.compare(password, oldUser?.password)
-        if (oldUser && passwordMatch) {
-            const token = generateJwt(oldUser.user_id, oldUser.email, oldUser.role)
-            return response.status(200).json({token});
+        for (let i = 0; i<oldUsers.length; i++) {
+            const passwordMatch = await bcrypt.compare(password,oldUsers[i]?.password)
+            if (oldUsers[i] && passwordMatch) {
+                const token = generateJwt(oldUsers[i]?.user_id, oldUsers[i]?.email, oldUsers[i]?.role)
+                return response.status(200).json({token});
+            }
         }
         response.status(400).send("Invalid Credentials");
     } catch (err) {
