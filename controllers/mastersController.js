@@ -17,9 +17,14 @@ const createMaster = async (request, response) => {
 }
 const getMasters = async (request, response) => {
     try {
+        const where = {}
+        if (request?.query?.name?.length) {
+            where.master_name = {[Op.iLike]: `%${request.query.name}%`}
+        }
         const {page} = request.params
         const offset = 10 * page
         const masters = await models.initModels(sequelize).master.findAll({
+            where,
             offset,
             limit: 10,
             raw: true
