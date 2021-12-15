@@ -15,8 +15,8 @@ const createOrder = async (request, response) => {
         const order = await models.initModels(sequelize).order.create(
             {...request.body, customer_id: customer[0].customer_id}
         )
-        const fileStr = request.body.data;
-        for (let i = 0; i < fileStr.length; i++) {
+        const fileStr = request.body?.data;
+        for (let i = 0; i < fileStr?.length; i++) {
             const uploadResponse = await cloudinary.uploader.upload(fileStr[i], {
                 folder: `order_photos/order${order.order_id}`
             });
