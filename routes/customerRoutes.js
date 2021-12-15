@@ -13,7 +13,7 @@ router
 router
     .route('/:id')
     .get(authMiddleware, customerController.getCustomerById)
-    .put(authMiddleware, customerController.updateCustomer)
+    .put(authCustomerMiddleware, customerController.updateCustomer)
     .delete(authMiddleware, customerController.deleteCustomer)
 router
     .route("/email/:email")
