@@ -103,15 +103,12 @@ const getOrders = async (request, response) => {
             where.work_id = request.query.work_id
         }
         if (request?.query?.from?.length && !request?.query?.to?.length) {
-            console.log(123)
             where.order_time = {[Op.gte]: request.query.from}
         }
         if (request?.query?.to?.length && !request?.query?.from?.length) {
-            console.log(12)
             where.order_time = {[Op.lte]: request.query.to}
         }
         if (request?.query?.to?.length && request?.query?.from?.length) {
-            console.log(8987)
             where.order_time = {[Op.between]: [request.query.from, request.query.to]}
         }
         const orders = await models.initModels(sequelize).order.findAndCountAll({
