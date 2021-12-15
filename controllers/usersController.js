@@ -67,7 +67,7 @@ const loginUser = async (request, response) => {
         for (let i = 0; i<oldUsers.length; i++) {
             const passwordMatch = await bcrypt.compare(password,oldUsers[i]?.password)
             if (oldUsers[i] && passwordMatch) {
-                const token = generateJwt(oldUsers[i]?.user_id, oldUsers[i]?.email, oldUsers[i]?.role)
+                const token = generateJwt(oldUsers[i].user_id, oldUsers[i].email, oldUsers[i].role)
                 return response.status(200).json({token});
             }
         }
