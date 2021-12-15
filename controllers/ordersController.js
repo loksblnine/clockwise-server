@@ -93,8 +93,8 @@ const getOrders = async (request, response) => {
         if (request?.query?.city_id?.length) {
             where.city_id = request.query.city_id
         }
-        if (request?.query?.customer_id?.length) {
-            where.customer_id = request.query.customer_id
+        if (request?.query?.master_id?.length) {
+            where.customer_id = request.query.master_id
         }
         if (request?.query?.isDone?.length) {
             where.isDone = request.query.isDone
