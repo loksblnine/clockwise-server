@@ -1,6 +1,8 @@
 const {cloudinary} = require("../utils/cloudinary");
 const models = require("../database/models");
 const sequelize = require("../database/config/config");
+const {Op} = require("sequelize");
+
 const createOrder = async (request, response) => {
     try {
         const customer = await models.initModels(sequelize).customer.findCreateFind({
@@ -87,6 +89,31 @@ const getOrders = async (request, response) => {
     try {
         const {page} = request.params
         const offset = 10 * page
+        const where = {}
+        if (request?.query?.city_id?.length) {
+            where.city_id = request.query.city_id
+        }
+        if (request?.query?.customer_id?.length) {
+            where.customer_id = request.query.customer_id
+        }
+        if (request?.query?.isDone?.length) {
+            where.isDone = request.query.isDone
+        }
+        if (request?.query?.work_id?.length) {
+            where.work_id = request.query.work_id
+        }
+        if (request?.query?.from?.length && !request?.query?.to?.length) {
+            console.log(123)
+            where.order_time = {[Op.gte]: request.query.from}
+        }
+        if (request?.query?.to?.length && !request?.query?.from?.length) {
+            console.log(12)
+            where.order_time = {[Op.lte]: request.query.to}
+        }
+        if (request?.query?.to?.length && request?.query?.from?.length) {
+            console.log(8987)
+            where.order_time = {[Op.between]: [request.query.from, request.query.to]}
+        }
         const orders = await models.initModels(sequelize).order.findAndCountAll({
             order: [
                 ['order_time', 'DESC'],
@@ -107,6 +134,7 @@ const getOrders = async (request, response) => {
                 attributes: ['customer_name']
             },
             ],
+            where,
             offset,
             limit: 10
         })
