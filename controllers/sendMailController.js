@@ -1,5 +1,7 @@
 const sgMail = require('@sendgrid/mail')
 const jwt = require("jsonwebtoken");
+const schedule = require('node-schedule');
+
 sgMail.setApiKey(process.env.SG_API_KEY)
 
 const testRoute = async (request, response) => {
@@ -19,6 +21,18 @@ const sendConfirmOrderMail = function (request, response) {
             message: request.body.message
         }
     }
+    const time = new Date(request.body.order_time)
+    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-1), 0)
+    const job = schedule.scheduleJob(hourBefore, () =>
+        sgMail.send({
+            to: request.body.email,
+            from: process.env.USER,
+            template_id: process.env.SG_TEMPLATE_ID_REMEMBER,
+            dynamic_template_data: {
+                message: request.body.message
+            }
+        })
+    );
     sgMail
         .send(msg)
         .then(() => {
@@ -27,6 +41,7 @@ const sendConfirmOrderMail = function (request, response) {
         .catch(() => {
             response.status(500).json("Something went wrong")
         })
+
 }
 const sendConfirmRegistrationMail = function (request, response) {
     const token = jwt.sign(
