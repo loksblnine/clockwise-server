@@ -8,6 +8,7 @@ const customerRoutes = require('../routes/customerRoutes')
 const usersRoutes = require('../routes/usersRoutes')
 const depsRoutes = require('../routes/depsRoutes')
 const sendMailRoutes = require('../routes/sendMailRoute')
+const photoRoutes = require('../routes/photoRoutes')
 
 router.use("/cities", cityRoutes)
 router.use("/masters", masterRoutes)
@@ -16,5 +17,6 @@ router.use("/customers", customerRoutes)
 router.use("/deps", depsRoutes)
 router.use("/send", sendMailRoutes)
 router.use("/auth", usersRoutes)
+router.use("/photo", photoRoutes)
 
 module.exports = router
