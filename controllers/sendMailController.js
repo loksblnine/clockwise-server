@@ -23,6 +23,8 @@ const sendConfirmOrderMail = function (request, response) {
     }
     const time = new Date(request.body.order_time)
     const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-1), time.getMinutes())
+    console.log(time)
+    console.log(hourBefore)
     const job = schedule.scheduleJob(hourBefore, () =>
         sgMail.send({
             to: request.body.email,
