@@ -38,6 +38,7 @@ const registerUser = async (request, response) => {
                 break;
             }
             case 3: {
+                //todo find create find
                 await models.initModels(sequelize).customer.create({
                     customer_name: "Inactive Customer", customer_email: email
                 })
