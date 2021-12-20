@@ -14,7 +14,7 @@ const testRoute = (request, response) => {
 
 const sendConfirmOrderMail = function (request, response) {
     const time = new Date(request.body.order_time)
-    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours() - 1), time.getMinutes())
+    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours() - 2), time.getMinutes())
     schedule.scheduleJob(hourBefore, () => {
         sgMail
             .send({
@@ -22,7 +22,8 @@ const sendConfirmOrderMail = function (request, response) {
                 from: process.env.USER,
                 template_id: process.env.SG_TEMPLATE_ID_REMEMBER,
             })
-        console.log("scheduled" + request.body.email)
+            .then(() =>
+                console.log("scheduled" + request.body.email))
     })
     sgMail
         .send({
