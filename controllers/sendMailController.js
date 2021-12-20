@@ -4,7 +4,7 @@ const schedule = require('node-schedule');
 
 sgMail.setApiKey(process.env.SG_API_KEY)
 
-const testRoute = async (request, response) => {
+const testRoute = (request, response) => {
     try {
         response.json("This is route for sending mail")
     } catch (e) {
@@ -13,25 +13,26 @@ const testRoute = async (request, response) => {
 }
 
 const sendConfirmOrderMail = function (request, response) {
-    const msg = {
-        to: request.body.email,
-        from: process.env.USER,
-        template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
-    }
     const time = new Date(request.body.order_time)
-    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-3), time.getMinutes())
-    const job = schedule.scheduleJob(hourBefore, () =>
-        sgMail.send({
+    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours() - 1), time.getMinutes())
+    schedule.scheduleJob(hourBefore, () => {
+        sgMail
+            .send({
+                to: request.body.email,
+                from: process.env.USER,
+                template_id: process.env.SG_TEMPLATE_ID_REMEMBER,
+            })
+        console.log("scheduled" + request.body.email)
+    })
+    sgMail
+        .send({
             to: request.body.email,
             from: process.env.USER,
-            template_id: process.env.SG_TEMPLATE_ID_REMEMBER,
+            template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
             dynamic_template_data: {
                 message: request.body.message
             }
         })
-    );
-    sgMail
-        .send(msg)
         .then(() => {
             response.status(201).json("Success!")
         })
