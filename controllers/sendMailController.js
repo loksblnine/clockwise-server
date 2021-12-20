@@ -17,9 +17,6 @@ const sendConfirmOrderMail = function (request, response) {
         to: request.body.email,
         from: process.env.USER,
         template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
-        dynamic_template_data: {
-            message: request.body.message
-        }
     }
     const time = new Date(request.body.order_time)
     const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-1), 0)
@@ -41,7 +38,6 @@ const sendConfirmOrderMail = function (request, response) {
         .catch(() => {
             response.status(500).json("Something went wrong")
         })
-
 }
 const sendConfirmRegistrationMail = function (request, response) {
     const token = jwt.sign(
