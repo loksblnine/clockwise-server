@@ -19,7 +19,7 @@ const sendConfirmOrderMail = function (request, response) {
         template_id: process.env.SG_TEMPLATE_ID_CONFIRM_ORDER,
     }
     const time = new Date(request.body.order_time)
-    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-1), 0)
+    const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours()-3), time.getMinutes())
     const job = schedule.scheduleJob(hourBefore, () =>
         sgMail.send({
             to: request.body.email,

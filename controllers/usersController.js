@@ -32,15 +32,20 @@ const registerUser = async (request, response) => {
                 break;
             }
             case 2: {
-                await models.initModels(sequelize).master.create({
-                    master_name: "Inactive Master", email: email, ranking: 5
+                await models.initModels(sequelize).master.findCreateFind({
+                    where:{email:email},
+                    defaults:{
+                        master_name: "Inactive Master", email: email, ranking: 5
+                    }
                 })
                 break;
             }
             case 3: {
-                //todo find create find
-                await models.initModels(sequelize).customer.create({
-                    customer_name: "Inactive Customer", customer_email: email
+                await models.initModels(sequelize).customer.findCreateFind({
+                    where:{customer_email:email},
+                    defaults:{
+                        customer_name: "Inactive Customer", email: email
+                    }
                 })
                 break;
             }
