@@ -6,6 +6,10 @@ import {Master, User, Customer, Order} from "../database/models";
 import {generateJwt, LINK, sendMail} from "../utils/utils";
 import {MailDataRequired} from "@sendgrid/helpers/classes/mail";
 
+export const isTokenValid = async (request: Request, response: Response): Promise<void> => {
+    const token = generateJwt(request.body.user.id, request.body.user.email, request.body.user.role, "2h")
+    response.status(200).json({token});
+}
 
 export const registerUser = async (request: Request, response: Response): Promise<void> => {
     try {
@@ -53,7 +57,7 @@ export const registerUser = async (request: Request, response: Response): Promis
         response.status(500).json("Something went wrong");
     }
 }
-export const loginUser = async (request: Request, response: Response): Promise<void> => {
+export const loginUser = async (request: Request, response: Response): Promise<Response> => {
     try {
         const email: string = request.body.email,
             password: string = request.body.password;
@@ -73,13 +77,12 @@ export const loginUser = async (request: Request, response: Response): Promise<v
             const passwordMatch: boolean = await bcrypt.compare(password, oldUsers[i]?.password)
             if (passwordMatch) {
                 const token = generateJwt(oldUsers[i].user_id, oldUsers[i].email, oldUsers[i].role, "2h")
-
-                response.status(200).json({token});
+                return response.status(200).json({token});
             }
         }
-        response.status(401).send("Invalid Credentials");
+        return response.status(500).send("Something went wrong");
     } catch (err) {
-        response.status(500).send(err.toString());
+        return response.status(500).send("Something went wrong");
     }
 }
 export const approveMaster = async (request: Request, response: Response): Promise<void> => {
@@ -107,8 +110,9 @@ export const approveMaster = async (request: Request, response: Response): Promi
                 }
             }
             sendMail(msg, response)
+        } else {
+            response.status(500).send("Something went wrong");
         }
-        response.status(500).send("Something went wrong");
     } catch (e) {
         response.status(500).send("Something went wrong");
     }

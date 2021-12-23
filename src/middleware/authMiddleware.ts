@@ -9,6 +9,7 @@ export const authMiddleware = (request: Request, response: Response, next: NextF
         }
         const decoded = jwt.verify(token, String(process.env.SECRET_KEY)) as JwtPayload
         if (decoded?.role === 1) {
+            request.body.user = decoded
             next()
         } else {
             response.status(401).json({message: "Не авторизован"})
