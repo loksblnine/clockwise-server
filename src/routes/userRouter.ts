@@ -1,6 +1,11 @@
 import express from "express";
 import * as userController from "../controllers/userController"
-import {authCustomerMiddleware, authMasterMiddleware, authMiddleware} from "../middleware/authMiddleware";
+import {
+    authCustomerMiddleware,
+    authMasterMiddleware,
+    authMiddleware,
+    authRefreshMiddleware
+} from "../middleware/authMiddleware";
 
 const router = express.Router();
 
@@ -10,7 +15,7 @@ router
 router
     .route("/login")
     .post(userController.loginUser)
-    .get(authMiddleware, userController.isTokenValid)
+    .get(authRefreshMiddleware, userController.isTokenValid)
 router
     .route("/approve-master/:id")
     .put(authMiddleware, userController.approveMaster)
