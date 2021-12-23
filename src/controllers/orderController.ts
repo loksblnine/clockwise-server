@@ -216,7 +216,7 @@ export const getCustomerOrders = async (request: Request, response: Response): P
         const page: string = request.params.page
         const id: string = request.params.id
         const offset: number = 10 * Number(page)
-        const orders = await Order.findAndCountAll({
+        const orders = await Order.findAll({
             order: [
                 ['order_time', 'DESC'],
                 ['order_id', 'ASC'],
@@ -237,7 +237,7 @@ export const getCustomerOrders = async (request: Request, response: Response): P
             offset,
             limit: 10
         })
-        response.status(201).json(orders.rows)
+        response.status(201).json(orders)
     } catch (e) {
         response.status(500).json("Something went wrong")
     }
