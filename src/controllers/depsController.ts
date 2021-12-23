@@ -60,7 +60,7 @@ export const getCityMasters = async (request: Request, response: Response): Prom
 export const deleteDependency = async (request: Request, response: Response): Promise<void> => {
     try {
         const city_id: string = request.body.city_id,
-            master_id: string = request.body.city_id;
+            master_id: string = request.body.master_id;
         await CityToMaster.destroy({
             where: {
                 city_id, master_id

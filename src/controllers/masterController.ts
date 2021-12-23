@@ -40,7 +40,6 @@ export const getMasters = async (request: Request, response: Response): Promise<
             limit: 10,
             raw: true
         })
-        console.log(masters)
         const deps = await CityToMaster.findAll({
             raw: true
         })
@@ -77,7 +76,6 @@ export const getFreeMasters = async (request: Request, response: Response): Prom
         const startHour = startDate.getHours()
         const finishHour = Number(work_id) + startHour
         const endDate = new Date(order_time).setHours(finishHour)
-        console.log(123)
         const deps = await CityToMaster.findAll({
             attributes: ['city_id', 'master_id'],
             where: {
