@@ -32,7 +32,6 @@ export const getCustomers = async (request: Request, response: Response): Promis
         response.status(500).json("Something went wrong")
     }
 }
-
 export const getCustomerById = async (request: Request, response: Response): Promise<void> => {
     try {
         const id: string = request.params.id
@@ -94,7 +93,7 @@ export const updateCustomerById = async (request: Request, response: Response): 
 export const getCustomerByEmail = async (request: Request, response: Response): Promise<void> => {
     try {
         const {email} = request.params
-        const customer = Customer.findOne({
+        const customer = await Customer.findOne({
             where: {
                 customer_email: email
             }
