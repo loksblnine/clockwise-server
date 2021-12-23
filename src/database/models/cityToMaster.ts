@@ -8,7 +8,7 @@ export interface ICityToMaster {
     master_id: number,
 }
 
-export type IDepsInput = Optional<ICityToMaster, 'city_name' & 'master_id'>
+export type IDepsInput = Optional<ICityToMaster, 'city_id' & 'master_id'>
 export type IDepsOutput = Required<ICityToMaster>
 
 export class CityToMaster extends Model<ICityToMaster, IDepsInput> implements ICityToMaster {

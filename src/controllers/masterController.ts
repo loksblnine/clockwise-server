@@ -29,7 +29,6 @@ export const getMasters = async (request: Request, response: Response): Promise<
         if (request?.query?.name?.length) {
             where.master_name = {[Op.iLike]: `%${request.query.name}%`}
         }
-        console.log(where)
         const page: string = request.params.page
         const offset: number = 10 * Number(page)
         const masters = await Master.findAll({
@@ -78,20 +77,13 @@ export const getFreeMasters = async (request: Request, response: Response): Prom
         const startHour = startDate.getHours()
         const finishHour = Number(work_id) + startHour
         const endDate = new Date(order_time).setHours(finishHour)
+        console.log(123)
         const deps = await CityToMaster.findAll({
             attributes: ['city_id', 'master_id'],
             where: {
                 city_id: city_id,
             },
-            include: [{
-                model: Master,
-                as: "master",
-                attributes: ['master_name', 'ranking'],
-                where: {
-                    isApproved: true,
-                }
-            },
-            ],
+
             raw: true
         })
         const masters = []
@@ -108,7 +100,12 @@ export const getFreeMasters = async (request: Request, response: Response): Prom
                 raw: true
             })
             if (!orders.length)
-                masters.push(dep)
+                masters.push(await Master.findOne({
+                    where: {
+                        master_id: dep.master_id
+                    },
+                    attributes: ['master_id', 'master_name', 'ranking']
+                }))
         }
         response.status(201).json(masters)
     } catch (e) {
