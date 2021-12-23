@@ -26,11 +26,11 @@ export const authCustomerMiddleware = (request: Request, response: Response, nex
         }
         const decoded = jwt.verify(token, String(process.env.SECRET_KEY)) as JwtPayload
         if (decoded?.role === 3 || decoded?.role === 1) {
+            request.body.user = decoded
             next()
         } else {
             response.status(401).json({message: "Не авторизован"})
         }
-        next()
     } catch (e) {
         response.status(401).json({message: "Не авторизован"})
     }
@@ -43,11 +43,11 @@ export const authMasterMiddleware = (request: Request, response: Response, next:
         }
         const decoded = jwt.verify(token, String(process.env.SECRET_KEY)) as JwtPayload
         if (decoded?.role === 2 || decoded?.role === 1) {
+            request.body.user = decoded
             next()
         } else {
             response.status(401).json({message: "Не авторизован"})
         }
-        next()
     } catch (e) {
         response.status(401).json({message: "Не авторизован"})
     }

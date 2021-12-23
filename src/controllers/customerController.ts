@@ -18,7 +18,7 @@ export const getCustomers = async (request: Request, response: Response): Promis
     try {
         const page: string = request.params.page
         const offset: number = 10 * Number(page)
-        const customers: { rows: Customer[]; count: number } = await Customer.findAndCountAll({
+        const customers: Customer[] = await Customer.findAll({
             order: [
                 ["customer_id", "ASC"]
             ],
@@ -26,8 +26,7 @@ export const getCustomers = async (request: Request, response: Response): Promis
             limit: 10
         })
         response.status(201).json(
-            customers.rows
-        )
+            customers)
     } catch
         (e) {
         response.status(500).json("Something went wrong")

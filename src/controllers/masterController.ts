@@ -29,14 +29,19 @@ export const getMasters = async (request: Request, response: Response): Promise<
         if (request?.query?.name?.length) {
             where.master_name = {[Op.iLike]: `%${request.query.name}%`}
         }
+        console.log(where)
         const page: string = request.params.page
         const offset: number = 10 * Number(page)
         const masters = await Master.findAll({
+            order: [
+                ["master_id", "ASC"]
+            ],
             where,
             offset,
             limit: 10,
             raw: true
         })
+        console.log(masters)
         const deps = await CityToMaster.findAll({
             raw: true
         })
@@ -181,6 +186,6 @@ export const getMasterByEmail = async (request: Request, response: Response): Pr
         )
     } catch
         (e) {
-        response.status(500).json(e.toString())
+        response.status(500).json("Something went wrong")
     }
 }

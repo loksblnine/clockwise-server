@@ -7,7 +7,9 @@ import {IWhere} from "../utils/utils";
 export const createOrder = async (request: Request, response: Response): Promise<void> => {
     try {
         const customer = await Customer.findCreateFind({
-                where: {customer_email: request.body.customer_email},
+                where: {
+                    customer_email: request.body.customer_email
+                },
                 defaults: {
                     customer_name: request.body.customer_name,
                     customer_email: request.body.customer_email
@@ -43,8 +45,9 @@ export const updateOrder = async (request: Request, response: Response): Promise
                 customer_id, master_id, city_id, work_id, order_time
             },
             {
-                where:
-                    {order_id: id}
+                where: {
+                    order_id: id
+                }
             })
         const order = await Order.findOne({
             where: {
@@ -100,7 +103,7 @@ export const getOrders = async (request: Request, response: Response): Promise<v
             where.master_id = Number(request.query.master_id)
         }
         if (request?.query?.isDone?.length) {
-            where.isDone = Boolean(request.query.isDone)
+            where.isDone = request.query.isDone === "true"
         }
         if (request?.query?.work_id?.length) {
             where.work_id = Number(request.query.work_id)
