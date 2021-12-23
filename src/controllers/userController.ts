@@ -88,8 +88,9 @@ export const loginUser = async (request: Request, response: Response): Promise<R
 export const approveMaster = async (request: Request, response: Response): Promise<void> => {
     try {
         const id: string = request.params.id
+        const active = Boolean(request.query.active === "true")
         await Master.update({
-                isApproved: true
+                isApproved: active
             },
             {
                 where:
