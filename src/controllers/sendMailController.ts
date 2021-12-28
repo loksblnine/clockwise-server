@@ -14,15 +14,6 @@ export const testRoute = async (request: Request, response: Response): Promise<v
 
 export const sendConfirmOrderMail = async (request: Request, response: Response): Promise<void> => {
     try {
-        const msg: MailDataRequired = {
-            to: String(request.body.email),
-            from: {name: "Clockwise Clockware", email: String(process.env.USER)},
-            templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
-            dynamicTemplateData: {
-                message: request.body.message
-            }
-        }
-        sendMail(msg, response)
         const time = new Date(request.body.order_time)
         const hourBefore = new Date(time.getFullYear(), time.getMonth(), time.getDate(), (time.getHours() - 3), time.getMinutes())
         schedule.scheduleJob(hourBefore, () => {
@@ -36,6 +27,15 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
             }
             sendMail(msg, response)
         })
+        const msg: MailDataRequired = {
+            to: String(request.body.email),
+            from: {name: "Clockwise Clockware", email: String(process.env.USER)},
+            templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
+            dynamicTemplateData: {
+                message: request.body.message
+            }
+        }
+        sendMail(msg, response)
     } catch (e) {
         response.status(500).json("Something went wrong")
     }
