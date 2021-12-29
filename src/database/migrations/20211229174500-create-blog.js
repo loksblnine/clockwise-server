@@ -20,6 +20,10 @@ module.exports = {
                 body: {
                     type: DataTypes.TEXT,
                     allowNull: false,
+                },
+                photo: {
+                    type: DataTypes.TEXT,
+                    allowNull: true
                 }
             },
             {

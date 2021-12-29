@@ -5,6 +5,7 @@ export interface IArticle {
     article_id?: number,
     header: string,
     body: string,
+    photo?: string
 }
 
 export type IArticleInput = Optional<IArticle, 'header' & 'body'>
@@ -14,6 +15,7 @@ export class Article extends Model<IArticle, IArticleInput> implements IArticle 
     public article_id!: number
     public header!: string
     public body!: string
+    public photo!: string
 }
 
 Article.init({
@@ -33,6 +35,10 @@ Article.init({
         body: {
             type: DataTypes.TEXT,
             allowNull: false,
+        },
+        photo: {
+            type: DataTypes.TEXT,
+            allowNull: true,
         }
     },
     {
