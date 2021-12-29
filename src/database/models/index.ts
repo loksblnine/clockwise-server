@@ -7,6 +7,7 @@ import {Photo} from "./photo";
 import {Type} from "./workType";
 import {User} from "./user";
 import {Role} from "./role";
+import {Article} from "./article"
 
 City.hasMany(CityToMaster, {as: "connect_city_masters", foreignKey: "city_id"});
 City.hasMany(Order, {as: "orders", foreignKey: "city_id"});
@@ -34,5 +35,6 @@ export {
     Role,
     User,
     Type,
-    Photo
+    Photo,
+    Article
 }

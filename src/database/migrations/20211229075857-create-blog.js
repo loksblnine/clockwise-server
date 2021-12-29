@@ -1,33 +1,51 @@
 'use strict';
+const {DataTypes} = require("sequelize");
+const {sequelize} = require("../config/config");
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Blogs', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      article_id: {
-        type: Sequelize.INTEGER
-      },
-      header: {
-        type: Sequelize.STRING
-      },
-      body: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  down: async (queryInterface) => {
-    await queryInterface.dropTable('Blogs');
-  }
+    up: async (queryInterface) => {
+        await queryInterface.createTable('blog', {
+                article_id: {
+                    autoIncrement: true,
+                    type: DataTypes.INTEGER,
+                    allowNull: false,
+                    primaryKey: true
+                },
+                header: {
+                    type: DataTypes.TEXT,
+                    allowNull: false,
+                    validate: {
+                        is: /^[A-ZА-Яa-zа-я -]+$/i
+                    }
+                },
+                body: {
+                    type: DataTypes.TEXT,
+                    allowNull: false,
+                }
+            },
+            {
+                tableName: 'blog',
+                schema: 'public',
+                timestamps: false,
+                sequelize,
+                indexes: [
+                    {
+                        name: "blog_article_id_uindex",
+                        unique: true,
+                        fields: [
+                            {name: "article_id"},
+                        ]
+                    },
+                    {
+                        name: "blog_pk",
+                        unique: true,
+                        fields: [
+                            {name: "article_id"},
+                        ]
+                    },
+                ]
+            })
+    },
+    down: async (queryInterface) => {
+        await queryInterface.dropTable('blog');
+    }
 };

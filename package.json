@@ -18,7 +18,6 @@
     "pg-hstore": "^2.3.4",
     "routes": "^2.1.0",
     "sequelize": "^6.12.0",
-    "sequelize-auto-migrations-v2": "^1.2.1",
     "sequelize-cli": "^6.3.0",
     "sequelize-typescript": "^2.1.1",
     "ts-express-decorators": "^5.65.9",
