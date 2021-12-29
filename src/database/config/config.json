@@ -1,8 +1,8 @@
 {
   "development": {
     "username": "postgres",
-    "password": "nutter01",
-    "database": "test123",
+    "password": "Nutter123@",
+    "database": "dev_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
@@ -14,10 +14,16 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "postgres"
+    "username": "iqcbxuxflfxduj",
+    "password": "fca4b36c9e7f749a049352848b6e40973f493d493cc13c9cfebe5c840c810fd8",
+    "database": "d2m6pthj9mlkqg",
+    "host": "ec2-34-204-128-77.compute-1.amazonaws.com",
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
   }
 }
