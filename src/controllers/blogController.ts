@@ -1,10 +1,25 @@
 import {Request, Response} from "express"
 import {Article} from "../database/models";
+import cloud from "../utils/cloudinary";
 
 export const createArticle = async (request: Request, response: Response): Promise<void> => {
     try {
-        const article: Article = await Article.create(
-            request.body
+        const article: Article = await Article.create({
+                ...request.body, photo: null
+            }
+        )
+        const fileStr = request.body?.photo;
+        const uploadResponse = await cloud.uploader.upload(fileStr[0], {
+            folder: `article_photos/article${article.article_id}`
+        });
+        await Article.update({
+                photo: uploadResponse.secure_url
+            },
+            {
+                where: {
+                    article_id: article.article_id
+                }
+            }
         )
         response.status(201).json(
             article
