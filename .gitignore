@@ -2,9 +2,6 @@
 logs
 *.log
 
-# transpiled code
-build
-
 # Dependency directories
 node_modules/
 

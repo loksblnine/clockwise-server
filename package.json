@@ -53,7 +53,8 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "start": "eslint . --ext .ts && tsc && ts-node build/app.js",
+    "start": "eslint . --ext .ts && tsc && node build/app.js",
+    "start-heroku": "node build/app.js",
     "test": "jest --coverageReporters='text-summary'"
   }
 }
