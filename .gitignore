@@ -1,6 +1,25 @@
-/node_modules
-.idea
+# Logs
+logs
+*.log
 
+# transpiled code
+build
+
+# Dependency directories
+node_modules/
+
+# Typescript v1 declaration files
+typings/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# dotenv environment variables file
 .env
-sendgrid.env
-login.http
+
+# OS metadata
+.DS_Store
+Thumbs.db

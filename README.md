@@ -1,57 +1,59 @@
-# Project Title
----
-## Requirements
+# Skeleton of a node.js / typescript / express / postgres app
 
-For development, you will only need Node.js and a node global package, Yarn, installed in your environement.
+## Install Node / NPM
 
-### Node
-- #### Node installation on Windows
+https://docs.npmjs.com/getting-started/installing-node
 
-  Just go on [official Node.js website](https://nodejs.org/) and download the installer.
-Also, be sure to have `git` available in your PATH, `npm` might need it (You can find git [here](https://git-scm.com/)).
+## Install TypeScript
 
-- #### Node installation on Ubuntu
+https://www.npmjs.com/package/typescript
 
-  You can install nodejs and npm easily with apt install, just run the following commands.
+## Create table in your Postgres DB:
 
-      $ sudo apt install nodejs
-      $ sudo apt install npm
+```
+CREATE TABLE test (
+  testcolumn VARCHAR(20)
+);
+```
 
-- #### Other Operating Systems
-  You can find more information about the installation on the [official Node.js website](https://nodejs.org/) and the [official NPM website](https://npmjs.org/).
+## Download this repo
 
-If the installation was successful, you should be able to run the following command.
+download and run `npm install`
 
-    $ node --version
-    v8.11.3
+## Set the following ENV VARs for your DB Connections:
 
-    $ npm --version
-    6.1.0
+`export DB_USER='' DB='' DB_PASS='' DB_HOST='' DB_PORT='' DB_MAX_CLIENTS='' DB_IDLE_TIMEOUT_MS=''`
 
-If you need to update `npm`, you can make it using `npm`! Cool right? After running the following command, just open again the command line and be happy.
+this can also be done by creating a `.env` file in the root of this project see `.env.example` for a reference
 
-    $ npm install npm -g
+## Quickstart: transpile, lint and start the app all at once
 
-###
-### Yarn installation
-  After installing node, this project will need yarn too, so just run the following command.
+`npm start`
 
-      $ npm install -g yarn
+### Or each step individually:
 
----
+1. Transpile TypeScript to the build folder
 
-## Install
+run `tsc`
 
-    $ git clone https://github.com/YOUR_USERNAME/PROJECT_TITLE
-    $ cd PROJECT_TITLE
-    $ yarn install
+1. Run ESLint
 
-## Configure app
+`npm run lint`
 
-## Running the project
+1. Run your built node app
 
-    $ node index.js
+`node build/app.js`
 
-## Simple build for production
+## Routes
 
-    $ yarn build
+http://localhost:5000/cities returns all cities
+
+http://localhost:5000/customers/offset/:page - returns 10 customers on the chosen page
+
+## node-postgres package
+
+-   documentation [here](https://node-postgres.com/)
+
+-   use [parameterized queries](https://github.com/brianc/node-postgres/wiki/FAQ#8-does-node-postgres-handle-sql-injection) to prevent SQL injection
+
+-   if you want to do more with [data types](https://node-postgres.com/features/types)
