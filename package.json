@@ -22,7 +22,6 @@
     "sequelize": "^6.12.0",
     "sequelize-cli": "^6.3.0",
     "sequelize-typescript": "^2.1.1",
-    "ts-express-decorators": "^5.65.9",
     "winston": "3.3.3"
   },
   "devDependencies": {
@@ -40,7 +39,8 @@
     "prettier": "2.3.2",
     "sequelize": "^6.12.0",
     "ts-jest": "^27.0.5",
-    "typescript": "^4.3.5"
+    "typescript": "^4.3.5",
+    "ts-node": "^10.4.0"
   },
   "engines": {
     "node": "16"
