@@ -48,9 +48,6 @@ router
     .route("/set-mark/:id")
     .put(authMiddleware_1.authCustomerMiddleware, userController.setMarkOrder);
 router
-    .route("/")
-    .get(userController.logInGoogle);
-router
     .route("/google")
     .get(passport.authenticate('google', { scope: ['email', 'profile'] }));
 router
