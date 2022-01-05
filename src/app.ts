@@ -3,13 +3,38 @@ import express from 'express';
 import {logger} from './utils/logger';
 import {sequelize} from "./database/config/config";
 import router from "./routes/router";
-import cors from 'cors'
+import cors from 'cors';
 
 const app: express.Express = express();
 
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+passport.use(new GoogleStrategy({
+        clientID: process.env.OAUTH_CLIENT_ID,
+        clientSecret: process.env.OAUTH_CLIENT_SECRET,
+        callbackURL: "http://localhost:5000/auth/google/callback",
+        passReqToCallback: true,
+    },
+    function (request: Request, accessToken: String, refreshToken: String, profile: any, done: any) {
+        return done(null, profile);
+    }));
+
+passport.serializeUser(function (user: any, done: any) {
+    done(null, user);
+});
+
+passport.deserializeUser(function (user: any, done: any) {
+    done(null, user);
+});
+
 app.use(cors())
-app.use(express.json({ limit: '7mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(session({secret: process.env.SECRET_SESSION_WORD, resave: false, saveUninitialized: true}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(express.json({limit: '7mb'}));
+app.use(express.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static("static"))
 app.use("/", router)
 

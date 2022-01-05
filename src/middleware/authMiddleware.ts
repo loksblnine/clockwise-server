@@ -1,5 +1,5 @@
 import jwt, {JwtPayload} from "jsonwebtoken"
-import {Request, Response, NextFunction} from "express";
+import {NextFunction, Request, Response} from "express";
 
 export const authMiddleware = (request: Request, response: Response, next: NextFunction): void => {
     try {
@@ -68,4 +68,12 @@ export const authMasterMiddleware = (request: Request, response: Response, next:
     } catch (e) {
         response.status(401).json({message: "Не авторизован"})
     }
+}
+
+export const isLoggedInGoogle = (request: Request, response: Response, next: NextFunction): void => {
+    //@ts-ignore
+    if (request.user) {
+        //@ts-ignore
+        request?.user?.email ? next() : response.sendStatus(401);
+    } else response.status(401)
 }

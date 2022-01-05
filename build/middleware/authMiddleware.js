@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authMasterMiddleware = exports.authCustomerMiddleware = exports.authRefreshMiddleware = exports.authMiddleware = void 0;
+exports.isLoggedInGoogle = exports.authMasterMiddleware = exports.authCustomerMiddleware = exports.authRefreshMiddleware = exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const authMiddleware = (request, response, next) => {
     try {
@@ -85,4 +85,12 @@ const authMasterMiddleware = (request, response, next) => {
     }
 };
 exports.authMasterMiddleware = authMasterMiddleware;
+const isLoggedInGoogle = (request, response, next) => {
+    if (request.user) {
+        request?.user?.email ? next() : response.sendStatus(401);
+    }
+    else
+        response.status(401);
+};
+exports.isLoggedInGoogle = isLoggedInGoogle;
 //# sourceMappingURL=authMiddleware.js.map
