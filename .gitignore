@@ -20,3 +20,5 @@ typings/
 # OS metadata
 .DS_Store
 Thumbs.db
+
+/src/database/config/config.json
