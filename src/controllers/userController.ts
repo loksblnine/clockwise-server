@@ -21,9 +21,9 @@ export const isTokenValidGoogle = async (request: Request, response: Response): 
     })
     if (user) {
         const token = generateJwt(user.user_id, user.email, user.role, "2h")
-        response.redirect(`http://localhost:3000/login/token/${token}`);
+        response.redirect(`${process.env.FRONT_URL}/login/token/${token}`);
     } else {
-        response.redirect('http://localhost:3000/login')
+        response.redirect(`${process.env.FRONT_URL}/login`)
     }
 }
 
@@ -73,9 +73,7 @@ export const registerUser = async (request: Request, response: Response): Promis
         response.status(500).json("Something went wrong");
     }
 }
-export const logInGoogle = async (request: Request, response: Response): Promise<void> => {
-    response.status(201).send('<a href=`http://localhost:5000/auth/google`>Authenticate with Google</a>');
-}
+
 export const loginUser = async (request: Request, response: Response): Promise<Response> => {
     try {
         const email: string = request.body.email,

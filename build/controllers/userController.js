@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMarkOrder = exports.approveOrder = exports.approveUser = exports.approveMaster = exports.loginUser = exports.logInGoogle = exports.registerUser = exports.isTokenValidGoogle = exports.isTokenValid = void 0;
+exports.setMarkOrder = exports.approveOrder = exports.approveUser = exports.approveMaster = exports.loginUser = exports.registerUser = exports.isTokenValidGoogle = exports.isTokenValid = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const models_1 = require("../database/models");
@@ -23,10 +23,10 @@ const isTokenValidGoogle = async (request, response) => {
     });
     if (user) {
         const token = utils_1.generateJwt(user.user_id, user.email, user.role, "2h");
-        response.redirect(`http://localhost:3000/login/token/${token}`);
+        response.redirect(`${process.env.FRONT_URL}/login/token/${token}`);
     }
     else {
-        response.redirect('http://localhost:3000/login');
+        response.redirect(`${process.env.FRONT_URL}/login`);
     }
 };
 exports.isTokenValidGoogle = isTokenValidGoogle;
@@ -76,10 +76,6 @@ const registerUser = async (request, response) => {
     }
 };
 exports.registerUser = registerUser;
-const logInGoogle = async (request, response) => {
-    response.status(201).send('<a href=`http://localhost:5000/auth/google`>Authenticate with Google</a>');
-};
-exports.logInGoogle = logInGoogle;
 const loginUser = async (request, response) => {
     try {
         const email = request.body.email, password = request.body.password;

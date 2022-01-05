@@ -27,13 +27,12 @@ router
 router
     .route("/approve-order/:id")
     .put(authMasterMiddleware, userController.approveOrder)
+
+//todo recalculate master ranking
 router
     .route("/set-mark/:id")
     .put(authCustomerMiddleware, userController.setMarkOrder)
 
-router
-    .route("/")
-    .get(userController.logInGoogle)
 router
     .route("/google")
     .get(passport.authenticate('google', {scope: ['email', 'profile']}))
