@@ -68,7 +68,14 @@ const editArticle = async (request, response) => {
         const id = Number(request.params.id);
         const header = request.body.header, body = request.body.body;
         let photo = request.body?.photo;
-        if (photo) {
+        await models_1.Article.update({
+            header, body
+        }, {
+            where: {
+                article_id: id
+            }
+        });
+        if (photo && !photo.includes('https://')) {
             await cloudinary_1.default.api.delete_resources_by_prefix(`article_photos/article${id}`);
             const fileStr = request.body?.photo;
             const uploadResponse = await cloudinary_1.default.uploader.upload(fileStr, {
@@ -83,13 +90,6 @@ const editArticle = async (request, response) => {
                 }
             });
         }
-        await models_1.Article.update({
-            header, body
-        }, {
-            where: {
-                article_id: id
-            }
-        });
         response.status(201).json("Success");
     }
     catch (e) {

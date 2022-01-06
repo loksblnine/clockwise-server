@@ -71,7 +71,14 @@ export const editArticle = async (request: Request, response: Response): Promise
         const header = request.body.header,
             body = request.body.body
         let photo = request.body?.photo
-        if (photo) {
+        await Article.update({
+            header, body
+        }, {
+            where: {
+                article_id: id
+            }
+        })
+        if (photo && !photo.includes('https://')) {
             await cloud.api.delete_resources_by_prefix(`article_photos/article${id}`)
             const fileStr = request.body?.photo;
             const uploadResponse = await cloud.uploader.upload(fileStr, {
@@ -86,18 +93,11 @@ export const editArticle = async (request: Request, response: Response): Promise
                 }
             })
         }
-        await Article.update({
-            header, body
-        }, {
-            where: {
-                article_id: id
-            }
-        })
         response.status(201).json(
             "Success"
         )
     } catch
-        (e) {
+        (e:any) {
         response.status(500).json("Something went wrong")
     }
 }

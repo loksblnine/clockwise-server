@@ -16,9 +16,6 @@ Article.init({
     header: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
-        validate: {
-            is: /^[A-ZА-Яa-zа-я -]+$/i
-        }
     },
     body: {
         type: sequelize_1.DataTypes.TEXT,
