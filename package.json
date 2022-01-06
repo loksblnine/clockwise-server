@@ -14,7 +14,6 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "node-schedule": "^2.1.0",
-    "passport-google-oidc": "^0.1.0",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "routes": "^2.1.0",
