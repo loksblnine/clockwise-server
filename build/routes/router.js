@@ -12,6 +12,7 @@ const depsRouter_1 = __importDefault(require("./depsRouter"));
 const sendMailRouter_1 = __importDefault(require("./sendMailRouter"));
 const userRouter_1 = __importDefault(require("./userRouter"));
 const photoRouter_1 = __importDefault(require("./photoRouter"));
+const blogRouter_1 = __importDefault(require("./blogRouter"));
 const router = express_1.default.Router();
 router.use("/cities", cityRouter_1.default);
 router.use("/customers", customerRouter_1.default);
@@ -21,5 +22,6 @@ router.use("/deps", depsRouter_1.default);
 router.use("/send", sendMailRouter_1.default);
 router.use("/auth", userRouter_1.default);
 router.use("/photo", photoRouter_1.default);
+router.use("/blog", blogRouter_1.default);
 exports.default = router;
 //# sourceMappingURL=router.js.map

@@ -32,5 +32,9 @@ blogRouter
 blogRouter
     .route("/offset/:page")
     .get(blogController.getArticles);
+blogRouter
+    .route("/:id")
+    .delete(authMiddleware_1.authMiddleware, blogController.deleteArticle)
+    .put(authMiddleware_1.authMiddleware, blogController.editArticle);
 exports.default = blogRouter;
 //# sourceMappingURL=blogRouter.js.map
