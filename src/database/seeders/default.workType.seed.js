@@ -2,18 +2,24 @@
 
 module.exports = {
     up: async (queryInterface) => {
-        await queryInterface.bulkInsert('role', [
+        await queryInterface.bulkInsert('workType', [
             {
                 work_id: 1,
-                description: "small"
+                description: "small",
+                time: "1:00:00",
+                price: 150
             },
             {
-                role_id: 2,
-                description: "average"
+                work_id: 2,
+                description: "average",
+                time: "2:00:00",
+                price: 300
             },
             {
-                role_id: 3,
-                description: "big"
+                work_id: 3,
+                description: "big",
+                time: "3:00:00",
+                price: 450
             }
         ], {});
     },
