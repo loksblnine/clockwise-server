@@ -20,7 +20,8 @@ export const sendMail = (message: MailDataRequired, response: Response): void =>
         .then(() => {
             response.status(201).json("Success!")
         })
-        .catch(() => {
+        .catch((e) => {
+            console.log(e.toString())
             response.status(500).json("Something went wrong")
         })
 }

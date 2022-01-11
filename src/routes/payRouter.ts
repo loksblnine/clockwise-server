@@ -27,7 +27,7 @@ payRouter
             },
             "redirect_urls": {
                 "return_url": `http://localhost:5000/pay/success?price=${type?.price}`,
-                "cancel_url": "http://localhost:5000/pay/cancel"
+                "cancel_url": `${process.env.SERVER_URL}/pay/cancel`
             },
             "transactions": [{
                 "amount": {
@@ -64,20 +64,17 @@ payRouter
             "transactions": [
                 {
                     "amount": {
-                        "currency": "UAH",
+                        "currency": "USD",
                         "total": price
                     }
                 }
             ]
         };
-
-        paypal.payment.execute(paymentId, execute_payment_json, function (error: any, payment: any) {
+        paypal.payment.execute(paymentId, execute_payment_json, function (error: any, payment: any): void {
             if (error) {
-                console.log(error.response);
                 throw error;
             } else {
-                console.log(JSON.stringify(payment));
-                res.send('Success');
+                res.status(201).json(JSON.stringify(payment));
             }
         });
     });

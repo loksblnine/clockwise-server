@@ -26,22 +26,25 @@ const sendConfirmOrderMail = async (request, response) => {
                 from: { name: "Clockwise Clockware", email: String(process.env.USER) },
                 templateId: String(process.env.SG_TEMPLATE_ID_REMEMBER),
                 dynamicTemplateData: {
-                    message: request.body.message
+                    message: request.body.message,
                 }
             };
             utils_1.sendMail(msg, response);
         });
+        console.log(String(process.env.USER));
         const msg = {
             to: String(request.body.email),
             from: { name: "Clockwise Clockware", email: String(process.env.USER) },
             templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
             dynamicTemplateData: {
-                message: request.body.message
+                message: request.body.message,
+                link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}`
             }
         };
         utils_1.sendMail(msg, response);
     }
     catch (e) {
+        console.log(e.toString());
         response.status(500).json("Something went wrong");
     }
 };

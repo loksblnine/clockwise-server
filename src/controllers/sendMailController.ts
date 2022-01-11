@@ -22,21 +22,24 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
                 from: {name: "Clockwise Clockware", email: String(process.env.USER)},
                 templateId: String(process.env.SG_TEMPLATE_ID_REMEMBER),
                 dynamicTemplateData: {
-                    message: request.body.message
+                    message: request.body.message,
                 }
             }
             sendMail(msg, response)
         })
+        console.log(String(process.env.USER))
         const msg: MailDataRequired = {
             to: String(request.body.email),
             from: {name: "Clockwise Clockware", email: String(process.env.USER)},
             templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
             dynamicTemplateData: {
-                message: request.body.message
+                message: request.body.message,
+                link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}`
             }
         }
         sendMail(msg, response)
     } catch (e) {
+        console.log(e.toString())
         response.status(500).json("Something went wrong")
     }
 }
