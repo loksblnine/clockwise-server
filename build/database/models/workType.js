@@ -16,6 +16,14 @@ Type.init({
     description: {
         type: sequelize_1.DataTypes.TEXT,
         allowNull: false,
+    },
+    time: {
+        type: sequelize_1.DataTypes.TEXT,
+        allowNull: false,
+    },
+    price: {
+        type: sequelize_1.DataTypes.INTEGER,
+        allowNull: false,
     }
 }, {
     tableName: 'workType',

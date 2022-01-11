@@ -7,5 +7,6 @@ import { Photo } from "./photo";
 import { Type } from "./workType";
 import { User } from "./user";
 import { Role } from "./role";
-export { City, Customer, CityToMaster, Order, Master, Role, User, Type, Photo };
+import { Article } from "./article";
+export { City, Customer, CityToMaster, Order, Master, Role, User, Type, Photo, Article };
 //# sourceMappingURL=index.d.ts.map

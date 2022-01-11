@@ -8,6 +8,7 @@ export interface IOrder {
     order_time: Date;
     isDone: boolean;
     mark: number | null;
+    isPaid: boolean | string;
 }
 export declare type IOrderInput = Optional<IOrder, 'master_id' & ('customer_id' | 'customer_email') & 'city_id' & 'work_id' & 'order_time'>;
 export declare type IOrderOutput = Required<IOrder>;
@@ -20,5 +21,6 @@ export declare class Order extends Model<IOrder, IOrderInput> implements IOrder 
     work_id: number;
     mark: number | null;
     city_id: number;
+    isPaid: boolean | string;
 }
 //# sourceMappingURL=order.d.ts.map

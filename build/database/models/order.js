@@ -56,6 +56,10 @@ Order.init({
     mark: {
         type: sequelize_1.DataTypes.INTEGER,
         allowNull: true
+    },
+    isPaid: {
+        type: sequelize_1.DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize: config_1.sequelize,
