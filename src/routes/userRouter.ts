@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request, Response} from "express";
 import * as userController from "../controllers/userController"
 import {isTokenValidGoogle} from "../controllers/userController"
 import {
@@ -52,7 +52,7 @@ router
     .get(isLoggedInGoogle, isTokenValidGoogle)
 router
     .route('/google/logout')
-    .get((req, res) => {
+    .get((req: Request, res: Response) => {
         // @ts-ignore
         req.logout();
         // @ts-ignore

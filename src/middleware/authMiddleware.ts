@@ -74,6 +74,8 @@ export const isLoggedInGoogle = (request: Request, response: Response, next: Nex
     //@ts-ignore
     if (request.user) {
         //@ts-ignore
-        request?.user?.email ? next() : response.sendStatus(401);
-    } else response.status(401)
+        request.user.email ? next() : response.sendStatus(401);
+    } else {
+        response.status(401)
+    }
 }
