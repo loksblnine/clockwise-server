@@ -1,86 +1,38 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const models_1 = require("../database/models");
+const payController = __importStar(require("../controllers/payController"));
 const payRouter = express_1.default.Router();
-const paypal = require('paypal-rest-sdk');
-paypal.configure({
-    'mode': 'sandbox',
-    'client_id': process.env.PAYPAL_CLIENT_ID,
-    'client_secret': process.env.PAYPAL_CLIENT_SECRET
-});
 payRouter
     .route('/')
-    .get(async (req, res) => {
-    const typeId = req.query.type;
-    const type = await models_1.Type.findOne({
-        where: {
-            work_id: typeId
-        }
-    });
-    const create_payment_json = {
-        "intent": "sale",
-        "payer": {
-            "payment_method": "paypal"
-        },
-        "redirect_urls": {
-            "return_url": `http://localhost:5000/pay/success?price=${type?.price}`,
-            "cancel_url": `${process.env.SERVER_URL}/pay/cancel`
-        },
-        "transactions": [{
-                "amount": {
-                    "currency": "USD",
-                    "total": type?.price
-                },
-                "description": "Clockwise Clockware sends regards"
-            }]
-    };
-    paypal.payment.create(create_payment_json, function (error, payment) {
-        if (error) {
-            throw error;
-        }
-        else {
-            for (let i = 0; i < payment.links.length; i++) {
-                if (payment.links[i].rel === 'approval_url') {
-                    res.redirect(payment.links[i].href);
-                }
-            }
-        }
-    });
-});
+    .get(payController.pay);
 payRouter
     .route('/success')
-    .get((req, res) => {
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
-    const price = req.query.price;
-    const execute_payment_json = {
-        "payer_id": payerId,
-        "transactions": [
-            {
-                "amount": {
-                    "currency": "USD",
-                    "total": price
-                }
-            }
-        ]
-    };
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
-        if (error) {
-            throw error;
-        }
-        else {
-            res.status(201).json(JSON.stringify(payment));
-        }
-    });
-});
+    .get(payController.successPay);
 payRouter
     .route('/cancel')
-    .get((req, response) => {
-    response.redirect(String(process.env.FRONT_URL));
-});
+    .get(payController.cancelPay);
 exports.default = payRouter;
 //# sourceMappingURL=payRouter.js.map

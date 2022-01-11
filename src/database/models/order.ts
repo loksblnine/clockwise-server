@@ -11,6 +11,7 @@ export interface IOrder {
     isDone: boolean,
     mark: number | null
     isPaid: boolean | string
+    'work.price'?: any
 }
 
 export type IOrderInput = Optional<IOrder, 'master_id' & ('customer_id' | 'customer_email') & 'city_id' & 'work_id' & 'order_time'>
