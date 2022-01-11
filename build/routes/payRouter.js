@@ -4,18 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const braintree = require('braintree');
+const models_1 = require("../database/models");
 const payRouter = express_1.default.Router();
-const gateway = new braintree.BraintreeGateway({
-    accessToken: process.env.PAYPAL_ACCESS_TOKEN
-});
-payRouter
-    .route("/client_token")
-    .get(function (req, res) {
-    gateway.clientToken.generate({}, function (err, response) {
-        res.send(response.clientToken);
-    });
-});
 const paypal = require('paypal-rest-sdk');
 paypal.configure({
     'mode': 'sandbox',
@@ -23,22 +13,27 @@ paypal.configure({
     'client_secret': process.env.PAYPAL_CLIENT_SECRET
 });
 payRouter
-    .route('/test_pay/:price')
-    .get((req, res) => {
-    const price = req.params.price;
+    .route('/')
+    .get(async (req, res) => {
+    const typeId = req.query.type;
+    const type = await models_1.Type.findOne({
+        where: {
+            work_id: typeId
+        }
+    });
     const create_payment_json = {
         "intent": "sale",
         "payer": {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": `http://localhost:5000/pay/success?price=${price}`,
+            "return_url": `http://localhost:5000/pay/success?price=${type?.price}`,
             "cancel_url": "http://localhost:5000/pay/cancel"
         },
         "transactions": [{
                 "amount": {
                     "currency": "USD",
-                    "total": price
+                    "total": type?.price
                 },
                 "description": "Clockwise Clockware sends regards"
             }]
@@ -67,7 +62,7 @@ payRouter
         "transactions": [
             {
                 "amount": {
-                    "currency": "USD",
+                    "currency": "UAH",
                     "total": price
                 }
             }
@@ -87,7 +82,7 @@ payRouter
 payRouter
     .route('/cancel')
     .get((req, response) => {
-    response.status(503).send('Cancelled');
+    response.redirect(String(process.env.FRONT_URL));
 });
 exports.default = payRouter;
 //# sourceMappingURL=payRouter.js.map

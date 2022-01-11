@@ -1,21 +1,7 @@
 import express, {Request, Response} from "express";
 import {Type} from "../database/models";
 
-const braintree = require('braintree')
-
 const payRouter = express.Router();
-
-const gateway = new braintree.BraintreeGateway({
-    accessToken: process.env.PAYPAL_ACCESS_TOKEN
-});
-
-payRouter
-    .route("/client_token")
-    .get(function (req, res) {
-        gateway.clientToken.generate({}, function (err: any, response: any) {
-            res.send(response.clientToken);
-        });
-    });
 
 const paypal = require('paypal-rest-sdk');
 
@@ -44,18 +30,9 @@ payRouter
                 "cancel_url": "http://localhost:5000/pay/cancel"
             },
             "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "Red Sox Hat",
-                        "sku": "001",
-                        "price": "25.00",
-                        "currency": "USD",
-                        "quantity": 1
-                    }]
-                },
                 "amount": {
                     "currency": "USD",
-                    "total": price
+                    "total": type?.price
                 },
                 "description": "Clockwise Clockware sends regards"
             }]
@@ -87,7 +64,7 @@ payRouter
             "transactions": [
                 {
                     "amount": {
-                        "currency": "USD",
+                        "currency": "UAH",
                         "total": price
                     }
                 }
@@ -108,7 +85,7 @@ payRouter
 payRouter
     .route('/cancel')
     .get((req: Request, response: Response): void => {
-        response.status(503).send('Cancelled')
+        response.redirect(String(process.env.FRONT_URL))
     });
 
 export default payRouter
