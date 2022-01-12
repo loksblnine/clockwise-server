@@ -1,6 +1,6 @@
 import express from "express";
 import * as payController from '../controllers/payController'
-import {authMiddleware} from "../middleware/authMiddleware";
+import {authMasterMiddleware} from "../middleware/authMiddleware";
 
 const payRouter = express.Router();
 
@@ -9,7 +9,7 @@ payRouter
     .get(payController.pay);
 payRouter
     .route('/order/:id')
-    .get(authMiddleware, payController.getPaymentDetailsByOrderId);
+    .get(authMasterMiddleware, payController.getPaymentDetailsByOrderId);
 payRouter
     .route('/isPaid/:id')
     .get(payController.getIsPaidByOrderId);
