@@ -28,9 +28,6 @@ Article.init({
         header: {
             type: DataTypes.TEXT,
             allowNull: false,
-            validate: {
-                is: /^[A-ZА-Яa-zа-я -]+$/i
-            }
         },
         body: {
             type: DataTypes.TEXT,

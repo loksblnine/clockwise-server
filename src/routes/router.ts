@@ -13,17 +13,16 @@ import payRouter from "./payRouter";
 
 const router: express.Router = express.Router();
 
+router.use("/auth", userRouter);
+router.use("/blog", blogRouter);
 router.use("/cities", cityRouter);
 router.use("/customers", customerRouter);
-router.use("/orders", orderRouter);
-router.use("/masters", masterRouter);
 router.use("/deps", depsRouter);
-router.use("/send", sendMailRouter);
-router.use("/auth", userRouter);
+router.use("/masters", masterRouter);
+router.use("/orders", orderRouter);
 router.use("/photo", photoRouter);
-router.use("/blog", blogRouter);
 router.use("/types", typesRouter);
 router.use("/pay", payRouter);
-
+router.use("/send", sendMailRouter);
 
 export default router;

@@ -2,13 +2,29 @@ import {Request, Response} from "express";
 import bcrypt from "bcrypt"
 import jwt, {JwtPayload} from "jsonwebtoken"
 
-import {Master, User, Customer, Order} from "../database/models";
+import {Customer, Master, Order, User} from "../database/models";
 import {generateJwt, LINK, sendMail} from "../utils/utils";
 import {MailDataRequired} from "@sendgrid/helpers/classes/mail";
 
 export const isTokenValid = async (request: Request, response: Response): Promise<void> => {
     const token = generateJwt(request.body.user.id, request.body.user.email, request.body.user.role, "2h")
     response.status(200).json({token});
+}
+export const isTokenValidGoogle = async (request: Request, response: Response): Promise<void> => {
+    const user: User | null = await User.findOne({
+        where: {
+            //@ts-ignore
+            email: request.user.email,
+            role: 3
+        },
+        raw: true
+    })
+    if (user) {
+        const token = generateJwt(user.user_id, user.email, user.role, "2h")
+        response.redirect(`${process.env.FRONT_URL}/login/token/${token}`);
+    } else {
+        response.redirect(`${process.env.FRONT_URL}/login`)
+    }
 }
 
 export const registerUser = async (request: Request, response: Response): Promise<void> => {
@@ -57,6 +73,7 @@ export const registerUser = async (request: Request, response: Response): Promis
         response.status(500).json("Something went wrong");
     }
 }
+
 export const loginUser = async (request: Request, response: Response): Promise<Response> => {
     try {
         const email: string = request.body.email,

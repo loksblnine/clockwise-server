@@ -1,24 +1,24 @@
 {
   "development": {
-    "username": "",
-    "password": "",
-    "database": "",
+    "username": "root",
+    "password": null,
+    "database": "database_development",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "mysql"
   },
   "test": {
-    "username": "",
-    "password": "",
-    "database": "",
+    "username": "root",
+    "password": null,
+    "database": "database_test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "mysql"
   },
   "production": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "",
-    "dialect": "postgres",
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
     "dialectOptions": {
       "ssl": {
         "require": true,
