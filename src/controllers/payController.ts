@@ -14,10 +14,6 @@ export const pay = async (req: Request, res: Response) => {
     const orderId = req.query.order_id
     const order: IOrder | null = await Order.findOne({
         raw: true,
-        order: [
-            ['order_time', 'DESC'],
-            ['order_id', 'ASC'],
-        ],
         where: {
             order_id: orderId
         },
@@ -64,10 +60,6 @@ export const successPay = async (req: Request, res: Response) => {
     const orderId = req.query.order_id;
     const order: IOrder | null = await Order.findOne({
         raw: true,
-        order: [
-            ['order_time', 'DESC'],
-            ['order_id', 'ASC'],
-        ],
         where: {
             order_id: orderId
         },
@@ -88,15 +80,47 @@ export const successPay = async (req: Request, res: Response) => {
             }
         ]
     };
-    paypal.payment.execute(paymentId, execute_payment_json, function (error: any, payment: any): void {
+    paypal.payment.execute(paymentId, execute_payment_json, async (error: any): Promise<void> => {
         if (error) {
             throw error;
         } else {
-            res.status(201).json(payment);
+            await Order.update({
+                    isPaid: String(paymentId)
+                },
+                {
+                    where: {
+                        order_id: orderId
+                    }
+                })
+            //send mail that order is paid
+            //success route on front
+            res.redirect(String(process.env.FRONT_URL));
         }
     });
 }
 
 export const cancelPay = (req: Request, response: Response): void => {
     response.redirect(String(process.env.FRONT_URL))
+}
+
+export const getPaymentDetailsByOrderId = async (req: Request, resp: Response): Promise<void> => {
+    const orderId = req.params.id
+    const order: IOrder | null = await Order.findOne({
+        raw: true,
+        where: {
+            order_id: orderId
+        }
+    })
+    if (order && order.isPaid)
+        paypal.payment.get(order.isPaid, function (error: any, payment: any) {
+            if (error) {
+                resp.status(503).json("Something went wrong")
+            } else {
+                resp.status(200).json(payment);
+            }
+        });
+    else {
+        resp.status(404).json("Payment not found")
+    }
+
 }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelPay = exports.successPay = exports.pay = void 0;
+exports.getPaymentDetailsByOrderId = exports.cancelPay = exports.successPay = exports.pay = void 0;
 const models_1 = require("../database/models");
 const paypal = require('paypal-rest-sdk');
 paypal.configure({
@@ -12,10 +12,6 @@ const pay = async (req, res) => {
     const orderId = req.query.order_id;
     const order = await models_1.Order.findOne({
         raw: true,
-        order: [
-            ['order_time', 'DESC'],
-            ['order_id', 'ASC'],
-        ],
         where: {
             order_id: orderId
         },
@@ -62,10 +58,6 @@ const successPay = async (req, res) => {
     const orderId = req.query.order_id;
     const order = await models_1.Order.findOne({
         raw: true,
-        order: [
-            ['order_time', 'DESC'],
-            ['order_id', 'ASC'],
-        ],
         where: {
             order_id: orderId
         },
@@ -86,12 +78,19 @@ const successPay = async (req, res) => {
             }
         ]
     };
-    paypal.payment.execute(paymentId, execute_payment_json, function (error, payment) {
+    paypal.payment.execute(paymentId, execute_payment_json, async (error) => {
         if (error) {
             throw error;
         }
         else {
-            res.status(201).json(payment);
+            await models_1.Order.update({
+                isPaid: String(paymentId)
+            }, {
+                where: {
+                    order_id: orderId
+                }
+            });
+            res.redirect(String(process.env.FRONT_URL));
         }
     });
 };
@@ -100,4 +99,26 @@ const cancelPay = (req, response) => {
     response.redirect(String(process.env.FRONT_URL));
 };
 exports.cancelPay = cancelPay;
+const getPaymentDetailsByOrderId = async (req, resp) => {
+    const orderId = req.params.id;
+    const order = await models_1.Order.findOne({
+        raw: true,
+        where: {
+            order_id: orderId
+        }
+    });
+    if (order && order.isPaid)
+        paypal.payment.get(order.isPaid, function (error, payment) {
+            if (error) {
+                resp.status(503).json("Something went wrong");
+            }
+            else {
+                resp.status(200).json(payment);
+            }
+        });
+    else {
+        resp.status(404).json("Payment not found");
+    }
+};
+exports.getPaymentDetailsByOrderId = getPaymentDetailsByOrderId;
 //# sourceMappingURL=payController.js.map

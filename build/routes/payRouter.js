@@ -29,6 +29,9 @@ payRouter
     .route('/')
     .get(payController.pay);
 payRouter
+    .route('/order/:id')
+    .get(payController.getPaymentDetailsByOrderId);
+payRouter
     .route('/success')
     .get(payController.successPay);
 payRouter
