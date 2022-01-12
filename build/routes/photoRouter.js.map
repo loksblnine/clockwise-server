@@ -1,1 +1,0 @@
-{"version":3,"file":"photoRouter.js","sourceRoot":"","sources":["../../src/routes/photoRouter.ts"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;;;AAAA,sDAA8B;AAC9B,gFAAiE;AACjE,iEAAkE;AAElE,MAAM,WAAW,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAErC,WAAW;KACN,KAAK,CAAC,WAAW,CAAC;KAClB,GAAG,CAAC,qCAAoB,EAAE,eAAe,CAAC,WAAW,CAAC,CAAA;AAE3D,kBAAe,WAAW,CAAA"}
