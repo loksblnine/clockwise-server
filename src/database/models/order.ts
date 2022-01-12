@@ -10,7 +10,7 @@ export interface IOrder {
     order_time: Date,
     isDone: boolean,
     mark: number | null
-    isPaid: boolean | string
+    isPaid: string
     'work.price'?: any
 }
 
@@ -26,7 +26,7 @@ export class Order extends Model<IOrder, IOrderInput> implements IOrder {
     public work_id!: number;
     public mark!: number | null;
     public city_id!: number;
-    public isPaid!: boolean | string
+    public isPaid!: string
 }
 
 Order.init({

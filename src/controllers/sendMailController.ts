@@ -34,7 +34,7 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
             templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
             dynamicTemplateData: {
                 message: request.body.message,
-                link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}`
+                link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}&type=${request.body.type}`
             }
         }
         sendMail(msg, response)
