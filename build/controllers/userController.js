@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setMarkOrder = exports.approveOrder = exports.approveUser = exports.approveMaster = exports.loginUser = exports.registerUser = exports.isTokenValid = void 0;
+exports.setMarkOrder = exports.approveOrder = exports.approveUser = exports.approveMaster = exports.loginUser = exports.registerUser = exports.isTokenValidGoogle = exports.isTokenValid = void 0;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const models_1 = require("../database/models");
@@ -13,6 +13,23 @@ const isTokenValid = async (request, response) => {
     response.status(200).json({ token });
 };
 exports.isTokenValid = isTokenValid;
+const isTokenValidGoogle = async (request, response) => {
+    const user = await models_1.User.findOne({
+        where: {
+            email: request.user.email,
+            role: 3
+        },
+        raw: true
+    });
+    if (user) {
+        const token = utils_1.generateJwt(user.user_id, user.email, user.role, "2h");
+        response.redirect(`${process.env.FRONT_URL}/login/token/${token}`);
+    }
+    else {
+        response.redirect(`${process.env.FRONT_URL}/login`);
+    }
+};
+exports.isTokenValidGoogle = isTokenValidGoogle;
 const registerUser = async (request, response) => {
     try {
         const email = request.body.email, password = request.body.password, role = request.body;

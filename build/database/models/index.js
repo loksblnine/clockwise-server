@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Photo = exports.Type = exports.User = exports.Role = exports.Master = exports.Order = exports.CityToMaster = exports.Customer = exports.City = void 0;
+exports.Article = exports.Photo = exports.Type = exports.User = exports.Role = exports.Master = exports.Order = exports.CityToMaster = exports.Customer = exports.City = void 0;
 const order_1 = require("./order");
 Object.defineProperty(exports, "Order", { enumerable: true, get: function () { return order_1.Order; } });
 const customer_1 = require("./customer");
@@ -19,6 +19,8 @@ const user_1 = require("./user");
 Object.defineProperty(exports, "User", { enumerable: true, get: function () { return user_1.User; } });
 const role_1 = require("./role");
 Object.defineProperty(exports, "Role", { enumerable: true, get: function () { return role_1.Role; } });
+const article_1 = require("./article");
+Object.defineProperty(exports, "Article", { enumerable: true, get: function () { return article_1.Article; } });
 city_1.City.hasMany(cityToMaster_1.CityToMaster, { as: "connect_city_masters", foreignKey: "city_id" });
 city_1.City.hasMany(order_1.Order, { as: "orders", foreignKey: "city_id" });
 customer_1.Customer.hasMany(order_1.Order, { as: "orders", foreignKey: "customer_id" });
