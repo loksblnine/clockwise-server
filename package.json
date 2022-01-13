@@ -51,7 +51,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "start": "tsc && node build/app.js",
+    "start": "node build/app.js",
     "test": "jest --coverageReporters='text-summary'"
   }
 }
