@@ -50,9 +50,10 @@ export const updateType = async (request: Request, response: Response): Promise<
     try {
         const id: string = request.params.id
         const time: string = request.body.time,
-            price: number = request.body.price
+            price: number = request.body.price,
+            description: string = request.body.description
         await Type.update({
-                time, price
+                description, time, price
             },
             {
                 where:

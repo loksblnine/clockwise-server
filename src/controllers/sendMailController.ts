@@ -27,7 +27,6 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
             }
             sendMail(msg, response)
         })
-        console.log(String(process.env.USER))
         const msg: MailDataRequired = {
             to: String(request.body.email),
             from: {name: "Clockwise Clockware", email: String(process.env.USER)},
@@ -39,7 +38,6 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
         }
         sendMail(msg, response)
     } catch (e) {
-        console.log(e.toString())
         response.status(500).json("Something went wrong")
     }
 }

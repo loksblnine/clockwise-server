@@ -21,7 +21,6 @@ export const sendMail = (message: MailDataRequired, response: Response): void =>
             response.status(201).json("Success!")
         })
         .catch((e) => {
-            console.log(e.toString())
             response.status(500).json("Something went wrong")
         })
 }
