@@ -8,6 +8,8 @@ import sendMailRouter from "./sendMailRouter";
 import userRouter from "./userRouter";
 import photoRouter from "./photoRouter";
 import blogRouter from "./blogRouter";
+import typesRouter from "./typesRouter";
+import payRouter from "./payRouter";
 
 const router: express.Router = express.Router();
 
@@ -19,6 +21,8 @@ router.use("/deps", depsRouter);
 router.use("/masters", masterRouter);
 router.use("/orders", orderRouter);
 router.use("/photo", photoRouter);
+router.use("/types", typesRouter);
+router.use("/pay", payRouter);
 router.use("/send", sendMailRouter);
 
 export default router;

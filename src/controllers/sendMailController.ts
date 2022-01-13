@@ -22,7 +22,7 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
                 from: {name: "Clockwise Clockware", email: String(process.env.USER)},
                 templateId: String(process.env.SG_TEMPLATE_ID_REMEMBER),
                 dynamicTemplateData: {
-                    message: request.body.message
+                    message: request.body.message,
                 }
             }
             sendMail(msg, response)
@@ -32,7 +32,8 @@ export const sendConfirmOrderMail = async (request: Request, response: Response)
             from: {name: "Clockwise Clockware", email: String(process.env.USER)},
             templateId: String(process.env.SG_TEMPLATE_ID_CONFIRM_ORDER),
             dynamicTemplateData: {
-                message: request.body.message
+                message: request.body.message,
+                link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}&type=${request.body.type}`
             }
         }
         sendMail(msg, response)

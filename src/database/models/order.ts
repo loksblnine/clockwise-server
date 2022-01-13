@@ -10,6 +10,8 @@ export interface IOrder {
     order_time: Date,
     isDone: boolean,
     mark: number | null
+    isPaid: string
+    'work.price'?: any
 }
 
 export type IOrderInput = Optional<IOrder, 'master_id' & ('customer_id' | 'customer_email') & 'city_id' & 'work_id' & 'order_time'>
@@ -24,6 +26,7 @@ export class Order extends Model<IOrder, IOrderInput> implements IOrder {
     public work_id!: number;
     public mark!: number | null;
     public city_id!: number;
+    public isPaid!: string
 }
 
 Order.init({
@@ -76,6 +79,10 @@ Order.init({
     mark: {
         type: DataTypes.INTEGER,
         allowNull: true
+    },
+    isPaid: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize,

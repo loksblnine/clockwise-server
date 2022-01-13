@@ -2,12 +2,12 @@
 const {DataTypes} = require("sequelize");
 module.exports = {
     up: async (queryInterface) => {
-        await queryInterface.addColumn('blog', 'photo', {
-            type: DataTypes.TEXT,
+        await queryInterface.addColumn('order', 'isPaid', {
+            type: DataTypes.STRING,
             allowNull: true
         })
     },
     down: async (queryInterface) => {
-        await queryInterface.removeColumn('blog', 'photo');
+        await queryInterface.removeColumn('order', 'isPaid');
     }
 };
