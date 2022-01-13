@@ -90,6 +90,15 @@ const editArticle = async (request, response) => {
                 }
             });
         }
+        else {
+            await models_1.Article.update({
+                photo: ""
+            }, {
+                where: {
+                    article_id: id
+                }
+            });
+        }
         response.status(201).json("Success");
     }
     catch (e) {

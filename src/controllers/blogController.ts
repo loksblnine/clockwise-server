@@ -93,6 +93,15 @@ export const editArticle = async (request: Request, response: Response): Promise
                 }
             })
         }
+        else {
+            await Article.update({
+                photo: ""
+            }, {
+                where: {
+                    article_id: id
+                }
+            })
+        }
         response.status(201).json(
             "Success"
         )
