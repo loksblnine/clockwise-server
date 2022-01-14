@@ -32,7 +32,8 @@ const pay = async (req, res) => {
             },
             "redirect_urls": {
                 "return_url": `${process.env.SERVER_URL}/pay/success?order_id=${orderId}`,
-                "cancel_url": `${process.env.SERVER_URL}/pay/cancel`
+                "cancel_url": `${process.env.SERVER_URL}/pay/cancel`,
+                "error_url": `${process.env.FRONT_URL}/payment/failed`
             },
             "transactions": [{
                     "amount": {
@@ -85,7 +86,7 @@ const successPay = async (req, res) => {
     };
     paypal.payment.execute(paymentId, execute_payment_json, async (error) => {
         if (error) {
-            throw error;
+            res.redirect(String(process.env.FRONT_URL) + "/payment/failed");
         }
         else {
             await models_1.Order.update({
