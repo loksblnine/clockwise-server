@@ -146,8 +146,10 @@ export const approveUser = async (request: Request, response: Response): Promise
                 isActive: true
             },
             {
-                where:
-                    {email: activated}
+                where: {
+                    email: activated,
+                    role: 3
+                }
             })
         const user: User | null = await User.findOne({
             where: {

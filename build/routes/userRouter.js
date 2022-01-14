@@ -40,7 +40,7 @@ router
     .put(authMiddleware_1.authMiddleware, userController.approveMaster);
 router
     .route("/approve-user")
-    .get(authMiddleware_1.authMiddleware, userController.approveUser);
+    .get(userController.approveUser);
 router
     .route("/approve-order/:id")
     .put(authMiddleware_1.authMasterMiddleware, userController.approveOrder);

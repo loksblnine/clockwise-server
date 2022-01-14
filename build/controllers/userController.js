@@ -146,7 +146,10 @@ const approveUser = async (request, response) => {
         await models_1.User.update({
             isActive: true
         }, {
-            where: { email: activated }
+            where: {
+                email: activated,
+                role: 3
+            }
         });
         const user = await models_1.User.findOne({
             where: {

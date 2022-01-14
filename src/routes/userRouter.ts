@@ -23,7 +23,7 @@ router
     .put(authMiddleware, userController.approveMaster)
 router
     .route("/approve-user")
-    .get(authMiddleware, userController.approveUser)
+    .get(userController.approveUser)
 router
     .route("/approve-order/:id")
     .put(authMasterMiddleware, userController.approveOrder)
