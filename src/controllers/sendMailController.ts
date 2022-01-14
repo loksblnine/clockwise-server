@@ -4,14 +4,6 @@ import {LINK, sendMail} from "../utils/utils";
 import jwt from "jsonwebtoken";
 import schedule from "node-schedule"
 
-export const testRoute = async (request: Request, response: Response): Promise<void> => {
-    try {
-        response.json("This is route for sending mail")
-    } catch (e) {
-        response.json(e.toString())
-    }
-}
-
 export const sendConfirmOrderMail = async (request: Request, response: Response): Promise<void> => {
     try {
         const time = new Date(request.body.order_time)

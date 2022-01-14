@@ -3,19 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendConfirmRegistrationMail = exports.sendConfirmOrderMail = exports.testRoute = void 0;
+exports.sendConfirmRegistrationMail = exports.sendConfirmOrderMail = void 0;
 const utils_1 = require("../utils/utils");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const node_schedule_1 = __importDefault(require("node-schedule"));
-const testRoute = async (request, response) => {
-    try {
-        response.json("This is route for sending mail");
-    }
-    catch (e) {
-        response.json(e.toString());
-    }
-};
-exports.testRoute = testRoute;
 const sendConfirmOrderMail = async (request, response) => {
     try {
         const time = new Date(request.body.order_time);

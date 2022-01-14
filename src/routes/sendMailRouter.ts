@@ -5,7 +5,6 @@ const sendMailRouter = express.Router();
 
 sendMailRouter
     .route('/confirm-order')
-    .get(sendMailController.testRoute)
     .post(sendMailController.sendConfirmOrderMail)
 sendMailRouter
     .route('/confirm-registration')

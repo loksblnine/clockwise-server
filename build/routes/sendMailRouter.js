@@ -27,7 +27,6 @@ const sendMailController = __importStar(require("../controllers/sendMailControll
 const sendMailRouter = express_1.default.Router();
 sendMailRouter
     .route('/confirm-order')
-    .get(sendMailController.testRoute)
     .post(sendMailController.sendConfirmOrderMail);
 sendMailRouter
     .route('/confirm-registration')
