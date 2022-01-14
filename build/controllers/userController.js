@@ -32,7 +32,7 @@ const isTokenValidGoogle = async (request, response) => {
 exports.isTokenValidGoogle = isTokenValidGoogle;
 const registerUser = async (request, response) => {
     try {
-        const email = request.body.email, password = request.body.password, role = request.body;
+        const email = request.body.email, password = request.body.password, role = request.body.role;
         if (!(email && password)) {
             response.status(400).send("Invalid credentials");
         }

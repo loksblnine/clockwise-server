@@ -31,7 +31,7 @@ export const registerUser = async (request: Request, response: Response): Promis
     try {
         const email: string = request.body.email,
             password: string = request.body.password,
-            role: number = request.body;
+            role: number = request.body.role;
         if (!(email && password)) {
             response.status(400).send("Invalid credentials");
         }
