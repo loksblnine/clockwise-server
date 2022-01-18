@@ -211,6 +211,38 @@ export const getMasterOrders = async (request: Request, response: Response): Pro
         response.status(500).json("Something went wrong")
     }
 }
+export const getOrdersCalendar = async (request: Request, response: Response): Promise<void> => {
+    try {
+        const id: string = request.params.id
+
+        const where: IWhere = {}
+        where.master_id = Number(id)
+        if (request?.query?.to?.length && request?.query?.from?.length) {
+            where.order_time = {[Op.between]: [request.query.from, request.query.to]}
+        }
+
+        const orders: Order[] | null = await Order.findAll({
+            order: [
+                ['order_time', 'DESC'],
+                ['order_id', 'ASC'],
+            ],
+            include: [{
+                model: City,
+                as: 'city',
+                attributes: ['city_name']
+            }, {
+                model: Customer,
+                as: 'customer',
+                attributes: ['customer_name']
+            },
+            ],
+            where
+        })
+        response.status(201).json(orders)
+    } catch (e) {
+        response.status(500).json("Something went wrong")
+    }
+}
 export const getCustomerOrders = async (request: Request, response: Response): Promise<void> => {
     try {
         const page: string = request.params.page

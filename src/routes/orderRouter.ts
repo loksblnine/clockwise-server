@@ -9,17 +9,20 @@ orderRouter
     .post(orderController.createOrder)
 orderRouter
     .route('/offset/:page')
-    .get(authMiddleware, orderController.getOrders)//auth
+    .get(authMiddleware, orderController.getOrders)
 orderRouter
     .route('/master/:id/offset/:page')
-    .get(authMasterMiddleware, orderController.getMasterOrders)//auth master
+    .get(authMasterMiddleware, orderController.getMasterOrders)
+orderRouter
+    .route('/master/:id/calendar')
+    .get(authMasterMiddleware, orderController.getOrdersCalendar)
 orderRouter
     .route('/customer/:id/offset/:page')
-    .get(authCustomerMiddleware, orderController.getCustomerOrders)//auth customer
+    .get(authCustomerMiddleware, orderController.getCustomerOrders)
 orderRouter
     .route('/:id')
-    .get(authMiddleware, orderController.getOrderById)//auth
-    .put(authMiddleware, orderController.updateOrder)//auth
-    .delete(authMiddleware, orderController.deleteOrder)//auth
+    .get(authMiddleware, orderController.getOrderById)
+    .put(authMiddleware, orderController.updateOrder)
+    .delete(authMiddleware, orderController.deleteOrder)
 
 export default orderRouter

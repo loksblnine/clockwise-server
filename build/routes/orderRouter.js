@@ -36,6 +36,9 @@ orderRouter
     .route('/master/:id/offset/:page')
     .get(authMiddleware_1.authMasterMiddleware, orderController.getMasterOrders);
 orderRouter
+    .route('/master/:id/calendar')
+    .get(authMiddleware_1.authMasterMiddleware, orderController.getOrdersCalendar);
+orderRouter
     .route('/customer/:id/offset/:page')
     .get(authMiddleware_1.authCustomerMiddleware, orderController.getCustomerOrders);
 orderRouter

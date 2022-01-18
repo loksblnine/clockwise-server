@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCustomerOrders = exports.getMasterOrders = exports.getOrderById = exports.getOrders = exports.deleteOrder = exports.updateOrder = exports.createOrder = void 0;
+exports.getCustomerOrders = exports.getOrdersCalendar = exports.getMasterOrders = exports.getOrderById = exports.getOrders = exports.deleteOrder = exports.updateOrder = exports.createOrder = void 0;
 const models_1 = require("../database/models");
 const sequelize_1 = require("sequelize");
 const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
@@ -207,6 +207,38 @@ const getMasterOrders = async (request, response) => {
     }
 };
 exports.getMasterOrders = getMasterOrders;
+const getOrdersCalendar = async (request, response) => {
+    try {
+        const id = request.params.id;
+        const where = {};
+        where.master_id = Number(id);
+        if (request?.query?.to?.length && request?.query?.from?.length) {
+            where.order_time = { [sequelize_1.Op.between]: [request.query.from, request.query.to] };
+        }
+        const orders = await models_1.Order.findAll({
+            order: [
+                ['order_time', 'DESC'],
+                ['order_id', 'ASC'],
+            ],
+            include: [{
+                    model: models_1.City,
+                    as: 'city',
+                    attributes: ['city_name']
+                }, {
+                    model: models_1.Customer,
+                    as: 'customer',
+                    attributes: ['customer_name']
+                },
+            ],
+            where
+        });
+        response.status(201).json(orders);
+    }
+    catch (e) {
+        response.status(500).json("Something went wrong");
+    }
+};
+exports.getOrdersCalendar = getOrdersCalendar;
 const getCustomerOrders = async (request, response) => {
     try {
         const page = request.params.page;
