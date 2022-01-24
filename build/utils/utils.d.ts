@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { MailDataRequired } from "@sendgrid/helpers/classes/mail";
 export declare const generateJwt: (id: number, email: string, role: number, time: string) => string;
 export declare const LINK: string | undefined;
@@ -13,5 +13,6 @@ export interface IWhere {
     isDone?: boolean;
     order_time?: OrderTime;
 }
+export declare const whereConstructor: (request: Request) => IWhere;
 export {};
 //# sourceMappingURL=utils.d.ts.map

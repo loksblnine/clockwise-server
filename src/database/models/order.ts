@@ -1,5 +1,8 @@
 import {DataTypes, Model, Optional} from "sequelize";
 import {sequelize} from "../config/config";
+import {ICity} from "./city";
+import {ICustomer} from "./customer";
+import {IMaster} from "./master";
 
 export interface IOrder {
     order_id?: number,
@@ -26,7 +29,10 @@ export class Order extends Model<IOrder, IOrderInput> implements IOrder {
     public work_id!: number;
     public mark!: number | null;
     public city_id!: number;
-    public isPaid!: string
+    public isPaid!: string;
+    public city!: ICity;
+    public customer!: ICustomer;
+    public master!: IMaster;
 }
 
 Order.init({

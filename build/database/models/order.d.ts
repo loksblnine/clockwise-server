@@ -1,4 +1,7 @@
 import { Model, Optional } from "sequelize";
+import { ICity } from "./city";
+import { ICustomer } from "./customer";
+import { IMaster } from "./master";
 export interface IOrder {
     order_id?: number;
     master_id: number;
@@ -23,5 +26,8 @@ export declare class Order extends Model<IOrder, IOrderInput> implements IOrder 
     mark: number | null;
     city_id: number;
     isPaid: string;
+    city: ICity;
+    customer: ICustomer;
+    master: IMaster;
 }
 //# sourceMappingURL=order.d.ts.map

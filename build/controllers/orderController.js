@@ -7,6 +7,7 @@ exports.getCustomerOrders = exports.getOrdersCalendar = exports.getMasterOrders 
 const models_1 = require("../database/models");
 const sequelize_1 = require("sequelize");
 const cloudinary_1 = __importDefault(require("../utils/cloudinary"));
+const utils_1 = require("../utils/utils");
 const createOrder = async (request, response) => {
     try {
         const customer = await models_1.Customer.findCreateFind({
@@ -91,28 +92,7 @@ const getOrders = async (request, response) => {
     try {
         const page = request.params.page;
         const offset = 10 * Number(page);
-        const where = {};
-        if (request?.query?.city_id?.length) {
-            where.city_id = Number(request.query.city_id);
-        }
-        if (request?.query?.master_id?.length) {
-            where.master_id = Number(request.query.master_id);
-        }
-        if (request?.query?.isDone?.length) {
-            where.isDone = request.query.isDone === "true";
-        }
-        if (request?.query?.work_id?.length) {
-            where.work_id = Number(request.query.work_id);
-        }
-        if (request?.query?.from?.length && !request?.query?.to?.length) {
-            where.order_time = { [sequelize_1.Op.gte]: request.query.from };
-        }
-        if (request?.query?.to?.length && !request?.query?.from?.length) {
-            where.order_time = { [sequelize_1.Op.lte]: request.query.to };
-        }
-        if (request?.query?.to?.length && request?.query?.from?.length) {
-            where.order_time = { [sequelize_1.Op.between]: [request.query.from, request.query.to] };
-        }
+        const where = utils_1.whereConstructor(request);
         const orders = await models_1.Order.findAndCountAll({
             order: [
                 ['order_time', 'DESC'],
