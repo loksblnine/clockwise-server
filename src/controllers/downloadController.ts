@@ -15,11 +15,7 @@ export const Excel = async (request: Request, response: Response): Promise<void>
             console.log('File deleted!');
         });
     }
-    const workbook = XLSX.readFile("C:/Users/admin/Desktop/cw2/src/examples/excel-example.xlsx");
-    let worksheets: any = {};
-    for (const sheetName of workbook.SheetNames) {
-        worksheets["Лист1"] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-    }
+    let worksheets: any = {"Лист1": []};
     const where: IWhere = whereConstructor(request)
     const orders: Order[] | null = await Order.findAll({
         order: [
@@ -61,8 +57,8 @@ export const Excel = async (request: Request, response: Response): Promise<void>
     const newBook = XLSX.utils.book_new();
     const newSheet = XLSX.utils.json_to_sheet(worksheets["Лист1"]);
     XLSX.utils.book_append_sheet(newBook, newSheet, "Лист1");
-    XLSX.writeFile(newBook, root + "\\Отчёт.xlsx");
-    response.status(201).sendFile(root + "\\Отчёт.xlsx", (err) => {
-        if (err) console.log(err);
-    })
+    const content = XLSX.write(newBook, {type: "buffer", bookType: "xlsx", Props: {Author: "Clockwise Clockware"}})
+    response
+        .status(201)
+        .send(content)
 }
