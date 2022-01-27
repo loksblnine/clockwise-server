@@ -194,6 +194,7 @@ export const approveOrder = async (request: Request, response: Response): Promis
                     master_id: order.master_id
                 }
             })
+            const token = generateJwt(request.body.user.id, request.body.user.email, request.body.user.role, "2h")
             if (customer && master && process.env.USER && process.env.SG_TEMPLATE_ID_FINISH_ORDER) {
                 const msg: MailDataRequired = {
                     to: String(customer.customer_email),
@@ -202,7 +203,9 @@ export const approveOrder = async (request: Request, response: Response): Promis
                     dynamicTemplateData: {
                         master_name: master.master_name,
                         order_id: id,
-                        link: LINK
+                        link: LINK,
+                        s_link: process.env.SERVER_URL,
+                        token
                     }
                 }
                 sendMail(msg, response)
