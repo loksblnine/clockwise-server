@@ -3,18 +3,8 @@ import {Request, Response} from "express";
 import XLSX from "xlsx";
 import {City, Customer, Master, Order} from "../database/models";
 import {IWhere, whereConstructor} from "../utils/utils";
-import * as fs from "fs";
-
-const path = require('path');
-const root = path.dirname(require?.main?.filename)
 
 export const Excel = async (request: Request, response: Response): Promise<void> => {
-    if (fs.existsSync(root + "\\Отчёт.xlsx")) {
-        fs.unlink(root + "\\Отчёт.xlsx", function (err) {
-            if (err) throw err;
-            console.log('File deleted!');
-        });
-    }
     let worksheets: any = {"Лист1": []};
     const where: IWhere = whereConstructor(request)
     const orders: Order[] | null = await Order.findAll({
@@ -61,4 +51,8 @@ export const Excel = async (request: Request, response: Response): Promise<void>
     response
         .status(201)
         .send(content)
+}
+
+export const createReceipt = async (request: Request, response: Response): Promise<void> => {
+
 }

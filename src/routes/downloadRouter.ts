@@ -6,8 +6,8 @@ const downloadRouter = express.Router();
 downloadRouter
     .route("/excel")
     .get(downloadController.Excel)
-// downloadRouter
-//     .route("/pdf")
-//     .get(downloadController.Excel)
+downloadRouter
+    .route("/pdf/:id")
+    .get(downloadController.createReceipt)
 
 export default downloadRouter
