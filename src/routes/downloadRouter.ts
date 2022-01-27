@@ -1,12 +1,12 @@
 import express from "express";
 import * as downloadController from "../controllers/downloadController"
-import {authCustomerMasterMiddleware} from "../middleware/authMiddleware";
+import {authCustomerMasterMiddleware, authMiddleware} from "../middleware/authMiddleware";
 
 const downloadRouter = express.Router();
 
 downloadRouter
     .route("/excel")
-    .get(downloadController.Excel)
+    .get(authMiddleware, downloadController.Excel)
 downloadRouter
     .route("/pdf/:id")
     .get(authCustomerMasterMiddleware, downloadController.createReceipt)
