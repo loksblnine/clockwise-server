@@ -2,7 +2,7 @@ import {Request, Response} from "express"
 import {City, Customer, Master, Order, Photo} from "../database/models";
 import {Op} from "sequelize"
 import cloud from "../utils/cloudinary";
-import {IWhere} from "../utils/utils";
+import {IWhere, whereConstructor} from "../utils/utils";
 
 export const createOrder = async (request: Request, response: Response): Promise<void> => {
     try {
@@ -95,28 +95,7 @@ export const getOrders = async (request: Request, response: Response): Promise<v
     try {
         const page: string = request.params.page
         const offset: number = 10 * Number(page)
-        const where: IWhere = {}
-        if (request?.query?.city_id?.length) {
-            where.city_id = Number(request.query.city_id)
-        }
-        if (request?.query?.master_id?.length) {
-            where.master_id = Number(request.query.master_id)
-        }
-        if (request?.query?.isDone?.length) {
-            where.isDone = request.query.isDone === "true"
-        }
-        if (request?.query?.work_id?.length) {
-            where.work_id = Number(request.query.work_id)
-        }
-        if (request?.query?.from?.length && !request?.query?.to?.length) {
-            where.order_time = {[Op.gte]: request.query.from}
-        }
-        if (request?.query?.to?.length && !request?.query?.from?.length) {
-            where.order_time = {[Op.lte]: request.query.to}
-        }
-        if (request?.query?.to?.length && request?.query?.from?.length) {
-            where.order_time = {[Op.between]: [request.query.from, request.query.to]}
-        }
+        const where: IWhere = whereConstructor(request)
         const orders: { rows: Order[]; count: number } = await Order.findAndCountAll({
             order: [
                 ['order_time', 'DESC'],

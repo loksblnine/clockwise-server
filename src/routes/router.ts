@@ -10,7 +10,7 @@ import photoRouter from "./photoRouter";
 import blogRouter from "./blogRouter";
 import typesRouter from "./typesRouter";
 import payRouter from "./payRouter";
-
+import downloadRouter from "./downloadRouter";
 const router: express.Router = express.Router();
 
 router.use("/auth", userRouter);
@@ -18,6 +18,7 @@ router.use("/blog", blogRouter);
 router.use("/cities", cityRouter);
 router.use("/customers", customerRouter);
 router.use("/deps", depsRouter);
+router.use("/download", downloadRouter);
 router.use("/masters", masterRouter);
 router.use("/orders", orderRouter);
 router.use("/photo", photoRouter);
