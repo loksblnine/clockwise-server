@@ -1,11 +1,11 @@
-// Import dependencies
 import {Request, Response} from "express";
 import XLSX from "xlsx";
 import {City, Customer, Master, Order} from "../database/models";
 import {IWhere, whereConstructor} from "../utils/utils";
+import {buildPDF} from "../service/pdf-service"
 
 export const Excel = async (request: Request, response: Response): Promise<void> => {
-    let worksheets: any = {"Лист1": []};
+    let worksheets: { "Лист1": any [] } = {"Лист1": []};
     const where: IWhere = whereConstructor(request)
     const orders: Order[] | null = await Order.findAll({
         order: [
@@ -54,5 +54,15 @@ export const Excel = async (request: Request, response: Response): Promise<void>
 }
 
 export const createReceipt = async (request: Request, response: Response): Promise<void> => {
+    const id = Number(request.params.id);
+    const stream = response.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment;filename=Receipt${id}.pdf`,
+    });
 
+
+    await buildPDF(id,
+        (chunk: any) => stream.write(chunk),
+        () => stream.end()
+    );
 }
