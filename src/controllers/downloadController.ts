@@ -33,10 +33,10 @@ export const Excel = async (request: Request, response: Response): Promise<void>
     orders.forEach((order) => {
             worksheets["Лист1"].push({
                 "Номер заказа": order.order_id,
-                "ID покупателя": order.customer.customer_name,
-                "ID мастера": order.master.master_name,
+                "Покупатель": order.customer.customer_name,
+                "Мастер": order.master.master_name,
                 "Тип работы": order.work_id,
-                "ID города": order.city.city_name,
+                "Город": order.city.city_name,
                 "Дата заказа": order.order_time,
                 "Выполнен ли": order.isDone ? "ДА" : "Не выполнен",
                 "Оплачен ли": order.isPaid || "Не оплачен",
