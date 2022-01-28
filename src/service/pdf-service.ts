@@ -129,6 +129,15 @@ export const buildPDF = async (id: number, dataCallback: any, endCallback: any) 
             .text(
                 `${order['work.price']} USD`, 150, 320
             )
+        if (!order.isPaid) {
+            doc.fontSize(12)
+                .fillColor('red')
+                .text('Оплатите сейчас!', 150, 350, {
+                        link: `${process.env.SERVER_URL}/pay?order_id=${order.order_id}`,
+                        underline: true
+                    }
+                );
+        }
         doc.image(Buffer.from(response.replace('data:image/png;base64,', ''), 'base64'), 220, 400, {
             width: 150,
             height: 150
