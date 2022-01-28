@@ -28,7 +28,7 @@ const authMiddleware_1 = require("../middleware/authMiddleware");
 const downloadRouter = express_1.default.Router();
 downloadRouter
     .route("/excel")
-    .get(authMiddleware_1.authMiddleware, downloadController.Excel);
+    .get(authMiddleware_1.authCustomerMasterMiddleware, downloadController.Excel);
 downloadRouter
     .route("/pdf/:id")
     .get(authMiddleware_1.authCustomerMasterMiddleware, downloadController.createReceipt);
