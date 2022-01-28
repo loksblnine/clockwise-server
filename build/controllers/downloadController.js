@@ -41,9 +41,9 @@ const Excel = async (request, response) => {
             "Тип работы": order.work_id,
             "Город": order.city.city_name,
             "Дата заказа": order.order_time,
-            "Выполнен ли": order.isDone ? "ДА" : "Не выполнен",
-            "Оплачен ли": order.isPaid || "Не оплачен",
-            "Оценка": order.mark || "Нет оценки"
+            "Выполнен ли": order.isDone ? "ДА" : "-",
+            "Оплачен ли": order.isPaid || "",
+            "Оценка": order.mark || ""
         });
     });
     const newBook = xlsx_1.default.utils.book_new();
