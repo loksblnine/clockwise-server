@@ -33,6 +33,7 @@ export class Order extends Model<IOrder, IOrderInput> implements IOrder {
     public city!: ICity;
     public customer!: ICustomer;
     public master!: IMaster;
+    public "city.city_name"!: string
 }
 
 Order.init({

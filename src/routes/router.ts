@@ -1,5 +1,6 @@
 import express from "express";
 import cityRouter from "./cityRouter";
+import chartRouter from "./chartRouter";
 import customerRouter from "./customerRouter";
 import orderRouter from "./orderRouter";
 import masterRouter from "./masterRouter";
@@ -15,6 +16,7 @@ const router: express.Router = express.Router();
 
 router.use("/auth", userRouter);
 router.use("/blog", blogRouter);
+router.use("/charts", chartRouter);
 router.use("/cities", cityRouter);
 router.use("/customers", customerRouter);
 router.use("/deps", depsRouter);

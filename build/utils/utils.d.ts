@@ -14,5 +14,6 @@ export interface IWhere {
     order_time?: OrderTime;
 }
 export declare const whereConstructor: (request: Request) => IWhere;
+export declare const getDaysArray: (from: string, to: Date) => Array<string>;
 export {};
 //# sourceMappingURL=utils.d.ts.map
