@@ -27,16 +27,16 @@ const chartController = __importStar(require("../controllers/chartController"));
 const authMiddleware_1 = require("../middleware/authMiddleware");
 const chartRouter = express_1.default.Router();
 chartRouter
-    .route("/1")
-    .get(authMiddleware_1.authMiddleware, chartController.diagram1);
+    .route("/orders-day")
+    .get(authMiddleware_1.authMiddleware, chartController.diagramByDays);
 chartRouter
-    .route("/2")
-    .get(authMiddleware_1.authMiddleware, chartController.diagram2);
+    .route("/orders-city")
+    .get(authMiddleware_1.authMiddleware, chartController.diagramOrdersByCity);
 chartRouter
-    .route("/3")
-    .get(authMiddleware_1.authMiddleware, chartController.diagram3);
+    .route("/orders-master")
+    .get(authMiddleware_1.authMiddleware, chartController.diagramOrdersByMaster);
 chartRouter
-    .route("/4")
-    .get(authMiddleware_1.authMiddleware, chartController.diagram4);
+    .route("/order-master-table")
+    .get(authMiddleware_1.authMiddleware, chartController.diagramOrderTableByMaster);
 exports.default = chartRouter;
 //# sourceMappingURL=chartRouter.js.map

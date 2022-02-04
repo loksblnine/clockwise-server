@@ -5,17 +5,17 @@ import {authMiddleware} from "../middleware/authMiddleware";
 const chartRouter = express.Router();
 
 chartRouter
-    .route("/1")
-    .get(authMiddleware, chartController.diagram1)
+    .route("/orders-day")
+    .get(authMiddleware, chartController.diagramByDays)
 chartRouter
-    .route("/2")
-    .get(authMiddleware, chartController.diagram2)
+    .route("/orders-city")
+    .get(authMiddleware, chartController.diagramOrdersByCity)
 chartRouter
-    .route("/3")
-    .get(authMiddleware, chartController.diagram3)
+    .route("/orders-master")
+    .get(authMiddleware, chartController.diagramOrdersByMaster)
 chartRouter
-    .route("/4")
-    .get(authMiddleware, chartController.diagram4)
+    .route("/order-master-table")
+    .get(authMiddleware, chartController.diagramOrderTableByMaster)
 
 
 export default chartRouter

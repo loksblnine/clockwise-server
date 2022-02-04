@@ -1,8 +1,9 @@
 import {Request, Response} from "express"
 import {City, Master, Order, Type} from "../database/models";
 import {getDaysArray, IWhere, whereConstructor} from "../utils/utils";
+import {Op} from "sequelize";
 
-export const diagram1 = async (request: Request, response: Response): Promise<void> => {
+export const diagramByDays = async (request: Request, response: Response): Promise<void> => {
     try {
         const from = String(request.query.from)
         const to = String(request.query.to)
@@ -29,7 +30,7 @@ export const diagram1 = async (request: Request, response: Response): Promise<vo
         response.status(500).json("Something went wrong")
     }
 }
-export const diagram2 = async (request: Request, response: Response): Promise<void> => {
+export const diagramOrdersByCity = async (request: Request, response: Response): Promise<void> => {
     try {
         const from = String(request.query.from)
         const to = String(request.query.to)
@@ -80,7 +81,7 @@ export const diagram2 = async (request: Request, response: Response): Promise<vo
         response.status(500).json("Something went wrong")
     }
 }
-export const diagram3 = async (request: Request, response: Response): Promise<void> => {
+export const diagramOrdersByMaster = async (request: Request, response: Response): Promise<void> => {
     try {
         const from = String(request.query.from)
         const to = String(request.query.to)
@@ -138,33 +139,59 @@ export const diagram3 = async (request: Request, response: Response): Promise<vo
         response.status(500).json("Something went wrong")
     }
 }
-export const diagram4 = async (request: Request, response: Response): Promise<void> => {
+export const diagramOrderTableByMaster = async (request: Request, response: Response): Promise<void> => {
     try {
         const from = String(request.query.from)
         const to = String(request.query.to)
-        const master_id = String(request.query.master_id)
-        if (from && to && master_id) {
-            const where: IWhere = whereConstructor(request)
-            const orders: Order[] | null = await Order.findAll({
-                where
-            })
-            const works: Type[] | null = await Type.findAll()
-            const sum1 = Number(orders.filter(o => o.work_id === 1).length) * Number(works?.find(w => w.work_id === 1)?.price)
-            const sum2 = Number(orders.filter(o => o.work_id === 2).length) * Number(works?.find(w => w.work_id === 2)?.price)
-            const sum3 = Number(orders.filter(o => o.work_id === 3).length) * Number(works?.find(w => w.work_id === 3)?.price)
-            const respData = [{
-                "Заработал": sum1 + sum2 + sum3,
-                "Количество": orders.length,
-                "Тип1": orders.filter(o => o.work_id === 1).length,
-                "Тип2": orders.filter(o => o.work_id === 2).length,
-                "Тип3": orders.filter(o => o.work_id === 3).length
-            }]
-            response.status(201).json(
-                respData
-            )
-        } else {
-            response.status(500).json("Something went wrong")
+        const masterIds = request.query.master_array
+        let respData: any[] = []
+        const works: Type[] | null = await Type.findAll()
+        // @ts-ignore
+        for (let masterId of masterIds) {
+            const master_id = String(masterId)
+            const where: IWhere = {}
+            if (from && to && master_id) {
+                where.order_time = {[Op.between]: [request.query.from, request.query.to]}
+                where.master_id = Number(master_id)
+                const orders: Order[] | null = await Order.findAll({
+                    where: {
+                        master_id
+                    },
+                    raw: true
+                })
+                const master: Master | null = await Master.findOne({
+                    where: {
+                        master_id
+                    }
+                })
+
+                const sum1 = Number(orders.filter(o => o.work_id === 1 && o.isPaid).length) * Number(works?.find(w => w.work_id === 1)?.price)
+                const sum2 = Number(orders.filter(o => o.work_id === 2 && o.isPaid).length) * Number(works?.find(w => w.work_id === 2)?.price)
+                const sum3 = Number(orders.filter(o => o.work_id === 3 && o.isPaid).length) * Number(works?.find(w => w.work_id === 3)?.price)
+                if (master?.master_name)
+                    respData.push({
+                        "Мастер": master?.master_name,
+                        "Заработал": sum1 + sum2 + sum3,
+                        "Количество": orders.length,
+                        "Завершенные": orders.filter(o => o.isDone).length,
+                        "Ждут выполнения": orders.filter(o => !o.isDone).length,
+                        "Маленькие часы": orders.filter(o => o.work_id === 1).length,
+                        "Средние часы": orders.filter(o => o.work_id === 2).length,
+                        "Большие часы": orders.filter(o => o.work_id === 3).length,
+                        "Рейтинг": master?.ranking
+                    })
+                else {
+                    response.status(201).json(
+                        respData
+                    )
+                }
+            } else {
+                response.status(500).json("Something went wrong")
+            }
         }
+        response.status(201).json(
+            respData
+        )
     } catch
         (e) {
         response.status(500).json("Something went wrong")

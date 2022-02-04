@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.diagram4 = exports.diagram3 = exports.diagram2 = exports.diagram1 = void 0;
+exports.diagramOrderTableByMaster = exports.diagramOrdersByMaster = exports.diagramOrdersByCity = exports.diagramByDays = void 0;
 const models_1 = require("../database/models");
 const utils_1 = require("../utils/utils");
-const diagram1 = async (request, response) => {
+const sequelize_1 = require("sequelize");
+const diagramByDays = async (request, response) => {
     try {
         const from = String(request.query.from);
         const to = String(request.query.to);
@@ -29,8 +30,8 @@ const diagram1 = async (request, response) => {
         response.status(500).json("Something went wrong");
     }
 };
-exports.diagram1 = diagram1;
-const diagram2 = async (request, response) => {
+exports.diagramByDays = diagramByDays;
+const diagramOrdersByCity = async (request, response) => {
     try {
         const from = String(request.query.from);
         const to = String(request.query.to);
@@ -79,8 +80,8 @@ const diagram2 = async (request, response) => {
         response.status(500).json("Something went wrong");
     }
 };
-exports.diagram2 = diagram2;
-const diagram3 = async (request, response) => {
+exports.diagramOrdersByCity = diagramOrdersByCity;
+const diagramOrdersByMaster = async (request, response) => {
     try {
         const from = String(request.query.from);
         const to = String(request.query.to);
@@ -136,37 +137,59 @@ const diagram3 = async (request, response) => {
         response.status(500).json("Something went wrong");
     }
 };
-exports.diagram3 = diagram3;
-const diagram4 = async (request, response) => {
+exports.diagramOrdersByMaster = diagramOrdersByMaster;
+const diagramOrderTableByMaster = async (request, response) => {
     try {
         const from = String(request.query.from);
         const to = String(request.query.to);
-        const master_id = String(request.query.master_id);
-        if (from && to && master_id) {
-            const where = utils_1.whereConstructor(request);
-            const orders = await models_1.Order.findAll({
-                where
-            });
-            const works = await models_1.Type.findAll();
-            const sum1 = Number(orders.filter(o => o.work_id === 1).length) * Number(works?.find(w => w.work_id === 1)?.price);
-            const sum2 = Number(orders.filter(o => o.work_id === 2).length) * Number(works?.find(w => w.work_id === 2)?.price);
-            const sum3 = Number(orders.filter(o => o.work_id === 3).length) * Number(works?.find(w => w.work_id === 3)?.price);
-            const respData = [{
-                    "Заработал": sum1 + sum2 + sum3,
-                    "Количество": orders.length,
-                    "Тип1": orders.filter(o => o.work_id === 1).length,
-                    "Тип2": orders.filter(o => o.work_id === 2).length,
-                    "Тип3": orders.filter(o => o.work_id === 3).length
-                }];
-            response.status(201).json(respData);
+        const masterIds = request.query.master_array;
+        let respData = [];
+        const works = await models_1.Type.findAll();
+        for (let masterId of masterIds) {
+            const master_id = String(masterId);
+            const where = {};
+            if (from && to && master_id) {
+                where.order_time = { [sequelize_1.Op.between]: [request.query.from, request.query.to] };
+                where.master_id = Number(master_id);
+                const orders = await models_1.Order.findAll({
+                    where: {
+                        master_id
+                    },
+                    raw: true
+                });
+                const master = await models_1.Master.findOne({
+                    where: {
+                        master_id
+                    }
+                });
+                const sum1 = Number(orders.filter(o => o.work_id === 1 && o.isPaid).length) * Number(works?.find(w => w.work_id === 1)?.price);
+                const sum2 = Number(orders.filter(o => o.work_id === 2 && o.isPaid).length) * Number(works?.find(w => w.work_id === 2)?.price);
+                const sum3 = Number(orders.filter(o => o.work_id === 3 && o.isPaid).length) * Number(works?.find(w => w.work_id === 3)?.price);
+                if (master?.master_name)
+                    respData.push({
+                        "Мастер": master?.master_name,
+                        "Заработал": sum1 + sum2 + sum3,
+                        "Количество": orders.length,
+                        "Завершенные": orders.filter(o => o.isDone).length,
+                        "Ждут выполнения": orders.filter(o => !o.isDone).length,
+                        "Маленькие часы": orders.filter(o => o.work_id === 1).length,
+                        "Средние часы": orders.filter(o => o.work_id === 2).length,
+                        "Большие часы": orders.filter(o => o.work_id === 3).length,
+                        "Рейтинг": master?.ranking
+                    });
+                else {
+                    response.status(201).json(respData);
+                }
+            }
+            else {
+                response.status(500).json("Something went wrong");
+            }
         }
-        else {
-            response.status(500).json("Something went wrong");
-        }
+        response.status(201).json(respData);
     }
     catch (e) {
         response.status(500).json("Something went wrong");
     }
 };
-exports.diagram4 = diagram4;
+exports.diagramOrderTableByMaster = diagramOrderTableByMaster;
 //# sourceMappingURL=chartController.js.map
