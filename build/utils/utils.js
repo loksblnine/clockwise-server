@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.whereConstructor = exports.sendMail = exports.LINK = exports.generateJwt = void 0;
+exports.getDaysArray = exports.whereConstructor = exports.sendMail = exports.LINK = exports.generateJwt = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const sequelize_1 = require("sequelize");
@@ -21,7 +21,7 @@ const sendMail = (message, response) => {
         .then(() => {
         response.status(201).json("Success!");
     })
-        .catch((e) => {
+        .catch(() => {
         response.status(500).json("Something went wrong");
     });
 };
@@ -52,4 +52,12 @@ const whereConstructor = (request) => {
     return where;
 };
 exports.whereConstructor = whereConstructor;
+const getDaysArray = (from, to) => {
+    const a = [];
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+        a.push(new Date(d).toLocaleDateString());
+    }
+    return a;
+};
+exports.getDaysArray = getDaysArray;
 //# sourceMappingURL=utils.js.map

@@ -21,7 +21,7 @@ export const sendMail = (message: MailDataRequired, response: Response): void =>
         .then(() => {
             response.status(201).json("Success!")
         })
-        .catch((e) => {
+        .catch(() => {
             response.status(500).json("Something went wrong")
         })
 }
@@ -63,3 +63,10 @@ export const whereConstructor = (request: Request) => {
     }
     return where
 }
+export const getDaysArray = (from: string, to: Date):Array<string> => {
+    const a: string[] = []
+    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
+        a.push(new Date(d).toLocaleDateString());
+    }
+    return a;
+};

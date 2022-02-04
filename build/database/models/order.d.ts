@@ -29,5 +29,6 @@ export declare class Order extends Model<IOrder, IOrderInput> implements IOrder 
     city: ICity;
     customer: ICustomer;
     master: IMaster;
+    "city.city_name": string;
 }
 //# sourceMappingURL=order.d.ts.map

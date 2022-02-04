@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cityRouter_1 = __importDefault(require("./cityRouter"));
+const chartRouter_1 = __importDefault(require("./chartRouter"));
 const customerRouter_1 = __importDefault(require("./customerRouter"));
 const orderRouter_1 = __importDefault(require("./orderRouter"));
 const masterRouter_1 = __importDefault(require("./masterRouter"));
@@ -19,6 +20,7 @@ const downloadRouter_1 = __importDefault(require("./downloadRouter"));
 const router = express_1.default.Router();
 router.use("/auth", userRouter_1.default);
 router.use("/blog", blogRouter_1.default);
+router.use("/charts", chartRouter_1.default);
 router.use("/cities", cityRouter_1.default);
 router.use("/customers", customerRouter_1.default);
 router.use("/deps", depsRouter_1.default);
