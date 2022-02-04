@@ -171,7 +171,7 @@ export const diagramOrderTableByMaster = async (request: Request, response: Resp
                 if (master?.master_name)
                     respData.push({
                         "Мастер": master?.master_name,
-                        "Заработал": sum1 + sum2 + sum3,
+                        "Заработал USD": sum1 + sum2 + sum3,
                         "Количество": orders.length,
                         "Завершенные": orders.filter(o => o.isDone).length,
                         "Ждут выполнения": orders.filter(o => !o.isDone).length,
