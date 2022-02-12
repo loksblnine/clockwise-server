@@ -6,7 +6,6 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/httpRequests" />
-      <excludeFolder url="file://$MODULE_DIR$/build" />
       <excludeFolder url="file://$MODULE_DIR$/src/database/seeders" />
       <excludeFolder url="file://$MODULE_DIR$/src/database/migrations" />
       <excludeFolder url="file://$MODULE_DIR$/src/__tests__" />
