@@ -136,7 +136,7 @@ export const updateMaster = async (request: Request, response: Response): Promis
             raw: true
         })
         response.status(201).json(
-            {...master, deps: deps.map((d: CityToMaster) => d.city_id)}
+            {...master, deps: deps?.map((d: CityToMaster) => d.city_id)}
         )
     } catch (err) {
         response.status(500).json("Something went wrong")
