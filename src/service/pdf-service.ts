@@ -6,7 +6,6 @@ export const buildPDF = async (id: number, dataCallback: any, endCallback: any) 
     const doc = new PDFDocument({bufferPages: true, font: 'Times-Roman'});
     doc.on('data', dataCallback);
     doc.on('end', endCallback);
-
     const order: any | null = await Order.findOne({
         raw: true,
         where: {
@@ -42,89 +41,89 @@ export const buildPDF = async (id: number, dataCallback: any, endCallback: any) 
             height: 120
         });
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(20)
             .text(`Детали заказа #${id}`, 200, 150);
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Мастер: `, 50, 200
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order['master.master_name']}`, 100, 200
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Email: `, 275, 200
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order['master.email']}`, 310, 200
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Покупатель: `, 50, 230
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order['customer.customer_name']}`, 125, 230
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Email: `, 275, 230
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order['customer.customer_email']}`, 310, 230
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Тип сервиса: `, 50, 260
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order['work.description']}`, 125, 260
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Дата выполнения заказа: `, 50, 290
             )
         doc
-            .font("../fonts/tnr.ttf")
+            .font("fonts/tnr.ttf")
             .fontSize(12)
             .text(
                 `${order.order_time.toLocaleDateString("ru")}`, 200, 290
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `Стоимость: `, 50, 320
             )
         doc
-            .font("../fonts/tnr-b.ttf")
+            .font("fonts/tnr-b.ttf")
             .fontSize(12)
             .text(
                 `${order['work.price']} USD`, 150, 320
