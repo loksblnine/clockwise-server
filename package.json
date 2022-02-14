@@ -57,6 +57,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "start": "tsc && node build/app.js",
-    "test": "jest --coverageReporters='text-summary'"
+    "test": "jest --coverageReporters='text-summary'",
+    "runProduction": "npm run test && node --NODE_ENV=production build/app.js"
   }
 }
