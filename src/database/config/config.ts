@@ -1,5 +1,6 @@
 import {Sequelize} from "sequelize";
 
+console.log(process.env.NODE_ENV)
 const db_database = process.env.NODE_ENV === "test" ? String(process.env.TEST_DB_DATABASE) : String(process.env.DB_DATABASE)
 const db_password = process.env.NODE_ENV === "test" ? String(process.env.TEST_DB_PASSWORD) : String(process.env.DB_PASSWORD)
 const db_user = process.env.NODE_ENV === "test" ? String(process.env.TEST_DB_USER) : String(process.env.DB_USER)

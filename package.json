@@ -61,6 +61,8 @@
     "lint": "eslint . --ext .ts",
     "start": "tsc && node build/app.js",
     "test": "jest --coverageReporters='text-summary' --forceExit",
-    "runProduction": "tsc && npm run test && node --NODE_ENV=production build/app.js"
+    "test1": "jest --detectOpenHandles && tsc",
+    "runProduction": "tsc && npm run test && node --NODE_ENV=production build/app.js",
+    "runDevProduction": "npm run test && SET --NODE_ENV=test && tsc && node build/app.js"
   }
 }

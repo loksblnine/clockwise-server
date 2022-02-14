@@ -13,6 +13,7 @@ export const createMaster = async (request: Request, response: Response): Promis
         )
     } catch
         (e) {
+        console.log(e.toString())
         response.status(500).json("Something went wrong")
     }
 }
