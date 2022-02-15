@@ -20,7 +20,13 @@ const createOrder = async (request, response) => {
             },
             raw: true
         });
-        const order = await models_1.Order.create({ ...request.body, customer_id: customer[0].customer_id, isPaid: null });
+        const order = await models_1.Order.create({
+            ...request.body,
+            customer_id: customer[0].customer_id,
+            isPaid: null,
+            mark: null,
+            isDone: false
+        });
         const fileStr = request.body?.data;
         for (let i = 0; i < fileStr?.length; i++) {
             const uploadResponse = await cloudinary_1.default.uploader.upload(fileStr[i], {

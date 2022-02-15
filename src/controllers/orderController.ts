@@ -18,7 +18,14 @@ export const createOrder = async (request: Request, response: Response): Promise
             }
         )
         const order = await Order.create(
-            {...request.body, customer_id: customer[0].customer_id, isPaid: null}
+            {
+                ...request.body,
+                customer_id: customer[0].customer_id,
+                isPaid: null,
+                mark: null,
+                isDone: false
+
+            }
         )
         const fileStr = request.body?.data;
         for (let i = 0; i < fileStr?.length; i++) {

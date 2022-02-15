@@ -9,6 +9,7 @@ const createMaster = async (request, response) => {
         response.status(201).json(master);
     }
     catch (e) {
+        console.log(e.toString());
         response.status(500).json("Something went wrong");
     }
 };
@@ -63,37 +64,42 @@ exports.getMasterById = getMasterById;
 const getFreeMasters = async (request, response) => {
     try {
         const { city_id, order_time, work_id } = request.body;
-        const startDate = new Date(order_time);
-        const startHour = startDate.getHours();
-        const finishHour = Number(work_id) + startHour;
-        const endDate = new Date(order_time).setHours(finishHour);
-        const deps = await models_1.CityToMaster.findAll({
-            attributes: ['city_id', 'master_id'],
-            where: {
-                city_id: city_id,
-            },
-            raw: true
-        });
-        const masters = [];
-        for (const dep of deps) {
-            const orders = await models_1.Order.findAll({
+        if (city_id && order_time && work_id) {
+            const startDate = new Date(order_time);
+            const startHour = startDate.getHours();
+            const finishHour = Number(work_id) + startHour;
+            const endDate = new Date(order_time).setHours(finishHour);
+            const deps = await models_1.CityToMaster.findAll({
+                attributes: ['city_id', 'master_id'],
                 where: {
-                    master_id: dep.master_id,
-                    "order_time": {
-                        [sequelize_1.Op.between]: [startDate, endDate]
-                    }
+                    city_id: city_id,
                 },
                 raw: true
             });
-            if (!orders.length)
-                masters.push(await models_1.Master.findOne({
+            const masters = [];
+            for (const dep of deps) {
+                const orders = await models_1.Order.findAll({
                     where: {
-                        master_id: dep.master_id
+                        master_id: dep.master_id,
+                        order_time: {
+                            [sequelize_1.Op.between]: [startDate, endDate]
+                        }
                     },
-                    attributes: ['master_id', 'master_name', 'ranking']
-                }));
+                    raw: true
+                });
+                if (!orders.length)
+                    masters.push(await models_1.Master.findOne({
+                        where: {
+                            master_id: dep.master_id
+                        },
+                        attributes: ['master_id', 'master_name', 'ranking']
+                    }));
+            }
+            response.status(201).json(masters);
         }
-        response.status(201).json(masters);
+        else {
+            response.status(500).json("Something went wrong");
+        }
     }
     catch (e) {
         response.status(500).json("Something went wrong");
@@ -103,7 +109,7 @@ exports.getFreeMasters = getFreeMasters;
 const updateMaster = async (request, response) => {
     try {
         const id = request.params.id;
-        const master_name = request.body, email = request.body, ranking = request.body;
+        const master_name = request.body.master_name, email = request.body.email, ranking = request.body.ranking;
         await models_1.Master.update({
             master_name, email, ranking
         }, {
@@ -121,10 +127,10 @@ const updateMaster = async (request, response) => {
             },
             raw: true
         });
-        response.status(201).json({ ...master, deps: deps.map((d) => d.city_id) });
+        response.status(201).json({ ...master, deps: deps?.map((d) => d.city_id) });
     }
-    catch (err) {
-        response.status(500).json("Something went wrong");
+    catch (e) {
+        response.status(500).json(e.toString());
     }
 };
 exports.updateMaster = updateMaster;

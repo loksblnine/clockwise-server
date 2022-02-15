@@ -13,6 +13,7 @@ export const createMaster = async (request: Request, response: Response): Promis
         )
     } catch
         (e) {
+        console.log(e.toString())
         response.status(500).json("Something went wrong")
     }
 }
@@ -72,40 +73,42 @@ export const getMasterById = async (request: Request, response: Response): Promi
 export const getFreeMasters = async (request: Request, response: Response): Promise<void> => {
     try {
         const {city_id, order_time, work_id} = request.body
-        const startDate = new Date(order_time)
-        const startHour = startDate.getHours()
-        const finishHour = Number(work_id) + startHour
-        const endDate = new Date(order_time).setHours(finishHour)
-        const deps = await CityToMaster.findAll({
-            attributes: ['city_id', 'master_id'],
-            where: {
-                city_id: city_id,
-            },
-
-            raw: true
-        })
-        const masters = []
-        for (const dep of deps) {
-            const orders: Array<Order> | null = await Order.findAll({
+        if (city_id && order_time && work_id) {
+            const startDate = new Date(order_time)
+            const startHour = startDate.getHours()
+            const finishHour = Number(work_id) + startHour
+            const endDate = new Date(order_time).setHours(finishHour)
+            const deps = await CityToMaster.findAll({
+                attributes: ['city_id', 'master_id'],
                 where: {
-                    master_id: dep.master_id,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    "order_time": {
-                        [Op.between]: [startDate, endDate]
-                    }
+                    city_id: city_id,
                 },
                 raw: true
             })
-            if (!orders.length)
-                masters.push(await Master.findOne({
+            const masters = []
+            for (const dep of deps) {
+                const orders: Array<Order> | null = await Order.findAll({
                     where: {
-                        master_id: dep.master_id
+                        master_id: dep.master_id,
+                        // @ts-ignore
+                        order_time: {
+                            [Op.between]: [startDate, endDate]
+                        }
                     },
-                    attributes: ['master_id', 'master_name', 'ranking']
-                }))
+                    raw: true
+                })
+                if (!orders.length)
+                    masters.push(await Master.findOne({
+                        where: {
+                            master_id: dep.master_id
+                        },
+                        attributes: ['master_id', 'master_name', 'ranking']
+                    }))
+            }
+            response.status(201).json(masters)
+        } else {
+            response.status(500).json("Something went wrong")
         }
-        response.status(201).json(masters)
     } catch (e) {
         response.status(500).json("Something went wrong")
     }
@@ -113,9 +116,9 @@ export const getFreeMasters = async (request: Request, response: Response): Prom
 export const updateMaster = async (request: Request, response: Response): Promise<void> => {
     try {
         const id: string = request.params.id
-        const master_name: string = request.body,
-            email: string = request.body,
-            ranking: string = request.body
+        const master_name: string = request.body.master_name,
+            email: string = request.body.email,
+            ranking: string = request.body.ranking
 
         await Master.update({
             master_name, email, ranking
@@ -136,10 +139,10 @@ export const updateMaster = async (request: Request, response: Response): Promis
             raw: true
         })
         response.status(201).json(
-            {...master, deps: deps.map((d: CityToMaster) => d.city_id)}
+            {...master, deps: deps?.map((d: CityToMaster) => d.city_id)}
         )
-    } catch (err) {
-        response.status(500).json("Something went wrong")
+    } catch (e) {
+        response.status(500).json(e.toString())
     }
 }
 export const deleteMaster = async (request: Request, response: Response): Promise<void> => {

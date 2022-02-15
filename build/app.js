@@ -43,6 +43,7 @@ catch (error) {
     logger_1.logger.error('Unable to connect to the database:', error);
 }
 app.listen(config_1.config.port, function () {
-    logger_1.logger.info(`server listening on port: ${config_1.config.port}`);
+    logger_1.logger.info(`server listening on port: ${config_1.config.port} and ${process.env.NODE_ENV}`);
 });
+exports.default = app;
 //# sourceMappingURL=app.js.map

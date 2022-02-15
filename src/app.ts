@@ -47,7 +47,7 @@ try {
 
 app.listen(config.port, function () {
     logger.info(
-        `server listening on port: ${config.port}`
+        `server listening on port: ${config.port} and ${process.env.NODE_ENV}`
     );
 });
-
+export default app
