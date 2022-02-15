@@ -60,8 +60,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "start": "tsc && node build/app.js",
-    "test": "heroku config:set NODE_ENV=test && jest --coverageReporters='text-summary' --forceExit && heroku config:set NODE_ENV=production",
-    "test1": "jest --detectOpenHandles && tsc",
+    "test": "jest --coverageReporters='text-summary' --forceExit",
     "runProduction": "npm run test && npm run start",
     "runDevProduction": "tsc && npm run test && node build/app.js"
   }
