@@ -1,1 +1,1 @@
-web: npm run test && node --NODE_ENV=production build/app.js
+web: npm run runProduction

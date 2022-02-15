@@ -62,7 +62,7 @@
     "start": "tsc && node build/app.js",
     "test": "jest --coverageReporters='text-summary' --forceExit",
     "test1": "jest --detectOpenHandles && tsc",
-    "runProduction": "tsc && npm run test && node --NODE_ENV=production build/app.js",
-    "runDevProduction": "npm run test && SET --NODE_ENV=test && tsc && node build/app.js"
+    "runProduction": "npm run test && node --NODE_ENV=production build/app.js",
+    "runDevProduction": "tsc && npm run test && node build/app.js"
   }
 }
