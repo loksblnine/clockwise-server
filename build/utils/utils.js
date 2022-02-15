@@ -44,10 +44,14 @@ const whereConstructor = (request) => {
         where.order_time = { [sequelize_1.Op.gte]: request.query.from };
     }
     if (request?.query?.to?.length && !request?.query?.from?.length) {
-        where.order_time = { [sequelize_1.Op.lte]: request.query.to };
+        const to = new Date(String(request.query.to)).setDate(new Date(String(request.query.to)).getDate() + 1);
+        where.order_time = { [sequelize_1.Op.lte]: to };
     }
     if (request?.query?.to?.length && request?.query?.from?.length) {
-        where.order_time = { [sequelize_1.Op.between]: [request.query.from, request.query.to] };
+        const from = new Date(String(request.query.from));
+        const to = new Date(String(request.query.to));
+        to.setDate(to.getDate() + 1);
+        where.order_time = { [sequelize_1.Op.between]: [from, to] };
     }
     return where;
 };

@@ -56,14 +56,19 @@ export const whereConstructor = (request: Request) => {
         where.order_time = {[Op.gte]: request.query.from}
     }
     if (request?.query?.to?.length && !request?.query?.from?.length) {
-        where.order_time = {[Op.lte]: request.query.to}
+        const to = new Date(String(request.query.to))
+        to.setDate(to.getDate() + 1)
+        where.order_time = {[Op.lte]: to}
     }
     if (request?.query?.to?.length && request?.query?.from?.length) {
-        where.order_time = {[Op.between]: [request.query.from, request.query.to]}
+        const from = new Date(String(request.query.from))
+        const to = new Date(String(request.query.to))
+        to.setDate(to.getDate() + 1)
+        where.order_time = {[Op.between]: [from, to]}
     }
     return where
 }
-export const getDaysArray = (from: string, to: Date):Array<string> => {
+export const getDaysArray = (from: string, to: Date): Array<string> => {
     const a: string[] = []
     for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
         a.push(new Date(d).toLocaleDateString());
