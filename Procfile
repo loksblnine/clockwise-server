@@ -1,1 +1,1 @@
-web: jest && node build/app.js
+web: npm run test && node build/app.js
