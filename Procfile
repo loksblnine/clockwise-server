@@ -1,1 +1,1 @@
-web: npm run test && node build/app.js
+web: npm install jest && npm run test && node build/app.js
