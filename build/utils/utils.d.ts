@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { MailDataRequired } from "@sendgrid/helpers/classes/mail";
-export declare const generateJwt: (id: number, email: string, role: number, time: string) => string;
+export declare const generateJwt: (id: number | undefined, email: string | undefined, role: number, time: string) => string;
 export declare const LINK: string | undefined;
 export declare const sendMail: (message: MailDataRequired, response: Response) => void;
 declare type OrderTime = {

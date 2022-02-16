@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIsPaidByOrderId = exports.getPaymentDetailsByOrderId = exports.cancelPay = exports.successPay = exports.pay = void 0;
 const models_1 = require("../database/models");
+const utils_1 = require("../utils/utils");
 const paypal = require('paypal-rest-sdk');
 paypal.configure({
     'mode': 'sandbox',
@@ -95,6 +96,33 @@ const successPay = async (req, res) => {
                     order_id: orderId
                 }
             });
+            const customer = await models_1.Customer.findOne({
+                where: {
+                    customer_id: order?.customer_id
+                },
+                raw: true
+            });
+            const user = await models_1.User.findOne({
+                where: {
+                    email: customer?.customer_email,
+                    role: 3
+                },
+                raw: true
+            });
+            const token = utils_1.generateJwt(user?.user_id, customer?.customer_email, 3, "12h");
+            if (customer?.customer_email && process.env.USER && process.env.SG_TEMPLATE_ID_PAID_ORDER) {
+                const msg = {
+                    to: String(customer.customer_email),
+                    from: String(process.env.USER),
+                    templateId: String(process.env.SG_TEMPLATE_ID_PAID_ORDER),
+                    dynamicTemplateData: {
+                        order_id: orderId,
+                        s_link: process.env.SERVER_URL,
+                        token
+                    }
+                };
+                utils_1.sendMail(msg, res);
+            }
             res.redirect(String(process.env.FRONT_URL) + "/payment/success");
         }
     });

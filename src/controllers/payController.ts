@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
-import {Customer, Order, Type} from "../database/models";
+import {Customer, Order, Type, User} from "../database/models";
 import {IOrder} from "../database/models/order";
-import {generateJwt, LINK, sendMail} from "../utils/utils";
+import {generateJwt, sendMail} from "../utils/utils";
 import {MailDataRequired} from "@sendgrid/helpers/classes/mail";
 
 const paypal = require('paypal-rest-sdk');
@@ -97,20 +97,28 @@ export const successPay = async (req: Request, res: Response) => {
                         order_id: orderId
                     }
                 })
-            const token = generateJwt(req.body.user.id, req.body.user.email, req.body.user.role, "2h")
+
             const customer: Customer | null = await Customer.findOne({
                 where: {
                     customer_id: order?.customer_id
-                }
+                },
+                raw: true
             })
-            if (customer && process.env.USER && process.env.SG_TEMPLATE_ID_FINISH_ORDER) {
+            const user : User | null = await User.findOne({
+                where: {
+                    email: customer?.customer_email,
+                    role: 3
+                },
+                raw: true
+            })
+            const token = generateJwt(user?.user_id, customer?.customer_email, 3, "12h")
+            if (customer?.customer_email && process.env.USER && process.env.SG_TEMPLATE_ID_PAID_ORDER) {
                 const msg: MailDataRequired = {
                     to: String(customer.customer_email),
                     from: String(process.env.USER),
                     templateId: String(process.env.SG_TEMPLATE_ID_PAID_ORDER),
                     dynamicTemplateData: {
                         order_id: orderId,
-                        link: LINK,
                         s_link: process.env.SERVER_URL,
                         token
                     }

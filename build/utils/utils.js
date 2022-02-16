@@ -44,7 +44,8 @@ const whereConstructor = (request) => {
         where.order_time = { [sequelize_1.Op.gte]: request.query.from };
     }
     if (request?.query?.to?.length && !request?.query?.from?.length) {
-        const to = new Date(String(request.query.to)).setDate(new Date(String(request.query.to)).getDate() + 1);
+        const to = new Date(String(request.query.to));
+        to.setDate(to.getDate() + 1);
         where.order_time = { [sequelize_1.Op.lte]: to };
     }
     if (request?.query?.to?.length && request?.query?.from?.length) {

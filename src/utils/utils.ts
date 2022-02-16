@@ -5,7 +5,7 @@ import {MailDataRequired} from "@sendgrid/helpers/classes/mail";
 import {Op} from "sequelize";
 
 sgMail.setApiKey(String(process.env.SG_API_KEY))
-export const generateJwt = (id: number, email: string, role: number, time: string): string => {
+export const generateJwt = (id: number | undefined, email: string | undefined, role: number, time: string): string => {
     return jwt.sign(
         {id, email, role},
         String(process.env.SECRET_KEY),
