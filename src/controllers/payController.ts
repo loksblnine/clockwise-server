@@ -1,6 +1,8 @@
 import {Request, Response} from "express";
-import {Order, Type} from "../database/models";
+import {Customer, Order, Type} from "../database/models";
 import {IOrder} from "../database/models/order";
+import {generateJwt, LINK, sendMail} from "../utils/utils";
+import {MailDataRequired} from "@sendgrid/helpers/classes/mail";
 
 const paypal = require('paypal-rest-sdk');
 
@@ -95,7 +97,26 @@ export const successPay = async (req: Request, res: Response) => {
                         order_id: orderId
                     }
                 })
-            //send mail that order is paid
+            const token = generateJwt(req.body.user.id, req.body.user.email, req.body.user.role, "2h")
+            const customer: Customer | null = await Customer.findOne({
+                where: {
+                    customer_id: order?.customer_id
+                }
+            })
+            if (customer && process.env.USER && process.env.SG_TEMPLATE_ID_FINISH_ORDER) {
+                const msg: MailDataRequired = {
+                    to: String(customer.customer_email),
+                    from: String(process.env.USER),
+                    templateId: String(process.env.SG_TEMPLATE_ID_PAID_ORDER),
+                    dynamicTemplateData: {
+                        order_id: orderId,
+                        link: LINK,
+                        s_link: process.env.SERVER_URL,
+                        token
+                    }
+                }
+                sendMail(msg, res)
+            }
             res.redirect(String(process.env.FRONT_URL) + "/payment/success");
         }
     });
