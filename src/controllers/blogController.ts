@@ -21,8 +21,13 @@ export const createArticle = async (request: Request, response: Response): Promi
                 }
             }
         )
+        const articleResponse: Article | null = await Article.findOne({
+            where: {
+                article_id: article.article_id
+            }
+        })
         response.status(201).json(
-            article
+            articleResponse
         )
     } catch
         (e) {
@@ -92,8 +97,7 @@ export const editArticle = async (request: Request, response: Response): Promise
                     article_id: id
                 }
             })
-        }
-        else {
+        } else {
             await Article.update({
                 photo: ""
             }, {
@@ -106,7 +110,7 @@ export const editArticle = async (request: Request, response: Response): Promise
             "Success"
         )
     } catch
-        (e:any) {
+        (e: any) {
         response.status(500).json("Something went wrong")
     }
 }

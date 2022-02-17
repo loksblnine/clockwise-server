@@ -59,7 +59,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "start": "node build/app.js",
+    "start": "tsc && node build/app.js",
     "test": "jest --coverageReporters='text-summary' --forceExit",
     "runProduction": "npm run test && npm run start",
     "runDevProduction": "tsc && npm run test && node build/app.js"

@@ -22,7 +22,12 @@ const createArticle = async (request, response) => {
                 article_id: article.article_id
             }
         });
-        response.status(201).json(article);
+        const articleResponse = await models_1.Article.findOne({
+            where: {
+                article_id: article.article_id
+            }
+        });
+        response.status(201).json(articleResponse);
     }
     catch (e) {
         response.status(500).json("Something went wrong");
