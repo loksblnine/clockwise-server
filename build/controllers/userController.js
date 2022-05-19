@@ -9,7 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const models_1 = require("../database/models");
 const utils_1 = require("../utils/utils");
 const isTokenValid = async (request, response) => {
-    const token = utils_1.generateJwt(request.body.user.id, request.body.user.email, request.body.user.role, "2h");
+    const token = (0, utils_1.generateJwt)(request.body.user.id, request.body.user.email, request.body.user.role, "2h");
     response.status(200).json({ token });
 };
 exports.isTokenValid = isTokenValid;
@@ -22,7 +22,7 @@ const isTokenValidGoogle = async (request, response) => {
         raw: true
     });
     if (user) {
-        const token = utils_1.generateJwt(user.user_id, user.email, user.role, "2h");
+        const token = (0, utils_1.generateJwt)(user.user_id, user.email, user.role, "2h");
         response.redirect(`${process.env.FRONT_URL}/login/token/${token}`);
     }
     else {
@@ -40,7 +40,7 @@ const registerUser = async (request, response) => {
         const newUser = await models_1.User.create({
             email, password: encryptedPassword, role
         });
-        const token = utils_1.generateJwt(newUser.user_id, email, role, "2h");
+        const token = (0, utils_1.generateJwt)(newUser.user_id, email, role, "2h");
         switch (role) {
             case 1: {
                 break;
@@ -91,7 +91,7 @@ const loginUser = async (request, response) => {
         for (let i = 0; i < oldUsers?.length; i++) {
             const passwordMatch = await bcrypt_1.default.compare(password, oldUsers[i]?.password);
             if (passwordMatch) {
-                const token = utils_1.generateJwt(oldUsers[i].user_id, oldUsers[i].email, oldUsers[i].role, "2h");
+                const token = (0, utils_1.generateJwt)(oldUsers[i].user_id, oldUsers[i].email, oldUsers[i].role, "2h");
                 return response.status(200).json({ token });
             }
         }
@@ -125,7 +125,7 @@ const approveMaster = async (request, response) => {
                     link: utils_1.LINK
                 }
             };
-            utils_1.sendMail(msg, response);
+            (0, utils_1.sendMail)(msg, response);
         }
         else {
             response.status(500).send("Something went wrong");
@@ -157,7 +157,7 @@ const approveUser = async (request, response) => {
             }
         });
         if (user) {
-            const newToken = utils_1.generateJwt(user.user_id, user.email, user.role, "2h");
+            const newToken = (0, utils_1.generateJwt)(user.user_id, user.email, user.role, "2h");
             response.status(201).json({ token: newToken });
         }
         response.status(500).send("Something went wrong");
@@ -195,7 +195,7 @@ const approveOrder = async (request, response) => {
                     master_id: order.master_id
                 }
             });
-            const token = utils_1.generateJwt(request.body.user.id, request.body.user.email, request.body.user.role, "2h");
+            const token = (0, utils_1.generateJwt)(request.body.user.id, request.body.user.email, request.body.user.role, "2h");
             if (customer && master && process.env.USER && process.env.SG_TEMPLATE_ID_FINISH_ORDER) {
                 const msg = {
                     to: String(customer.customer_email),
@@ -209,7 +209,7 @@ const approveOrder = async (request, response) => {
                         token
                     }
                 };
-                utils_1.sendMail(msg, response);
+                (0, utils_1.sendMail)(msg, response);
             }
             else {
                 response.status(500).send("Something went wrong");

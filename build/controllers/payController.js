@@ -109,7 +109,7 @@ const successPay = async (req, res) => {
                 },
                 raw: true
             });
-            const token = utils_1.generateJwt(user?.user_id, customer?.customer_email, 3, "12h");
+            const token = (0, utils_1.generateJwt)(user?.user_id, customer?.customer_email, 3, "12h");
             if (customer?.customer_email && process.env.USER && process.env.SG_TEMPLATE_ID_PAID_ORDER) {
                 const msg = {
                     to: String(customer.customer_email),
@@ -121,7 +121,7 @@ const successPay = async (req, res) => {
                         token
                     }
                 };
-                utils_1.sendMail(msg, res);
+                (0, utils_1.sendMail)(msg, res);
             }
             res.redirect(String(process.env.FRONT_URL) + "/payment/success");
         }

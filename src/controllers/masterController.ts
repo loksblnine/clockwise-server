@@ -13,7 +13,6 @@ export const createMaster = async (request: Request, response: Response): Promis
         )
     } catch
         (e) {
-        console.log(e.toString())
         response.status(500).json("Something went wrong")
     }
 }
@@ -142,7 +141,7 @@ export const updateMaster = async (request: Request, response: Response): Promis
             {...master, deps: deps?.map((d: CityToMaster) => d.city_id)}
         )
     } catch (e) {
-        response.status(500).json(e.toString())
+        response.status(500).json("Something went wrong")
     }
 }
 export const deleteMaster = async (request: Request, response: Response): Promise<void> => {
