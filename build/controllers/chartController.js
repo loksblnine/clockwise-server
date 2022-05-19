@@ -9,11 +9,11 @@ const diagramByDays = async (request, response) => {
         const from = String(request.query.from);
         const to = String(request.query.to);
         if (from && to) {
-            const where = utils_1.whereConstructor(request);
+            const where = (0, utils_1.whereConstructor)(request);
             const orders = await models_1.Order.findAll({
                 where
             });
-            const days = utils_1.getDaysArray(from, new Date(to));
+            const days = (0, utils_1.getDaysArray)(from, new Date(to));
             const respData = days.map(d => {
                 return {
                     "date": d,
@@ -36,7 +36,7 @@ const diagramOrdersByCity = async (request, response) => {
         const from = String(request.query.from);
         const to = String(request.query.to);
         if (from && to) {
-            const where = utils_1.whereConstructor(request);
+            const where = (0, utils_1.whereConstructor)(request);
             const orders = await models_1.Order.findAll({
                 where,
                 include: [{
@@ -86,7 +86,7 @@ const diagramOrdersByMaster = async (request, response) => {
         const from = String(request.query.from);
         const to = String(request.query.to);
         if (from && to) {
-            const where = utils_1.whereConstructor(request);
+            const where = (0, utils_1.whereConstructor)(request);
             const orders = await models_1.Order.findAll({
                 where,
                 include: [{

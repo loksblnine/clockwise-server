@@ -10,7 +10,7 @@ const utils_1 = require("../utils/utils");
 const pdf_service_1 = require("../service/pdf-service");
 const Excel = async (request, response) => {
     let worksheets = { "Лист1": [] };
-    const where = utils_1.whereConstructor(request);
+    const where = (0, utils_1.whereConstructor)(request);
     const orders = await models_1.Order.findAll({
         order: [
             ['order_time', 'DESC'],
@@ -61,7 +61,7 @@ const createReceipt = async (request, response) => {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment;filename=Receipt${id}.pdf`,
     });
-    await pdf_service_1.buildPDF(id, (chunk) => stream.write(chunk), () => stream.end());
+    await (0, pdf_service_1.buildPDF)(id, (chunk) => stream.write(chunk), () => stream.end());
 };
 exports.createReceipt = createReceipt;
 //# sourceMappingURL=downloadController.js.map

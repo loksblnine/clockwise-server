@@ -9,7 +9,6 @@ const createMaster = async (request, response) => {
         response.status(201).json(master);
     }
     catch (e) {
-        console.log(e.toString());
         response.status(500).json("Something went wrong");
     }
 };
@@ -130,7 +129,7 @@ const updateMaster = async (request, response) => {
         response.status(201).json({ ...master, deps: deps?.map((d) => d.city_id) });
     }
     catch (e) {
-        response.status(500).json(e.toString());
+        response.status(500).json("Something went wrong");
     }
 };
 exports.updateMaster = updateMaster;

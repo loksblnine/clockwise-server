@@ -1,4 +1,3 @@
-import express from 'express';
-declare const app: express.Express;
-export default app;
+declare const httpServer: any;
+export default httpServer;
 //# sourceMappingURL=app.d.ts.map

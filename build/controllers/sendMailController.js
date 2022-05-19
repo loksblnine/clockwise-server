@@ -20,7 +20,7 @@ const sendConfirmOrderMail = async (request, response) => {
                     message: request.body.message,
                 }
             };
-            utils_1.sendMail(msg, response);
+            (0, utils_1.sendMail)(msg, response);
         });
         const msg = {
             to: String(request.body.email),
@@ -31,7 +31,7 @@ const sendConfirmOrderMail = async (request, response) => {
                 link: `${process.env.FRONT_URL}/pay?order_id=${request.body.order_id}&type=${request.body.type}`
             }
         };
-        utils_1.sendMail(msg, response);
+        (0, utils_1.sendMail)(msg, response);
     }
     catch (e) {
         response.status(500).json("Something went wrong");
@@ -54,7 +54,7 @@ const sendConfirmRegistrationMail = async (request, response) => {
                     link: LINK_WITH_TOKEN
                 }
             };
-            utils_1.sendMail(msg, response);
+            (0, utils_1.sendMail)(msg, response);
         }
         else {
             response.status(500).json("Something went wrong");

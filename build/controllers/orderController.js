@@ -98,7 +98,7 @@ const getOrders = async (request, response) => {
     try {
         const page = request.params.page;
         const offset = 10 * Number(page);
-        const where = utils_1.whereConstructor(request);
+        const where = (0, utils_1.whereConstructor)(request);
         const orders = await models_1.Order.findAndCountAll({
             order: [
                 ['order_time', 'DESC'],
