@@ -50,7 +50,7 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
     done(null, user);
 });
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({ origin: true }));
 app.use(session({ secret: process.env.SECRET_SESSION_WORD, resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());

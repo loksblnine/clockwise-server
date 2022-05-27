@@ -34,7 +34,7 @@ passport.deserializeUser(function (user: any, done: any) {
     done(null, user);
 });
 
-app.use(cors())
+app.use(cors({origin: true}))
 app.use(session({secret: process.env.SECRET_SESSION_WORD, resave: false, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
